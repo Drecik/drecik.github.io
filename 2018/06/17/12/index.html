@@ -87,7 +87,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="lua,luajit,gc," />
+  <meta name="keywords" content="lua,gc,luajit," />
 
 
 
@@ -104,7 +104,7 @@
 
 
 <meta name="description" content="说明分析lua使用的gc算法，如何做到分步gc，以及测试结论 gc算法分析lua gc采用的是标记-清除算法，即一次gc分两步：  从根节点开始遍历gc对象，如果可达，则标记 遍历所有的gc对象，清除没有被标记的对象">
-<meta name="keywords" content="lua,luajit,gc">
+<meta name="keywords" content="lua,gc,luajit">
 <meta property="og:type" content="article">
 <meta property="og:title" content="lua gc分析">
 <meta property="og:url" content="http://yoursite.com/2018/06/17/12/index.html">
@@ -120,7 +120,7 @@
 <meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/12/18.png">
 <meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/12/19.png">
 <meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/12/11.png">
-<meta property="og:updated_time" content="2018-06-17T03:14:13.406Z">
+<meta property="og:updated_time" content="2018-06-23T05:35:38.292Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="lua gc分析">
 <meta name="twitter:description" content="说明分析lua使用的gc算法，如何做到分步gc，以及测试结论 gc算法分析lua gc采用的是标记-清除算法，即一次gc分两步：  从根节点开始遍历gc对象，如果可达，则标记 遍历所有的gc对象，清除没有被标记的对象">
@@ -490,7 +490,7 @@
 <li>释放内存速率jemalloc最好，并且随着常驻内存的table大小变大，效率体现的越明显</li>
 </ul>
 <h3 id="table缓存优化"><a href="#table缓存优化" class="headerlink" title="table缓存优化"></a>table缓存优化</h3><h4 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h4><p>自己写一个table缓冲池，缓冲一定数量、一定大小的table在c++内存，避免每次反复申请内存及rehash，reszie table操作<br>TODO: 需要具体修改luajit源码进行测试</p>
-<h3 id="减少gc遍历的对象"><a href="#减少gc遍历的对象" class="headerlink" title="减少gc遍历的对象"></a>减少gc遍历的对象</h3><h4 id="思路-1"><a href="#思路-1" class="headerlink" title="思路"></a>思路</h4><p>对于那些常驻内存的table，可以主动加一个标记，在gc时候遍历到这个table，将对其以及所有子gc对象从全局gc链表删除，并加入到一个全局const gc对象链表中。<br>TODO：代码上传</p>
+<h3 id="减少gc遍历的对象"><a href="#减少gc遍历的对象" class="headerlink" title="减少gc遍历的对象"></a>减少gc遍历的对象</h3><h4 id="思路-1"><a href="#思路-1" class="headerlink" title="思路"></a>思路</h4><p>对于那些常驻内存的table，可以主动加一个标记，在gc时候遍历到这个table，将对其以及所有子gc对象从全局gc链表删除，并加入到一个全局const gc对象链表中。<br>源代码可以查看<a href="https://github.com/Drecik/luajit-table-const" target="_blank" rel="noopener">github</a></p>
 <h4 id="测试结果-1"><a href="#测试结果-1" class="headerlink" title="测试结果"></a>测试结果</h4><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/12/18.png" alt="image"></p>
 <h4 id="对比结果"><a href="#对比结果" class="headerlink" title="对比结果"></a>对比结果</h4><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/12/19.png" alt="image"></p>
 <h4 id="火焰图（jemalloc-4G内存）"><a href="#火焰图（jemalloc-4G内存）" class="headerlink" title="火焰图（jemalloc-4G内存）"></a>火焰图（jemalloc-4G内存）</h4><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/12/11.png" alt="image"></p>
@@ -534,9 +534,9 @@
           
             <a href="/tags/lua/" rel="tag"><i class="fa fa-tag"></i> lua</a>
           
-            <a href="/tags/luajit/" rel="tag"><i class="fa fa-tag"></i> luajit</a>
-          
             <a href="/tags/gc/" rel="tag"><i class="fa fa-tag"></i> gc</a>
+          
+            <a href="/tags/luajit/" rel="tag"><i class="fa fa-tag"></i> luajit</a>
           
         </div>
       
