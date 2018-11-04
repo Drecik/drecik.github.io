@@ -87,7 +87,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="hexo,next," />
+  <meta name="keywords" content="unity,plugin," />
 
 
 
@@ -103,25 +103,18 @@
 
 
 
-<meta name="description" content="说明记录下制作该博客时候的一些配置修改，默认已经有hexo+next环境，如果没有该环境，请自行搜索教程">
-<meta name="keywords" content="hexo,next">
+<meta name="description" content="说明总结下最近在开发4个平台（win64, mac, ios, android）的unity复杂C++扩展遇到的坑点，不对unity如何开发c++插件进行介绍。整个插件开发用了3-4天，各个平台的编译兼容花了1周多时间。可见有多坑。">
+<meta name="keywords" content="unity,plugin">
 <meta property="og:type" content="article">
-<meta property="og:title" content="hexo+next配置">
-<meta property="og:url" content="http://yoursite.com/2018/06/17/14/index.html">
+<meta property="og:title" content="unity c++扩展开发坑点总结">
+<meta property="og:url" content="http://yoursite.com/2018/07/06/15/index.html">
 <meta property="og:site_name" content="Drecik&#39;s Blog">
-<meta property="og:description" content="说明记录下制作该博客时候的一些配置修改，默认已经有hexo+next环境，如果没有该环境，请自行搜索教程">
+<meta property="og:description" content="说明总结下最近在开发4个平台（win64, mac, ios, android）的unity复杂C++扩展遇到的坑点，不对unity如何开发c++插件进行介绍。整个插件开发用了3-4天，各个平台的编译兼容花了1周多时间。可见有多坑。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/1.png">
-<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/2.png">
-<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/3.png">
-<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/4.png">
-<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/5.png">
-<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/6.png">
-<meta property="og:updated_time" content="2018-06-17T04:31:53.987Z">
+<meta property="og:updated_time" content="2018-11-04T02:25:52.380Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="hexo+next配置">
-<meta name="twitter:description" content="说明记录下制作该博客时候的一些配置修改，默认已经有hexo+next环境，如果没有该环境，请自行搜索教程">
-<meta name="twitter:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/1.png">
+<meta name="twitter:title" content="unity c++扩展开发坑点总结">
+<meta name="twitter:description" content="说明总结下最近在开发4个平台（win64, mac, ios, android）的unity复杂C++扩展遇到的坑点，不对unity如何开发c++插件进行介绍。整个插件开发用了3-4天，各个平台的编译兼容花了1周多时间。可见有多坑。">
 
 
 
@@ -149,13 +142,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/06/17/14/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/06/15/"/>
 
 
 
 
 
-  <title> hexo+next配置 | Drecik's Blog </title>
+  <title> unity c++扩展开发坑点总结 | Drecik's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -330,7 +323,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/17/14/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/06/15/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Drecik Xu">
@@ -351,7 +344,7 @@
             
             
               
-                hexo+next配置
+                unity c++扩展开发坑点总结
               
             
           </h1>
@@ -366,8 +359,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-17T11:38:50+08:00">
-                2018-06-17
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-06T19:37:12+08:00">
+                2018-07-06
               </time>
             
 
@@ -384,7 +377,7 @@
 
           
           
-             <span id="/2018/06/17/14/" class="leancloud_visitors" data-flag-title="hexo+next配置">
+             <span id="/2018/07/06/15/" class="leancloud_visitors" data-flag-title="unity c++扩展开发坑点总结">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -413,31 +406,56 @@
       
 
       
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>记录下制作该博客时候的一些配置修改，默认已经有hexo+next环境，如果没有该环境，请自行搜索教程</p>
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>总结下最近在开发4个平台（win64, mac, ios, android）的unity复杂C++扩展遇到的坑点，不对unity如何开发c++插件进行介绍。整个插件开发用了3-4天，各个平台的编译兼容花了1周多时间。可见有多坑。</p>
 <a id="more"></a>
-<h2 id="next样式修改"><a href="#next样式修改" class="headerlink" title="next样式修改"></a>next样式修改</h2><p>next提供三种样式，在next/_config.yml中直接搜索Schemes，通过开关注释进行修改，我用的是Mist<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Schemes</span><br><span class="line">#scheme: Muse</span><br><span class="line">scheme: Mist</span><br><span class="line">#scheme: Pisces</span><br></pre></td></tr></table></figure></p>
-<h2 id="隐藏网页底部powered-By-Hexo-强力驱动"><a href="#隐藏网页底部powered-By-Hexo-强力驱动" class="headerlink" title="隐藏网页底部powered By Hexo / 强力驱动"></a>隐藏网页底部powered By Hexo / 强力驱动</h2><p>打开themes/next/layout/_partials/footer.swig, 使用<!-- -->注释，或直接删除以下代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;% if theme.copyright %&#125;</span><br><span class="line">&lt;div class=&quot;powered-by&quot;&gt;</span><br><span class="line">  &#123;&#123; __(&apos;footer.powered&apos;, &apos;&lt;a class=&quot;theme-link&quot; href=&quot;https://hexo.io&quot;&gt;Hexo&lt;/a&gt;&apos;) &#125;&#125;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;div class=&quot;theme-info&quot;&gt;</span><br><span class="line">  &#123;&#123; __(&apos;footer.theme&apos;) &#125;&#125; -</span><br><span class="line">  &lt;a class=&quot;theme-link&quot; href=&quot;https://github.com/iissnan/hexo-theme-next&quot;&gt;</span><br><span class="line">    NexT.&#123;&#123; theme.scheme &#125;&#125;</span><br><span class="line">  &lt;/a&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&#123;% endif %&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="添加顶部加载条"><a href="#添加顶部加载条" class="headerlink" title="添加顶部加载条"></a>添加顶部加载条</h2><p>打开/themes/next/layout/_partials/head.swig文件，前三行<meta>之后增加：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=&quot;//cdn.bootcss.com/pace/1.0.2/pace.min.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">&lt;link href=&quot;//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css&quot; rel=&quot;stylesheet&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">    .pace .pace-progress &#123;</span><br><span class="line">        background: #1E92FB; /*进度条颜色*/</span><br><span class="line">        height: 3px;</span><br><span class="line">    &#125;</span><br><span class="line">    .pace .pace-progress-inner &#123;</span><br><span class="line">         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/</span><br><span class="line">    &#125;</span><br><span class="line">    .pace .pace-activity &#123;</span><br><span class="line">        border-top-color: #1E92FB;    /*上边框颜色*/</span><br><span class="line">        border-left-color: #1E92FB;    /*左边框颜色*/</span><br><span class="line">    &#125;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure></p>
-<h2 id="修改文章底部的那个带-号的标签"><a href="#修改文章底部的那个带-号的标签" class="headerlink" title="修改文章底部的那个带#号的标签"></a>修改文章底部的那个带#号的标签</h2><p>修改模板/themes/next/layout/_macro/post.swig，搜索rel=”tag”&gt;#，将#替换成如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;i class=&quot;fa fa-tag&quot;&gt;&lt;/i&gt;</span><br></pre></td></tr></table></figure></p>
-<h2 id="代码样式"><a href="#代码样式" class="headerlink" title="代码样式"></a>代码样式</h2><p>在next/_config.yml中直接搜索highlight_theme，提供四种代码样式，可以自行修改找到合适自己的样式，我用的是night eighties<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Code Highlight theme</span><br><span class="line"># Available value:</span><br><span class="line">#    normal | night | night eighties | night blue | night bright</span><br><span class="line"># https://github.com/chriskempson/tomorrow-theme</span><br><span class="line">highlight_theme: night eighties</span><br></pre></td></tr></table></figure></p>
-<h2 id="主页文章添加阴影效果"><a href="#主页文章添加阴影效果" class="headerlink" title="主页文章添加阴影效果"></a>主页文章添加阴影效果</h2><p>打开next/source/css_custom/custom.styl，在里面加入以下样式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 主页文章添加阴影效果</span><br><span class="line">.post &#123;</span><br><span class="line">    margin-top: 60px;</span><br><span class="line">    margin-bottom: 60px;</span><br><span class="line">    padding: 25px;</span><br><span class="line">    -webkit-box-shadow: 0 0 5px rgba(202, 203, 203, .5);</span><br><span class="line">    -moz-box-shadow: 0 0 5px rgba(202, 203, 204, .5);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="增加阅读统计"><a href="#增加阅读统计" class="headerlink" title="增加阅读统计"></a>增加阅读统计</h2><h3 id="leancloud注册账号"><a href="#leancloud注册账号" class="headerlink" title="leancloud注册账号"></a>leancloud注册账号</h3><p>进入<a href="https://leancloud.cn/" target="_blank" rel="noopener">leancloud</a>注册账号</p>
-<h3 id="创建应用"><a href="#创建应用" class="headerlink" title="创建应用"></a>创建应用</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/1.png" alt="image"></p>
-<h3 id="创建class"><a href="#创建class" class="headerlink" title="创建class"></a>创建class</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/2.png" alt="image"><br>class名字一定得失Counter，为了避免权限问题，选择无限制</p>
-<h3 id="获取app-id和app-key"><a href="#获取app-id和app-key" class="headerlink" title="获取app id和app key"></a>获取app id和app key</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/3.png" alt="image"></p>
-<h3 id="设置app-id和app-key"><a href="#设置app-id和app-key" class="headerlink" title="设置app id和app key"></a>设置app id和app key</h3><p>打开next/_config.yml，搜索leancloud_visitors，将enable设置为true，appi_id和app_key设置为上一步获取到的值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">leancloud_visitors:</span><br><span class="line">  enable: true</span><br><span class="line">  app_id: xxxx</span><br><span class="line">  app_key: xxxx</span><br></pre></td></tr></table></figure></p>
-<h2 id="增加评论功能（来必力）"><a href="#增加评论功能（来必力）" class="headerlink" title="增加评论功能（来必力）"></a>增加评论功能（来必力）</h2><h3 id="来必力注册账号"><a href="#来必力注册账号" class="headerlink" title="来必力注册账号"></a>来必力注册账号</h3><p>进入<a href="https://livere.com/" target="_blank" rel="noopener">来必力</a>注册账号</p>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>选择免费的city版<br><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/4.png" alt="image"></p>
-<h3 id="获取uid"><a href="#获取uid" class="headerlink" title="获取uid"></a>获取uid</h3><p>进入到 管理页面 -&gt; 代码管理 -&gt; 一般网站 代码中，在一堆js代码里面，搜索data-uid，后面的值即为uid</p>
-<h3 id="设置uid"><a href="#设置uid" class="headerlink" title="设置uid"></a>设置uid</h3><p>打开next/_config.yml，搜索livere_uid，将livere_uid设置为上一步获取到的值</p>
-<h2 id="增加本地搜索功能"><a href="#增加本地搜索功能" class="headerlink" title="增加本地搜索功能"></a>增加本地搜索功能</h2><h3 id="安装hexo-search"><a href="#安装hexo-search" class="headerlink" title="安装hexo search"></a>安装hexo search</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-generator-searchdb --save</span><br></pre></td></tr></table></figure>
-<h3 id="配置搜索功能"><a href="#配置搜索功能" class="headerlink" title="配置搜索功能"></a>配置搜索功能</h3><p>在根目录的_config.yml最后加入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">search:</span><br><span class="line">  path: search.xml</span><br><span class="line">  field: post</span><br><span class="line">  format: html</span><br><span class="line">  limit: 10000</span><br></pre></td></tr></table></figure></p>
-<p>在next/_config.yml中搜索local_search，将enable设置为true<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">local_search:</span><br><span class="line">  enable: true</span><br></pre></td></tr></table></figure></p>
-<p>搜索效果可以参考我的博客的搜索功能</p>
-<h2 id="增加腾讯移动分析"><a href="#增加腾讯移动分析" class="headerlink" title="增加腾讯移动分析"></a>增加腾讯移动分析</h2><h3 id="腾讯移动分析注册账号"><a href="#腾讯移动分析注册账号" class="headerlink" title="腾讯移动分析注册账号"></a>腾讯移动分析注册账号</h3><p>进入<a href="http://mta.qq.com" target="_blank" rel="noopener">腾讯移动分析</a>注册账号，可以直接qq登录</p>
-<h3 id="创建应用-1"><a href="#创建应用-1" class="headerlink" title="创建应用"></a>创建应用</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/5.png" alt="image"></p>
-<h3 id="获取app-id"><a href="#获取app-id" class="headerlink" title="获取app id"></a>获取app id</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/6.png" alt="image"></p>
-<h3 id="设置app-id"><a href="#设置app-id" class="headerlink" title="设置app id"></a>设置app id</h3><p>打开next/_config.yml，搜索tencent_mta，将tencent_mta设置为上一步获取到的app id</p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><h3 id="插件架构"><a href="#插件架构" class="headerlink" title="插件架构"></a>插件架构</h3><p>c# -&gt; a.dll -&gt; b.dll -&gt; c.lib, d.lib</p>
+<ul>
+<li>c.lib/d.lib：是单独的一个第三方库，在win64下编译成.lib，在其他平台编译成.a</li>
+<li>b.dll：依赖于c.lib/d.lib，在win64下编译成.dll，在mac下编译成.bundle，ios下编译成.a，在android下编译成.so</li>
+<li>a.dll：依赖于b.dll，在win64下编译成.dll，在mac下编译成.bundle，ios下编译成.a，在android下编译成.so，并提供导出函数给c#使用</li>
+<li>c#：通过unity调用c++扩展的方式调用a.dll</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="windows"><a href="#windows" class="headerlink" title="windows"></a>windows</h3><ol>
+<li>b.dll，c.lib，d.lib是我自己搭建的环境，用vs编译，a.dll使用的是mingw环境编译。一开始我以为两种编译的dll会不能兼容，结果发现mingw编译a.dll的时候可以直接链接vs生成的b.dll(进一步测试发现，b.dll只能在导出c函数的时候兼容，导出类的话就会出现链接失败问题)。</li>
+<li><strong>b.dll编译输出后不能被重命名</strong>，即使修改a.dll的编译脚本，去链接重命名后的名字也不行。会导致将a.dll，b.dll丢入到unity中运行的时候，报<strong>“DllNotFoundException”</strong>错误。</li>
+<li><strong>unity编辑器在使用播放按钮启动游戏之后，除非你重新打开unity，否则已经加载的dll不会被卸载。</strong>所以如果你的dll里面有静态变量依赖某些指针，而这些指针会随着游戏通过Unity播放按钮停止而删除的话，再第二次通过播放按钮打开游戏可能会导致unity崩溃。</li>
+</ol>
+<h3 id="mac"><a href="#mac" class="headerlink" title="mac"></a>mac</h3><ol>
+<li>libc.a, libd.a使用makefile编译，b.bundle与a.bundle使用的是xcode编译</li>
+<li><strong>xcode编译bundle的时候是会编译32位与64位版本，所以依赖库(libc.a, libd.a)也需要编译这两个版本</strong>，使用gcc -m32/-m64分别编译对应的版本。否则在使用xcode编译的时候会出现<strong>i686, x86_64</strong>链接问题</li>
+<li><p>小技巧1：可以使用lipo查看当前的.a支持什么版本：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Lees-iMac:TestOtherLib Netease$ lipo -info libTestOtherLib.a </span><br><span class="line">input file libTestOtherLib.a is not a fat file</span><br><span class="line">Non-fat file: libTestOtherLib.a is architecture: x86_64</span><br></pre></td></tr></table></figure>
+<p> 可以看到libTestOtherLib.a只编译了64位版本</p>
+</li>
+<li><p>小技巧2：可以使用lipo把32版本的.a和64位.a合并成一个：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Lees-iMac:TestOtherLib Netease$ lipo -create libnetwork_c32.a libnetwork_c64.a -output libnetwork_c.a</span><br><span class="line">Lees-iMac:mac Netease$ lipo -info libnetwork_c.a </span><br><span class="line">Architectures in the fat file: libnetwork_c.a are: i386 x86_64</span><br></pre></td></tr></table></figure>
+<p> 可以看到libnetwork_c.a现在支持32位与64位版本</p>
+</li>
+</ol>
+<h3 id="ios"><a href="#ios" class="headerlink" title="ios"></a>ios</h3><ol>
+<li>ios不支持动态链接库，所以所有库都得编译成.a</li>
+<li>ios真机需要编译arm指令集(arm64, armv7, armv7s)的库，因为不清楚如何使用makefile编译这个指令集，所以都采用xcode来编译。xcode device如果选择了模拟器，则编译出来的会是x86指令集版本。这里<strong>需要将device选择位Generic iOS Device，则编译出来的会是arm指令集的库。</strong></li>
+<li>arm指令集有多种，如果编译出来的arm指令集库没有包含需要的版本，则最后在链接的时候，也会错误。所以在编译的时候我们要指定需要支持的指令集，在xcode中Build Settings-&gt;Architenctures用来选择编译出来的库支持哪些指令集：<ul>
+<li>Architectures：指定工程被编译成可支持哪些指令集类型，支持的指令集越多，对应生成二进制包就越大。</li>
+<li>Valid Architectures：限制可能被支持的指令集的范围，也就是Xcode编译出来的二进制包类型最终从这些类型产生，而<strong>编译出哪种指令集的包，将由Architectures与Valid Architectures的交集来确定</strong></li>
+<li>Build Active Architecture Only：指定是否只对当前激活的设备所支持的指令集编译，debug一般设置为yes，它只编译当前的architecture版本，加快编译速度。release设置为no，按照Architectures和Valid Architectures的配置编译对应的所有指令集。</li>
+</ul>
+</li>
+<li>如果不确定当前编译出来的库支持什么指令集，可以使用<strong>lipo</strong>查看</li>
+<li><p>在使用ios交叉编译luajit的时候包xxx函数找不到。这问题坑了好久，最后发现换行符的原因，将所有luajit文件CRLF改为LF之后编译通过，附上交叉编译ios版本luajit的编译命令：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env bash</span><br><span class="line">DIR=&quot;$( cd &quot;$( dirname &quot;$&#123;BASH_SOURCE[0]&#125;&quot; )&quot; &amp;&amp; pwd )&quot;</span><br><span class="line"></span><br><span class="line">SRCDIR=$DIR/luajit-2.1/</span><br><span class="line">DESTDIR=$DIR/iOS</span><br><span class="line">IXCODE=`xcode-select -print-path`</span><br><span class="line">ISDK=$IXCODE/Platforms/iPhoneOS.platform/Developer</span><br><span class="line">ISDKD=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/</span><br><span class="line">ISDKVER=iPhoneOS.sdk</span><br><span class="line">ISDKP=$IXCODE/usr/bin/</span><br><span class="line"></span><br><span class="line">if [ ! -e $ISDKP/ar ]; then </span><br><span class="line">    sudo cp $ISDKD/usr/bin/ar $ISDKP</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [ ! -e $ISDKP/ranlib ]; then</span><br><span class="line">    sudo cp $ISDKD/usr/bin/ranlib $ISDKP</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">cd $SRCDIR</span><br><span class="line"></span><br><span class="line">make clean</span><br><span class="line">ISDKF=&quot;-arch arm64 -isysroot $ISDK/SDKs/$ISDKVER -miphoneos-version-min=8.0 -fembed-bitcode&quot;</span><br><span class="line">make HOST_CC=&quot;gcc &quot; TARGET_FLAGS=&quot;$ISDKF&quot; TARGET=arm64 TARGET_SYS=iOS BUILDMODE=static</span><br><span class="line">mv -f &quot;$SRCDIR&quot;/src/libluajit.a &quot;$DESTDIR&quot;/libluajit.a</span><br><span class="line">make clean</span><br></pre></td></tr></table></figure>
+<p> 因为我们编译的ios app只需要arm64版本，所以这里只编译了arm64指令集版本</p>
+</li>
+</ol>
+<h3 id="android"><a href="#android" class="headerlink" title="android"></a>android</h3><ol>
+<li>android jni有两个配置文件，Application.mk和Android.mk。Application.mk配置全局相关内容，Android.mk配置编译相关命令。一开始我只知道Android.mk，全局变量APP_ABI是通过命令行传入配置的，这在编译纯C库的时候没遇到什么问题。但是在编译c++库的时候就遇到大坑了，无论我在Android.mk里面如何设置APP_STL，都感觉起不到这个变量的作用，还是会报找不到头文件。最后看到Application.mk文件时候才知道需要设置在Appliction.mk里面。原谅我第一次搞mk脚本。所以总结<strong>类似于APP_ABI, APP_STL这种全局配置变量需要设置在Application.mk中</strong></li>
+<li><p>编译libb.so或者liba.so的时候，因为依赖其他库，Android.mk中不能简单的直接在LOCAL_STATIC_LIBRARIES := 中加入依赖的库，需要在之前将依赖库加入到PREBUILT_STATIC_LIBRARY中。例如这里的network_c依赖libenet.a，libkcp.a的Android.mk脚本：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">LOCAL_PATH := $(call my-dir)</span><br><span class="line"></span><br><span class="line">include $(CLEAR_VARS)</span><br><span class="line">LOCAL_MODULE := enet</span><br><span class="line">LOCAL_SRC_FILES := ../../enet/android/lib/$(TARGET_ARCH_ABI)/libenet.a  # 因为APP_ABI里指定了两个版本(x86,armeabi-v7a)，所以可以使用这个宏来表示现在正在编译哪个版本</span><br><span class="line">include $(PREBUILT_STATIC_LIBRARY)</span><br><span class="line"></span><br><span class="line">include $(CLEAR_VARS)</span><br><span class="line">LOCAL_MODULE := kcp</span><br><span class="line">LOCAL_SRC_FILES := ../../kcp/android/lib/$(TARGET_ARCH_ABI)/libkcp.a</span><br><span class="line">include $(PREBUILT_STATIC_LIBRARY)</span><br><span class="line"></span><br><span class="line">include $(CLEAR_VARS)</span><br><span class="line">LOCAL_MODULE := z</span><br><span class="line">LOCAL_SRC_FILES := ../../zlib/android/lib/$(TARGET_ARCH_ABI)/libz.a</span><br><span class="line">include $(PREBUILT_STATIC_LIBRARY)</span><br><span class="line"></span><br><span class="line">include $(CLEAR_VARS)</span><br><span class="line"></span><br><span class="line">LOCAL_MODULE := network_c</span><br><span class="line"></span><br><span class="line">LOCAL_C_INCLUDES := $(LOCAL_PATH)/../ \</span><br><span class="line">    $(LOCAL_PATH)/../../enet/android/include \</span><br><span class="line">    $(LOCAL_PATH)/../../kcp/android/include \</span><br><span class="line">    $(LOCAL_PATH)/../../zlib/android/include</span><br><span class="line"></span><br><span class="line">LOCAL_STATIC_LIBRARIES := enet kcp z</span><br><span class="line"></span><br><span class="line">LOCAL_CPPFLAGS := -std=c++11</span><br><span class="line">MY_CPP_LIST := $(wildcard $(LOCAL_PATH)/../*.cpp)</span><br><span class="line">LOCAL_SRC_FILES := $(MY_CPP_LIST:$(LOCAL_PATH)/%=%)</span><br><span class="line"></span><br><span class="line">include $(BUILD_SHARED_LIBRARY)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>windows下如果在批处理脚本里调用ndk-build命令的话，需要在之前加入call，例如<code>call ndk-build</code>，因为windows下ndk-build自己本身就是一个批处理</p>
+</li>
+</ol>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>我第一次接触mac、ios、android的平台编译，如果有错误，请大家指出，共同进步。</p>
 
       
     </div>
@@ -467,9 +485,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/hexo/" rel="tag"><i class="fa fa-tag"></i> hexo</a>
+            <a href="/tags/unity/" rel="tag"><i class="fa fa-tag"></i> unity</a>
           
-            <a href="/tags/next/" rel="tag"><i class="fa fa-tag"></i> next</a>
+            <a href="/tags/plugin/" rel="tag"><i class="fa fa-tag"></i> plugin</a>
           
         </div>
       
@@ -482,8 +500,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/06/17/13/" rel="next" title="lua与luajit string hash算法对比">
-                <i class="fa fa-chevron-left"></i> lua与luajit string hash算法对比
+              <a href="/2018/06/17/14/" rel="next" title="hexo+next配置">
+                <i class="fa fa-chevron-left"></i> hexo+next配置
               </a>
             
           </div>
@@ -492,8 +510,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/07/06/15/" rel="prev" title="unity c++扩展开发坑点总结">
-                unity c++扩展开发坑点总结 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/07/09/16/" rel="prev" title="linux perf使用">
+                linux perf使用 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -616,7 +634,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#next样式修改"><span class="nav-number">2.</span> <span class="nav-text">next样式修改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐藏网页底部powered-By-Hexo-强力驱动"><span class="nav-number">3.</span> <span class="nav-text">隐藏网页底部powered By Hexo / 强力驱动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#添加顶部加载条"><span class="nav-number">4.</span> <span class="nav-text">添加顶部加载条</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改文章底部的那个带-号的标签"><span class="nav-number">5.</span> <span class="nav-text">修改文章底部的那个带#号的标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码样式"><span class="nav-number">6.</span> <span class="nav-text">代码样式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主页文章添加阴影效果"><span class="nav-number">7.</span> <span class="nav-text">主页文章添加阴影效果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#增加阅读统计"><span class="nav-number">8.</span> <span class="nav-text">增加阅读统计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#leancloud注册账号"><span class="nav-number">8.1.</span> <span class="nav-text">leancloud注册账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建应用"><span class="nav-number">8.2.</span> <span class="nav-text">创建应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建class"><span class="nav-number">8.3.</span> <span class="nav-text">创建class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取app-id和app-key"><span class="nav-number">8.4.</span> <span class="nav-text">获取app id和app key</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置app-id和app-key"><span class="nav-number">8.5.</span> <span class="nav-text">设置app id和app key</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#增加评论功能（来必力）"><span class="nav-number">9.</span> <span class="nav-text">增加评论功能（来必力）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#来必力注册账号"><span class="nav-number">9.1.</span> <span class="nav-text">来必力注册账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">9.2.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取uid"><span class="nav-number">9.3.</span> <span class="nav-text">获取uid</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置uid"><span class="nav-number">9.4.</span> <span class="nav-text">设置uid</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#增加本地搜索功能"><span class="nav-number">10.</span> <span class="nav-text">增加本地搜索功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装hexo-search"><span class="nav-number">10.1.</span> <span class="nav-text">安装hexo search</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置搜索功能"><span class="nav-number">10.2.</span> <span class="nav-text">配置搜索功能</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#增加腾讯移动分析"><span class="nav-number">11.</span> <span class="nav-text">增加腾讯移动分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#腾讯移动分析注册账号"><span class="nav-number">11.1.</span> <span class="nav-text">腾讯移动分析注册账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建应用-1"><span class="nav-number">11.2.</span> <span class="nav-text">创建应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取app-id"><span class="nav-number">11.3.</span> <span class="nav-text">获取app id</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置app-id"><span class="nav-number">11.4.</span> <span class="nav-text">设置app id</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">2.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#插件架构"><span class="nav-number">2.1.</span> <span class="nav-text">插件架构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#windows"><span class="nav-number">3.1.</span> <span class="nav-text">windows</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mac"><span class="nav-number">3.2.</span> <span class="nav-text">mac</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ios"><span class="nav-number">3.3.</span> <span class="nav-text">ios</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#android"><span class="nav-number">3.4.</span> <span class="nav-text">android</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#写在最后"><span class="nav-number">4.</span> <span class="nav-text">写在最后</span></a></li></ol></div>
             
 
           </div>

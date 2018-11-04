@@ -1,0 +1,1028 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="perf,linux," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="说明总结perf在linux下进行性能分析的常用方式。 perf介绍Perf是一款linux性能分析工具。通过它，应用程序可以利用 PMU(performance monitoring unit)，tracepoint和内核中的特殊计数器来进行性能统计。它不但可以分析指定应用程序的性能问题，也可以用来分析内核的性能问题，当然也可以同时分析应用代码和内核，从而全面理解应用程序中的性能瓶颈。">
+<meta name="keywords" content="perf,linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux perf使用">
+<meta property="og:url" content="http://yoursite.com/2018/07/09/16/index.html">
+<meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="说明总结perf在linux下进行性能分析的常用方式。 perf介绍Perf是一款linux性能分析工具。通过它，应用程序可以利用 PMU(performance monitoring unit)，tracepoint和内核中的特殊计数器来进行性能统计。它不但可以分析指定应用程序的性能问题，也可以用来分析内核的性能问题，当然也可以同时分析应用代码和内核，从而全面理解应用程序中的性能瓶颈。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/16/1.png">
+<meta property="og:updated_time" content="2018-11-04T02:24:53.844Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux perf使用">
+<meta name="twitter:description" content="说明总结perf在linux下进行性能分析的常用方式。 perf介绍Perf是一款linux性能分析工具。通过它，应用程序可以利用 PMU(performance monitoring unit)，tracepoint和内核中的特殊计数器来进行性能统计。它不但可以分析指定应用程序的性能问题，也可以用来分析内核的性能问题，当然也可以同时分析应用代码和内核，从而全面理解应用程序中的性能瓶颈。">
+<meta name="twitter:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/16/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/07/09/16/"/>
+
+
+
+
+
+  <title> linux perf使用 | Drecik's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=65896483";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+<script>
+  	var _mtac = {};
+  	(function() {
+  		var mta = document.createElement("script");
+  		mta.src = "https://pingjs.qq.com/h5/stats.js?v2.0.2";
+  		mta.setAttribute("name", "MTAH5");
+  		mta.setAttribute("sid", "500620013");
+
+  		var s = document.getElementsByTagName("script")[0];
+  		s.parentNode.insertBefore(mta, s);
+  	})();
+</script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Drecik's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/09/16/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Drecik Xu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                linux perf使用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-09T19:14:34+08:00">
+                2018-07-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/09/16/" class="leancloud_visitors" data-flag-title="linux perf使用">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>总结perf在linux下进行性能分析的常用方式。</p>
+<h2 id="perf介绍"><a href="#perf介绍" class="headerlink" title="perf介绍"></a>perf介绍</h2><p>Perf是一款linux性能分析工具。<br>通过它，应用程序可以利用 PMU(performance monitoring unit)，tracepoint和内核中的特殊计数器来进行性能统计。它不但可以分析指定应用程序的性能问题，也可以用来分析内核的性能问题，当然也可以同时分析应用代码和内核，从而全面理解应用程序中的性能瓶颈。</p>
+<a id="more"></a>
+<h2 id="perf举例"><a href="#perf举例" class="headerlink" title="perf举例"></a>perf举例</h2><h3 id="perf-stat"><a href="#perf-stat" class="headerlink" title="perf stat"></a>perf stat</h3><p><code>perf stat</code>命令用于检测和汇总关键CPU计数，例如:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">xuchen03@pm02-bot04<span class="number">-30002</span>:~$ perf stat gzip perf.data</span><br><span class="line"></span><br><span class="line"> Performance counter stats for 'gzip perf.data':</span><br><span class="line"></span><br><span class="line">         <span class="number">87.275950</span>      task-clock (msec)         #    <span class="number">0.995</span> CPUs utilized          </span><br><span class="line">                 <span class="number">0</span>      context-switches          #    <span class="number">0.000</span> K/sec                  </span><br><span class="line">                 <span class="number">0</span>      cpu-migrations            #    <span class="number">0.000</span> K/sec                  </span><br><span class="line">               <span class="number">127</span>      page-faults               #    <span class="number">0.001</span> M/sec                  </span><br><span class="line">       <span class="number">152</span>,<span class="number">861</span>,<span class="number">746</span>      cycles                    #    <span class="number">1.751</span> GHz                    </span><br><span class="line">        <span class="number">77</span>,<span class="number">476</span>,<span class="number">340</span>      stalled-cycles-frontend   #   <span class="number">50.68</span>% frontend cycles idle   </span><br><span class="line">   &lt;<span class="keyword">not</span> supported&gt;      stalled-cycles-backend   </span><br><span class="line">       <span class="number">201</span>,<span class="number">679</span>,<span class="number">601</span>      instructions              #    <span class="number">1.32</span>  insns per cycle        </span><br><span class="line">                                                  #    <span class="number">0.38</span>  stalled cycles per insn</span><br><span class="line">        <span class="number">39</span>,<span class="number">663</span>,<span class="number">860</span>      branches                  #  <span class="number">454.465</span> M/sec                  </span><br><span class="line">         <span class="number">1</span>,<span class="number">397</span>,<span class="number">981</span>      branch-misses             #    <span class="number">3.52</span>% of all branches        </span><br><span class="line"></span><br><span class="line">       <span class="number">0.087739461</span> seconds time elapsed</span><br></pre></td></tr></table></figure></p>
+<p><strong>注意：在虚拟机下可能不支持某些功能</strong><br>这里面有包含一个计数：每个指令周期执行的指令数(IPC)，即<code>insns per cycle</code>，这是一个常用的检测单位，高的IPC意味着高的CPU占用，底的IPC意味着更多的等待消耗（磁盘I/O，内存延迟）。<br><code>perf stat</code>的使用需要对CPU体系的知识，一般如果程序在代码，算法层面都没有地方在提升的时候可以考虑深挖下这边的性能，例如brach-miss，cache-miss(我的机器上不支持)。用的比较多的还是通过<code>perf record</code>分析代码层面的性能问题。</p>
+<h2 id="perf-record"><a href="#perf-record" class="headerlink" title="perf record"></a>perf record</h2><p><code>perf record</code>命令通过一定频率采样CPU当前执行的堆栈，生成一个分析文件(perf.data)进行分析。如果某个函数比较耗时，那它占用CPU的时间就会越高，从而被采样到的概率也就越高。<br><code>perf report</code>用来统计采样文件(perf.data)，生成一个较可观的输出（但是跟火焰图的直观还是没法比）</p>
+<h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">longa</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="keyword">int</span> i,j; </span><br><span class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) </span><br><span class="line">        j=i;</span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo2</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="keyword">int</span> i; </span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span> ; i &lt; <span class="number">10000</span>; i++) </span><br><span class="line">        longa(); </span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo1</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="keyword">int</span> i; </span><br><span class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>; i&lt; <span class="number">10000</span>; i++) </span><br><span class="line">       longa(); </span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    foo1(); </span><br><span class="line">    foo2(); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">xuchen03@pm02-bot04-30002:~$ gcc test.c </span><br><span class="line">xuchen03@pm02-bot04-30002:~$ sudo perf record -g ./a.out </span><br><span class="line">[ perf record: Woken up 2 times to write data ]</span><br><span class="line">[ perf record: Captured and wrote 0.410 MB perf.data (~17900 samples) ]</span><br><span class="line">xuchen03@pm02-bot04-30002:~$ sudo perf report --stdio</span><br><span class="line"># To display the perf.data header info, please use --header/--header-only options.</span><br><span class="line">#</span><br><span class="line"># Samples: 2K of event &apos;cycles&apos;</span><br><span class="line"># Event count (approx.): 1413222776</span><br><span class="line">#</span><br><span class="line"># Children      Self  Command      Shared Object                     Symbol</span><br><span class="line"># ........  ........  .......  .................  .........................</span><br><span class="line">#</span><br><span class="line">    99.92%     0.00%    a.out  libc-2.19.so       [.] __libc_start_main    </span><br><span class="line">              |</span><br><span class="line">              --- __libc_start_main</span><br><span class="line"></span><br><span class="line">    99.92%     0.00%    a.out  a.out              [.] main                 </span><br><span class="line">              |</span><br><span class="line">              --- main</span><br><span class="line">                  __libc_start_main</span><br><span class="line"></span><br><span class="line">    99.88%    99.88%    a.out  a.out              [.] longa                </span><br><span class="line">              |</span><br><span class="line">              --- longa</span><br><span class="line">                 |          </span><br><span class="line">                 |--50.07%-- foo2</span><br><span class="line">                 |          main</span><br><span class="line">                 |          __libc_start_main</span><br><span class="line">                 |          </span><br><span class="line">                 |--49.89%-- foo1</span><br><span class="line">                 |          main</span><br><span class="line">                 |          __libc_start_main</span><br><span class="line">                  --0.04%-- [...]</span><br><span class="line"></span><br><span class="line">    50.02%     0.00%    a.out  a.out              [.] foo2                 </span><br><span class="line">              |</span><br><span class="line">              --- foo2</span><br><span class="line">                  main</span><br><span class="line">                  __libc_start_main</span><br><span class="line"></span><br><span class="line">    49.87%     0.04%    a.out  a.out              [.] foo1                 </span><br><span class="line">              |</span><br><span class="line">              --- foo1</span><br><span class="line">                  main</span><br><span class="line">                  __libc_start_main</span><br><span class="line"></span><br><span class="line">     0.06%     0.06%    a.out  ld-2.19.so         [.] do_lookup_x          </span><br><span class="line">              |</span><br><span class="line">              --- do_lookup_x</span><br><span class="line"></span><br><span class="line">     0.03%     0.00%    a.out  [unknown]          [k] 0x00007f9d7dc06317   </span><br><span class="line">              |</span><br><span class="line">              --- 0x7f9d7dc06317</span><br></pre></td></tr></table></figure></p>
+<p>可以看到self列占用时间最大的是longa，占比99.88%。堆栈也能看到，但是看起来不是很直观。</p>
+<h3 id="火焰图"><a href="#火焰图" class="headerlink" title="火焰图"></a>火焰图</h3><p>火焰图以一种更直观的方式来看<code>perf record</code>的采样结果</p>
+<h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><p>安装很简单，直接使用<code>git clone</code>即可<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xuchen03@pm02-bot04-30002:~$ cd ~</span><br><span class="line">xuchen03@pm02-bot04-30002:~$ git clone https://github.com/brendangregg/FlameGraph.git</span><br></pre></td></tr></table></figure></p>
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><p>继续刚刚的采样命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">xuchen03@pm02-bot04-30002:~$ gcc test.c </span><br><span class="line">xuchen03@pm02-bot04-30002:~$ sudo perf record -ga ./a.out </span><br><span class="line">[ perf record: Woken up 2 times to write data ]</span><br><span class="line">[ perf record: Captured and wrote 0.410 MB perf.data (~17900 samples) ]</span><br><span class="line">xuchen03@pm02-bot04-30002:~$ sudo perf report --stdio</span><br><span class="line">xuchen03@pm02-bot04-30002:~$ sudo perf script |cat|c++filt|~/FlameGraph/stackcollapse-perf.pl|~/sysperf/FlameGraph/flamegraph.pl &gt; ~/c.svg</span><br></pre></td></tr></table></figure></p>
+<p>在自己的home目录下生成了c.svg，可以直接用浏览器打开：<br><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/16/1.png" alt="imgage"><br>可以很清楚的看到每个函数占用CPU的比例，以及这个函数的堆栈情况。在火焰图上可以很方便的找到哪个函数是可能是性能瓶颈，从而可以进一步的对这个函数进行分析。</p>
+<h2 id="动态追踪"><a href="#动态追踪" class="headerlink" title="动态追踪"></a>动态追踪</h2><p>perf更强大的地方是可以自定义追踪点</p>
+<h3 id="perf-stat-1"><a href="#perf-stat-1" class="headerlink" title="perf stat"></a>perf stat</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">xuchen03@pm02-bot04-30002:~$ sudo perf probe -x a.out --add longa</span><br><span class="line">Added new event:</span><br><span class="line">  probe_a:longa        (on longa in /home/xuchen03/a.out)</span><br><span class="line"></span><br><span class="line">You can now use it in all perf tools, such as:</span><br><span class="line"></span><br><span class="line">	perf record -e probe_a:longa -aR sleep 1</span><br><span class="line"></span><br><span class="line">xuchen03@pm02-bot04-30002:~$ sudo perf stat -e probe_a:longa ./a.out </span><br><span class="line"></span><br><span class="line"> Performance counter stats for &apos;./a.out&apos;:</span><br><span class="line"></span><br><span class="line">            20,000      probe_a:longa                                               </span><br><span class="line"></span><br><span class="line">       0.754663782 seconds time elapsed</span><br></pre></td></tr></table></figure>
+<p>可以看到stat能统计出来追踪函数longa被调用2W次</p>
+<h3 id="perf-record-1"><a href="#perf-record-1" class="headerlink" title="perf record"></a>perf record</h3><p>同时动态追踪和<code>perf record</code>一起使用，可以进一步分析追踪点相关的采样情况(注意这里的<code>perf record</code>加了–call-graph dwarf，不加可能导致堆栈不全)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">xuchen03@pm02-bot04-30002:~$ sudo perf record --call-graph dwarf -e probe_a:longa ./a.out </span><br><span class="line">[ perf record: Woken up 646 times to write data ]</span><br><span class="line">[ perf record: Captured and wrote 161.319 MB perf.data (~7048126 samples) ]</span><br><span class="line">xuchen03@pm02-bot04-30002:~$ sudo perf report --stdio</span><br><span class="line"># To display the perf.data header info, please use --header/--header-only options.</span><br><span class="line">#</span><br><span class="line"># Samples: 20K of event &apos;probe_a:longa&apos;</span><br><span class="line"># Event count (approx.): 20000</span><br><span class="line">#</span><br><span class="line"># Children      Self  Command  Shared Object                 Symbol</span><br><span class="line"># ........  ........  .......  .............  .....................</span><br><span class="line">#</span><br><span class="line">   100.00%     0.00%    a.out  a.out          [.] _start           </span><br><span class="line">              |</span><br><span class="line">              --- _start</span><br><span class="line"></span><br><span class="line">   100.00%     0.00%    a.out  libc-2.19.so   [.] __libc_start_main</span><br><span class="line">              |</span><br><span class="line">              --- __libc_start_main</span><br><span class="line">                  _start</span><br><span class="line"></span><br><span class="line">   100.00%     0.00%    a.out  a.out          [.] main             </span><br><span class="line">              |</span><br><span class="line">              --- main</span><br><span class="line">                  __libc_start_main</span><br><span class="line">                  _start</span><br><span class="line"></span><br><span class="line">   100.00%   100.00%    a.out  a.out          [.] longa            </span><br><span class="line">              |</span><br><span class="line">              --- longa</span><br><span class="line">                 |          </span><br><span class="line">                 |--50.00%-- foo1</span><br><span class="line">                 |          main</span><br><span class="line">                 |          __libc_start_main</span><br><span class="line">                 |          _start</span><br><span class="line">                 |          </span><br><span class="line">                  --50.00%-- foo2</span><br><span class="line">                            main</span><br><span class="line">                            __libc_start_main</span><br><span class="line">                            _start</span><br><span class="line"></span><br><span class="line">    50.00%     0.00%    a.out  a.out          [.] foo1             </span><br><span class="line">              |</span><br><span class="line">              --- foo1</span><br><span class="line">                  main</span><br><span class="line">                  __libc_start_main</span><br><span class="line">                  _start</span><br><span class="line"></span><br><span class="line">    50.00%     0.00%    a.out  a.out          [.] foo2             </span><br><span class="line">              |</span><br><span class="line">              --- foo2</span><br><span class="line">                  main</span><br><span class="line">                  __libc_start_main</span><br><span class="line">                  _start</span><br></pre></td></tr></table></figure></p>
+<p>因为本来longa函数在使用动态追踪之前就是占用100%，所以与之前的结果差不多。对于我们一般的程序来说，就会删除大量其他函数调用，只会得到追踪点相关的调用情况。<br>同样对于<code>perf record</code>结果可以使用命令火焰图命令生成更直观的火焰图来查看</p>
+<h3 id="更强大的动态追踪"><a href="#更强大的动态追踪" class="headerlink" title="更强大的动态追踪"></a>更强大的动态追踪</h3><p>动态追踪更强大的地方可以追加追踪的变量，就像gdb调试程序一样方便。<br>例如我们这里给foo2的for循环里加追踪点，并追踪i变量：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">xuchen03@pm02-bot04-30002:~$ sudo perf probe -x a.out --add &apos;test.c:12 i&apos;</span><br><span class="line">Added new event:</span><br><span class="line">  probe_a:foo2         (on @test.c:12 in /home/xuchen03/a.out with i)</span><br><span class="line"></span><br><span class="line">You can now use it in all perf tools, such as:</span><br><span class="line"></span><br><span class="line">	perf record -e probe_a:foo2 -aR sleep 1</span><br><span class="line">xuchen03@pm02-bot04-30002:~$ sudo perf record -e probe_a:foo2 ./a.out </span><br><span class="line">[ perf record: Woken up 3 times to write data ]</span><br><span class="line">[ perf record: Captured and wrote 0.699 MB perf.data (~30527 samples) ]</span><br><span class="line">xuchen03@pm02-bot04-30002:~$ sudo perf script</span><br><span class="line">           a.out  9082 [017] 21495626.717550: probe_a:foo2: (4004e9) i=0</span><br><span class="line">           a.out  9082 [017] 21495626.717601: probe_a:foo2: (4004e9) i=1</span><br><span class="line">           a.out  9082 [017] 21495626.717639: probe_a:foo2: (4004e9) i=2</span><br><span class="line">           a.out  9082 [017] 21495626.717676: probe_a:foo2: (4004e9) i=3</span><br><span class="line">           a.out  9082 [017] 21495626.717713: probe_a:foo2: (4004e9) i=4</span><br><span class="line">           a.out  9082 [017] 21495626.717750: probe_a:foo2: (4004e9) i=5</span><br><span class="line">           a.out  9082 [017] 21495626.717787: probe_a:foo2: (4004e9) i=6</span><br><span class="line">           a.out  9082 [017] 21495626.717824: probe_a:foo2: (4004e9) i=7</span><br><span class="line">           a.out  9082 [017] 21495626.717861: probe_a:foo2: (4004e9) i=8</span><br><span class="line">           a.out  9082 [017] 21495626.717898: probe_a:foo2: (4004e9) i=9</span><br><span class="line">           a.out  9082 [017] 21495626.717936: probe_a:foo2: (4004e9) i=10</span><br><span class="line">           a.out  9082 [017] 21495626.717973: probe_a:foo2: (4004e9) i=11</span><br><span class="line">           a.out  9082 [017] 21495626.718010: probe_a:foo2: (4004e9) i=12</span><br><span class="line">           a.out  9082 [017] 21495626.718047: probe_a:foo2: (4004e9) i=13</span><br><span class="line">           a.out  9082 [017] 21495626.718084: probe_a:foo2: (4004e9) i=14</span><br><span class="line">           a.out  9082 [017] 21495626.718121: probe_a:foo2: (4004e9) i=15</span><br><span class="line">           a.out  9082 [017] 21495626.718158: probe_a:foo2: (4004e9) i=16</span><br><span class="line">           a.out  9082 [017] 21495626.718195: probe_a:foo2: (4004e9) i=17</span><br><span class="line">           a.out  9082 [017] 21495626.718232: probe_a:foo2: (4004e9) i=18</span><br><span class="line">           a.out  9082 [017] 21495626.718269: probe_a:foo2: (4004e9) i=19</span><br><span class="line">           a.out  9082 [017] 21495626.718306: probe_a:foo2: (4004e9) i=20</span><br><span class="line">           a.out  9082 [017] 21495626.718343: probe_a:foo2: (4004e9) i=21</span><br><span class="line">           a.out  9082 [017] 21495626.718380: probe_a:foo2: (4004e9) i=22</span><br><span class="line">           a.out  9082 [017] 21495626.718417: probe_a:foo2: (4004e9) i=23</span><br><span class="line">           a.out  9082 [017] 21495626.718454: probe_a:foo2: (4004e9) i=24</span><br><span class="line">           a.out  9082 [017] 21495626.718491: probe_a:foo2: (4004e9) i=25</span><br><span class="line">           a.out  9082 [017] 21495626.718528: probe_a:foo2: (4004e9) i=26</span><br><span class="line">           a.out  9082 [017] 21495626.718565: probe_a:foo2: (4004e9) i=27</span><br><span class="line">           a.out  9082 [017] 21495626.718602: probe_a:foo2: (4004e9) i=28</span><br><span class="line">           a.out  9082 [017] 21495626.718639: probe_a:foo2: (4004e9) i=29</span><br><span class="line">           a.out  9082 [017] 21495626.718676: probe_a:foo2: (4004e9) i=30</span><br><span class="line">           a.out  9082 [017] 21495626.718713: probe_a:foo2: (4004e9) i=31</span><br><span class="line">           a.out  9082 [017] 21495626.718750: probe_a:foo2: (4004e9) i=32</span><br><span class="line">           a.out  9082 [017] 21495626.718787: probe_a:foo2: (4004e9) i=33</span><br><span class="line">           a.out  9082 [017] 21495626.718824: probe_a:foo2: (4004e9) i=34</span><br><span class="line">           a.out  9082 [017] 21495626.718861: probe_a:foo2: (4004e9) i=35</span><br><span class="line">           a.out  9082 [017] 21495626.718898: probe_a:foo2: (4004e9) i=36</span><br><span class="line">           a.out  9082 [017] 21495626.718935: probe_a:foo2: (4004e9) i=37</span><br><span class="line">           a.out  9082 [017] 21495626.718972: probe_a:foo2: (4004e9) i=38</span><br><span class="line">           a.out  9082 [017] 21495626.719009: probe_a:foo2: (4004e9) i=39</span><br><span class="line">           a.out  9082 [017] 21495626.719046: probe_a:foo2: (4004e9) i=40</span><br><span class="line">           a.out  9082 [017] 21495626.719083: probe_a:foo2: (4004e9) i=41</span><br><span class="line">           a.out  9082 [017] 21495626.719120: probe_a:foo2: (4004e9) i=42</span><br><span class="line">           a.out  9082 [017] 21495626.719157: probe_a:foo2: (4004e9) i=43</span><br><span class="line">           a.out  9082 [017] 21495626.719194: probe_a:foo2: (4004e9) i=44</span><br><span class="line">           a.out  9082 [017] 21495626.719231: probe_a:foo2: (4004e9) i=45</span><br><span class="line">           a.out  9082 [017] 21495626.719268: probe_a:foo2: (4004e9) i=46</span><br><span class="line">           a.out  9082 [017] 21495626.719305: probe_a:foo2: (4004e9) i=47</span><br><span class="line">           a.out  9082 [017] 21495626.719343: probe_a:foo2: (4004e9) i=48</span><br><span class="line">           a.out  9082 [017] 21495626.719380: probe_a:foo2: (4004e9) i=49</span><br><span class="line">        ...</span><br></pre></td></tr></table></figure></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>性能分析界的牛人: <a href="http://www.brendangregg.com/perf.html" target="_blank" rel="noopener">http://www.brendangregg.com/perf.html</a><br>中文介绍perf较不错的技术文章，我的例子代码摘自这里: <a href="https://www.ibm.com/developerworks/cn/linux/l-cn-perf1/index.html" target="_blank" rel="noopener">https://www.ibm.com/developerworks/cn/linux/l-cn-perf1/index.html</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/perf/" rel="tag"><i class="fa fa-tag"></i> perf</a>
+          
+            <a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> linux</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/06/15/" rel="next" title="unity c++扩展开发坑点总结">
+                <i class="fa fa-chevron-left"></i> unity c++扩展开发坑点总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/10/17/" rel="prev" title="linux systemtap, stap++使用">
+                linux systemtap, stap++使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Drecik Xu" />
+          <p class="site-author-name" itemprop="name">Drecik Xu</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#perf介绍"><span class="nav-number">2.</span> <span class="nav-text">perf介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#perf举例"><span class="nav-number">3.</span> <span class="nav-text">perf举例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#perf-stat"><span class="nav-number">3.1.</span> <span class="nav-text">perf stat</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#perf-record"><span class="nav-number">4.</span> <span class="nav-text">perf record</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#举例"><span class="nav-number">4.1.</span> <span class="nav-text">举例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#火焰图"><span class="nav-number">4.2.</span> <span class="nav-text">火焰图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#安装"><span class="nav-number">4.2.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用"><span class="nav-number">4.2.2.</span> <span class="nav-text">使用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态追踪"><span class="nav-number">5.</span> <span class="nav-text">动态追踪</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#perf-stat-1"><span class="nav-number">5.1.</span> <span class="nav-text">perf stat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#perf-record-1"><span class="nav-number">5.2.</span> <span class="nav-text">perf record</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更强大的动态追踪"><span class="nav-number">5.3.</span> <span class="nav-text">更强大的动态追踪</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drecik Xu</span>
+</div>
+
+<!--
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+-->
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("8ur18uDJDAiMLXcqTjHKYOQo-gzGzoHsz", "FBQnJWBqt8F9IFuv3eGdn7rt");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

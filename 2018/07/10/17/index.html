@@ -87,7 +87,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="hexo,next," />
+  <meta name="keywords" content="linux,systemtap,stap++," />
 
 
 
@@ -103,25 +103,18 @@
 
 
 
-<meta name="description" content="说明记录下制作该博客时候的一些配置修改，默认已经有hexo+next环境，如果没有该环境，请自行搜索教程">
-<meta name="keywords" content="hexo,next">
+<meta name="description" content="说明介绍systemtap, stap++的一些使用方式，以及总结了一些遇到的坑点 systemtap介绍systemtap跟perf一样也是一个linux下的性能分析工具，但它提供自定义脚本编写，所以功能会比perf更强大。">
+<meta name="keywords" content="linux,systemtap,stap++">
 <meta property="og:type" content="article">
-<meta property="og:title" content="hexo+next配置">
-<meta property="og:url" content="http://yoursite.com/2018/06/17/14/index.html">
+<meta property="og:title" content="linux systemtap, stap++使用">
+<meta property="og:url" content="http://yoursite.com/2018/07/10/17/index.html">
 <meta property="og:site_name" content="Drecik&#39;s Blog">
-<meta property="og:description" content="说明记录下制作该博客时候的一些配置修改，默认已经有hexo+next环境，如果没有该环境，请自行搜索教程">
+<meta property="og:description" content="说明介绍systemtap, stap++的一些使用方式，以及总结了一些遇到的坑点 systemtap介绍systemtap跟perf一样也是一个linux下的性能分析工具，但它提供自定义脚本编写，所以功能会比perf更强大。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/1.png">
-<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/2.png">
-<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/3.png">
-<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/4.png">
-<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/5.png">
-<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/6.png">
-<meta property="og:updated_time" content="2018-06-17T04:31:53.987Z">
+<meta property="og:updated_time" content="2018-11-04T02:24:53.844Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="hexo+next配置">
-<meta name="twitter:description" content="说明记录下制作该博客时候的一些配置修改，默认已经有hexo+next环境，如果没有该环境，请自行搜索教程">
-<meta name="twitter:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/1.png">
+<meta name="twitter:title" content="linux systemtap, stap++使用">
+<meta name="twitter:description" content="说明介绍systemtap, stap++的一些使用方式，以及总结了一些遇到的坑点 systemtap介绍systemtap跟perf一样也是一个linux下的性能分析工具，但它提供自定义脚本编写，所以功能会比perf更强大。">
 
 
 
@@ -149,13 +142,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/06/17/14/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/10/17/"/>
 
 
 
 
 
-  <title> hexo+next配置 | Drecik's Blog </title>
+  <title> linux systemtap, stap++使用 | Drecik's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -330,7 +323,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/17/14/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/10/17/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Drecik Xu">
@@ -351,7 +344,7 @@
             
             
               
-                hexo+next配置
+                linux systemtap, stap++使用
               
             
           </h1>
@@ -366,8 +359,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-17T11:38:50+08:00">
-                2018-06-17
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-10T15:35:55+08:00">
+                2018-07-10
               </time>
             
 
@@ -384,7 +377,7 @@
 
           
           
-             <span id="/2018/06/17/14/" class="leancloud_visitors" data-flag-title="hexo+next配置">
+             <span id="/2018/07/10/17/" class="leancloud_visitors" data-flag-title="linux systemtap, stap++使用">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -413,31 +406,43 @@
       
 
       
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>记录下制作该博客时候的一些配置修改，默认已经有hexo+next环境，如果没有该环境，请自行搜索教程</p>
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>介绍systemtap, stap++的一些使用方式，以及总结了一些遇到的坑点</p>
+<h2 id="systemtap介绍"><a href="#systemtap介绍" class="headerlink" title="systemtap介绍"></a>systemtap介绍</h2><p>systemtap跟perf一样也是一个linux下的性能分析工具，但它提供自定义脚本编写，所以功能会比perf更强大。</p>
 <a id="more"></a>
-<h2 id="next样式修改"><a href="#next样式修改" class="headerlink" title="next样式修改"></a>next样式修改</h2><p>next提供三种样式，在next/_config.yml中直接搜索Schemes，通过开关注释进行修改，我用的是Mist<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Schemes</span><br><span class="line">#scheme: Muse</span><br><span class="line">scheme: Mist</span><br><span class="line">#scheme: Pisces</span><br></pre></td></tr></table></figure></p>
-<h2 id="隐藏网页底部powered-By-Hexo-强力驱动"><a href="#隐藏网页底部powered-By-Hexo-强力驱动" class="headerlink" title="隐藏网页底部powered By Hexo / 强力驱动"></a>隐藏网页底部powered By Hexo / 强力驱动</h2><p>打开themes/next/layout/_partials/footer.swig, 使用<!-- -->注释，或直接删除以下代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;% if theme.copyright %&#125;</span><br><span class="line">&lt;div class=&quot;powered-by&quot;&gt;</span><br><span class="line">  &#123;&#123; __(&apos;footer.powered&apos;, &apos;&lt;a class=&quot;theme-link&quot; href=&quot;https://hexo.io&quot;&gt;Hexo&lt;/a&gt;&apos;) &#125;&#125;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;div class=&quot;theme-info&quot;&gt;</span><br><span class="line">  &#123;&#123; __(&apos;footer.theme&apos;) &#125;&#125; -</span><br><span class="line">  &lt;a class=&quot;theme-link&quot; href=&quot;https://github.com/iissnan/hexo-theme-next&quot;&gt;</span><br><span class="line">    NexT.&#123;&#123; theme.scheme &#125;&#125;</span><br><span class="line">  &lt;/a&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&#123;% endif %&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="添加顶部加载条"><a href="#添加顶部加载条" class="headerlink" title="添加顶部加载条"></a>添加顶部加载条</h2><p>打开/themes/next/layout/_partials/head.swig文件，前三行<meta>之后增加：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=&quot;//cdn.bootcss.com/pace/1.0.2/pace.min.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">&lt;link href=&quot;//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css&quot; rel=&quot;stylesheet&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">    .pace .pace-progress &#123;</span><br><span class="line">        background: #1E92FB; /*进度条颜色*/</span><br><span class="line">        height: 3px;</span><br><span class="line">    &#125;</span><br><span class="line">    .pace .pace-progress-inner &#123;</span><br><span class="line">         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/</span><br><span class="line">    &#125;</span><br><span class="line">    .pace .pace-activity &#123;</span><br><span class="line">        border-top-color: #1E92FB;    /*上边框颜色*/</span><br><span class="line">        border-left-color: #1E92FB;    /*左边框颜色*/</span><br><span class="line">    &#125;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure></p>
-<h2 id="修改文章底部的那个带-号的标签"><a href="#修改文章底部的那个带-号的标签" class="headerlink" title="修改文章底部的那个带#号的标签"></a>修改文章底部的那个带#号的标签</h2><p>修改模板/themes/next/layout/_macro/post.swig，搜索rel=”tag”&gt;#，将#替换成如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;i class=&quot;fa fa-tag&quot;&gt;&lt;/i&gt;</span><br></pre></td></tr></table></figure></p>
-<h2 id="代码样式"><a href="#代码样式" class="headerlink" title="代码样式"></a>代码样式</h2><p>在next/_config.yml中直接搜索highlight_theme，提供四种代码样式，可以自行修改找到合适自己的样式，我用的是night eighties<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Code Highlight theme</span><br><span class="line"># Available value:</span><br><span class="line">#    normal | night | night eighties | night blue | night bright</span><br><span class="line"># https://github.com/chriskempson/tomorrow-theme</span><br><span class="line">highlight_theme: night eighties</span><br></pre></td></tr></table></figure></p>
-<h2 id="主页文章添加阴影效果"><a href="#主页文章添加阴影效果" class="headerlink" title="主页文章添加阴影效果"></a>主页文章添加阴影效果</h2><p>打开next/source/css_custom/custom.styl，在里面加入以下样式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 主页文章添加阴影效果</span><br><span class="line">.post &#123;</span><br><span class="line">    margin-top: 60px;</span><br><span class="line">    margin-bottom: 60px;</span><br><span class="line">    padding: 25px;</span><br><span class="line">    -webkit-box-shadow: 0 0 5px rgba(202, 203, 203, .5);</span><br><span class="line">    -moz-box-shadow: 0 0 5px rgba(202, 203, 204, .5);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="增加阅读统计"><a href="#增加阅读统计" class="headerlink" title="增加阅读统计"></a>增加阅读统计</h2><h3 id="leancloud注册账号"><a href="#leancloud注册账号" class="headerlink" title="leancloud注册账号"></a>leancloud注册账号</h3><p>进入<a href="https://leancloud.cn/" target="_blank" rel="noopener">leancloud</a>注册账号</p>
-<h3 id="创建应用"><a href="#创建应用" class="headerlink" title="创建应用"></a>创建应用</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/1.png" alt="image"></p>
-<h3 id="创建class"><a href="#创建class" class="headerlink" title="创建class"></a>创建class</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/2.png" alt="image"><br>class名字一定得失Counter，为了避免权限问题，选择无限制</p>
-<h3 id="获取app-id和app-key"><a href="#获取app-id和app-key" class="headerlink" title="获取app id和app key"></a>获取app id和app key</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/3.png" alt="image"></p>
-<h3 id="设置app-id和app-key"><a href="#设置app-id和app-key" class="headerlink" title="设置app id和app key"></a>设置app id和app key</h3><p>打开next/_config.yml，搜索leancloud_visitors，将enable设置为true，appi_id和app_key设置为上一步获取到的值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">leancloud_visitors:</span><br><span class="line">  enable: true</span><br><span class="line">  app_id: xxxx</span><br><span class="line">  app_key: xxxx</span><br></pre></td></tr></table></figure></p>
-<h2 id="增加评论功能（来必力）"><a href="#增加评论功能（来必力）" class="headerlink" title="增加评论功能（来必力）"></a>增加评论功能（来必力）</h2><h3 id="来必力注册账号"><a href="#来必力注册账号" class="headerlink" title="来必力注册账号"></a>来必力注册账号</h3><p>进入<a href="https://livere.com/" target="_blank" rel="noopener">来必力</a>注册账号</p>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>选择免费的city版<br><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/4.png" alt="image"></p>
-<h3 id="获取uid"><a href="#获取uid" class="headerlink" title="获取uid"></a>获取uid</h3><p>进入到 管理页面 -&gt; 代码管理 -&gt; 一般网站 代码中，在一堆js代码里面，搜索data-uid，后面的值即为uid</p>
-<h3 id="设置uid"><a href="#设置uid" class="headerlink" title="设置uid"></a>设置uid</h3><p>打开next/_config.yml，搜索livere_uid，将livere_uid设置为上一步获取到的值</p>
-<h2 id="增加本地搜索功能"><a href="#增加本地搜索功能" class="headerlink" title="增加本地搜索功能"></a>增加本地搜索功能</h2><h3 id="安装hexo-search"><a href="#安装hexo-search" class="headerlink" title="安装hexo search"></a>安装hexo search</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-generator-searchdb --save</span><br></pre></td></tr></table></figure>
-<h3 id="配置搜索功能"><a href="#配置搜索功能" class="headerlink" title="配置搜索功能"></a>配置搜索功能</h3><p>在根目录的_config.yml最后加入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">search:</span><br><span class="line">  path: search.xml</span><br><span class="line">  field: post</span><br><span class="line">  format: html</span><br><span class="line">  limit: 10000</span><br></pre></td></tr></table></figure></p>
-<p>在next/_config.yml中搜索local_search，将enable设置为true<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">local_search:</span><br><span class="line">  enable: true</span><br></pre></td></tr></table></figure></p>
-<p>搜索效果可以参考我的博客的搜索功能</p>
-<h2 id="增加腾讯移动分析"><a href="#增加腾讯移动分析" class="headerlink" title="增加腾讯移动分析"></a>增加腾讯移动分析</h2><h3 id="腾讯移动分析注册账号"><a href="#腾讯移动分析注册账号" class="headerlink" title="腾讯移动分析注册账号"></a>腾讯移动分析注册账号</h3><p>进入<a href="http://mta.qq.com" target="_blank" rel="noopener">腾讯移动分析</a>注册账号，可以直接qq登录</p>
-<h3 id="创建应用-1"><a href="#创建应用-1" class="headerlink" title="创建应用"></a>创建应用</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/5.png" alt="image"></p>
-<h3 id="获取app-id"><a href="#获取app-id" class="headerlink" title="获取app id"></a>获取app id</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/14/6.png" alt="image"></p>
-<h3 id="设置app-id"><a href="#设置app-id" class="headerlink" title="设置app id"></a>设置app id</h3><p>打开next/_config.yml，搜索tencent_mta，将tencent_mta设置为上一步获取到的app id</p>
+<h2 id="快速了解systemptab功能"><a href="#快速了解systemptab功能" class="headerlink" title="快速了解systemptab功能"></a>快速了解systemptab功能</h2><h3 id="最简单的systemtab脚本"><a href="#最简单的systemtab脚本" class="headerlink" title="最简单的systemtab脚本"></a>最简单的systemtab脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">probe begin</span><br><span class="line">&#123;</span><br><span class="line">    print(&quot;hello world\n&quot;)</span><br><span class="line">    exit()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xuchen03@onlinegame-53-51:~/systab$ sudo stap hello-world.stp</span><br><span class="line">hello world</span><br></pre></td></tr></table></figure></p>
+<p><code>probe begin</code>指定了一个begin的追踪点，脚本实际上做的就是定义一些列追踪点。systemtap将脚本翻译成C，并将其编译成一个内核的模块加载到内核。一旦被加载则脚本中所有指定的追踪点会在运行的时候被回调。下面列举了一些systemtap提供的追踪点：</p>
+<ul>
+<li>begin：此次检测开始被回调</li>
+<li>end: 此次检测结束被回调</li>
+<li>kernel.function(“sys_open”): 内核函数sys_open进入时候被回调</li>
+<li>syscall.close.return:    系统调用close返回时候被回调</li>
+<li>timer.ms(200): 定时器，每200ms回调一次</li>
+<li>timer.profile: 定时器，每个system tick回调一次</li>
+<li>perf.hw.cache_misses: cache miss的时候回调</li>
+</ul>
+<h3 id="另一个例子"><a href="#另一个例子" class="headerlink" title="另一个例子"></a>另一个例子</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">probe syscall.open</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;%s&quot;(%d) open (%s)\n&quot;, execname(), pid(), argstr)</span><br><span class="line">&#125;</span><br><span class="line">probe time.ms(4000)</span><br><span class="line">&#123;</span><br><span class="line">    exit()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">xuchen03@onlinegame-53-51:~/systab$ vi strace-open.stp</span><br><span class="line">xuchen03@onlinegame-53-51:~/systab$ sudo stap ./strace-open.stp </span><br><span class="line">redis-server(24453) open (&quot;/proc/24453/stat&quot;, O_RDONLY)</span><br><span class="line">bot(28026) open (&quot;/proc/self/stat&quot;, O_RDONLY)</span><br><span class="line">bot(28026) open (&quot;/proc/stat&quot;, O_RDONLY)</span><br><span class="line">redis-server(24453) open (&quot;/proc/24453/stat&quot;, O_RDONLY)</span><br><span class="line">redis-server(24453) open (&quot;/proc/24453/stat&quot;, O_RDONLY)</span><br><span class="line">tail(3649) open (&quot;logs/zqc/gameapp.3.INFO&quot;, O_RDONLY|O_NONBLOCK)</span><br><span class="line">tail(3651) open (&quot;logs/zqc/gameapp.5.INFO&quot;, O_RDONLY|O_NONBLOCK)</span><br><span class="line">mgrapp(3845) open (&quot;/proc/self/stat&quot;, O_RDONLY)</span><br><span class="line">mgrapp(3845) open (&quot;/proc/stat&quot;, O_RDONLY)</span><br><span class="line">tail(3652) open (&quot;logs/zqc/gateapp.2.INFO&quot;, O_RDONLY|O_NONBLOCK)</span><br><span class="line">tail(3650) open (&quot;logs/zqc/gameapp.4.INFO&quot;, O_RDONLY|O_NONBLOCK)</span><br><span class="line">mgrapp(11899) open (&quot;/proc/self/stat&quot;, O_RDONLY)</span><br><span class="line">mgrapp(11899) open (&quot;/proc/stat&quot;, O_RDONLY)</span><br><span class="line">gateapp(3849) open (&quot;/proc/self/stat&quot;, O_RDONLY)</span><br><span class="line">gateapp(3849) open (&quot;/proc/stat&quot;, O_RDONLY)</span><br><span class="line">gateapp(11903) open (&quot;/proc/self/stat&quot;, O_RDONLY)</span><br><span class="line">gateapp(11903) open (&quot;/proc/stat&quot;, O_RDONLY)</span><br><span class="line">loginapp(3847) open (&quot;/proc/self/stat&quot;, O_RDONLY)</span><br><span class="line">loginapp(3847) open (&quot;/proc/stat&quot;, O_RDONLY)</span><br><span class="line">redis-server(24453) open (&quot;/proc/24453/stat&quot;, O_RDONLY)</span><br><span class="line">gameapp(3855) open (&quot;/proc/self/stat&quot;, O_RDONLY)</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p><code>printf</code>是一个格式化打印函数，可以打印自己脚本定义的变量，或者systemtap提供的获取信息的函数或变量：</p>
+<ul>
+<li>tid(): 当前线程id</li>
+<li>pid(): 当前进程id</li>
+<li>uid(): 当前用户id</li>
+<li>execname(): 进程的名字</li>
+<li>cpu(): 当前cpu number</li>
+<li>gettimeofday_s(): 当前时间戳</li>
+<li>pp(): 描述当前追踪点的字符串</li>
+<li>ppfunc(): 当前追踪点被触发的函数，如果存在的话</li>
+<li>print_backtrace(): 直接输出内核态堆栈</li>
+<li>print_ubacktrace(): 直接输出用户态堆栈</li>
+</ul>
+<h2 id="systemtap脚本语法"><a href="#systemtap脚本语法" class="headerlink" title="systemtap脚本语法"></a>systemtap脚本语法</h2><p>普通语法和C语言差不多，这里介绍下不太一样的地方，其他具体可以查看<a href="https://sourceware.org/systemtap/langref/" target="_blank" rel="noopener">官方教程</a>，或者这个<a href="https://sourceware.org/systemtap/tutorial/Analysis.html" target="_blank" rel="noopener">简化版的教程</a></p>
+<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><p>数组非常方便，内部使用hash table实现，数组大小除非显示指定，否则都定义为一个预先定义好的大小。多维可以直接用’,’分割即可，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">names[400]       // 大小位400的数组</span><br><span class="line">...</span><br><span class="line">foreach (name in names) &#123;</span><br><span class="line">    // do something</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">foo[1, &quot;200&quot;] = 1</span><br><span class="line">foo[2, &quot;200&quot;] = 2</span><br><span class="line">foreach ([id, str] in foo) &#123;</span><br><span class="line">    // do something</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里有个方便的地方当数组元素不存在的时候返回的是0，所以计数的时候就非常方便，可以直接使用<code>bts[ubacktrace()]++</code>计数</p>
+<h2 id="stap-介绍"><a href="#stap-介绍" class="headerlink" title="stap++介绍"></a>stap++介绍</h2><p><a href="https://github.com/openresty/stapxx" target="_blank" rel="noopener">stap++</a>是一个stap扩展，提供一些类似于宏的功能，最后将宏替换后生成的systemtap脚本，并调用systemtap执行。<br>stap++使得systemtap的脚本可以得到进一步扩展。</p>
+<h3 id="sample-bt-sxx-perf-record"><a href="#sample-bt-sxx-perf-record" class="headerlink" title="sample-bt.sxx(perf record)"></a>sample-bt.sxx(perf record)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env stap++</span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line"> * Copyright (C) Yichun Zhang (agentzh)</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">global bts;</span><br><span class="line">global quit = 0</span><br><span class="line"></span><br><span class="line">probe timer.profile &#123;</span><br><span class="line">    if ($^pid_ok) &#123; // pid是否相等</span><br><span class="line">        %( &quot;$^arg_execname :default()&quot; != &quot;&quot; %? </span><br><span class="line">        if (execname() == &quot;$^arg_execname&quot;) &#123;   // 进程名是否相等，如果存在的话</span><br><span class="line">        %)</span><br><span class="line"></span><br><span class="line">        if (!quit) &#123;</span><br><span class="line">            bts[ubacktrace()] &lt;&lt;&lt; 1             // 计数，这里有个大坑，如果采样时间长会导致消耗巨量内存，可以改用bts[ubacktrace()]++优化</span><br><span class="line"></span><br><span class="line">        &#125; else &#123;</span><br><span class="line"></span><br><span class="line">            foreach (usr in bts- limit $^arg_limit :default(1000)) &#123;</span><br><span class="line">                print_ustack(usr)</span><br><span class="line">                printf(&quot;\t%d\n&quot;, @count(bts[usr]))      // 打印堆栈和数量，如果上面改为bts[ubacktrace()]++，这里可以直接输出bts[usr]的值</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            exit()</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        %( &quot;$^arg_execname :default()&quot; != &quot;&quot; %?</span><br><span class="line">        &#125;</span><br><span class="line">        %)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">probe timer.s($^arg_time) &#123;</span><br><span class="line">    nstacks = 0</span><br><span class="line">    foreach (bt in bts limit 1) &#123;</span><br><span class="line">        nstacks++</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (nstacks == 0) &#123;</span><br><span class="line">        warn(&quot;No backtraces found. Quitting now...\n&quot;)</span><br><span class="line">        exit()</span><br><span class="line"></span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        warn(&quot;Time&apos;s up. Quitting now...(it may take a while)\n&quot;)</span><br><span class="line">        quit = 1</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">probe begin &#123;</span><br><span class="line">    warn(sprintf(&quot;Start tracing process $^target ($^exec_path)...\n&quot;))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这脚本实现了<code>perf record</code>功能，统计了每次采样的堆栈。<br>命令执行方式，其中PID是需要进行采样的进程id<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ./stap++ samples/sample-bt.sxx -x PID -D MAXMAPENTRIES=102400 -D MAXBACKTRACE=100 -D MAXSTRINGLEN=4096 -D MAXACTION=100000 -D STP_OVERLOAD_THRESHOLD=5000000000 -D MAXSKIPPED=100000 --arg time=60 &gt; ~/cpp.bt</span><br></pre></td></tr></table></figure></p>
+<p>采样之后可以使用命令<code>cat ~/cpp.bt|c++filt|~/FlameGraph/stackcollapse-stap.pl|~/sysperf/FlameGraph/flamegraph.pl &gt; ~/cpp.svg</code>生成火焰图</p>
 
       
     </div>
@@ -467,9 +472,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/hexo/" rel="tag"><i class="fa fa-tag"></i> hexo</a>
+            <a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> linux</a>
           
-            <a href="/tags/next/" rel="tag"><i class="fa fa-tag"></i> next</a>
+            <a href="/tags/systemtap/" rel="tag"><i class="fa fa-tag"></i> systemtap</a>
+          
+            <a href="/tags/stap/" rel="tag"><i class="fa fa-tag"></i> stap++</a>
           
         </div>
       
@@ -482,8 +489,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/06/17/13/" rel="next" title="lua与luajit string hash算法对比">
-                <i class="fa fa-chevron-left"></i> lua与luajit string hash算法对比
+              <a href="/2018/07/09/16/" rel="next" title="linux perf使用">
+                <i class="fa fa-chevron-left"></i> linux perf使用
               </a>
             
           </div>
@@ -492,8 +499,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/07/06/15/" rel="prev" title="unity c++扩展开发坑点总结">
-                unity c++扩展开发坑点总结 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/11/04/18/" rel="prev" title="lua 5.4分代研究及luajit分代移植">
+                lua 5.4分代研究及luajit分代移植 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -616,7 +623,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#next样式修改"><span class="nav-number">2.</span> <span class="nav-text">next样式修改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐藏网页底部powered-By-Hexo-强力驱动"><span class="nav-number">3.</span> <span class="nav-text">隐藏网页底部powered By Hexo / 强力驱动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#添加顶部加载条"><span class="nav-number">4.</span> <span class="nav-text">添加顶部加载条</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改文章底部的那个带-号的标签"><span class="nav-number">5.</span> <span class="nav-text">修改文章底部的那个带#号的标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码样式"><span class="nav-number">6.</span> <span class="nav-text">代码样式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主页文章添加阴影效果"><span class="nav-number">7.</span> <span class="nav-text">主页文章添加阴影效果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#增加阅读统计"><span class="nav-number">8.</span> <span class="nav-text">增加阅读统计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#leancloud注册账号"><span class="nav-number">8.1.</span> <span class="nav-text">leancloud注册账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建应用"><span class="nav-number">8.2.</span> <span class="nav-text">创建应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建class"><span class="nav-number">8.3.</span> <span class="nav-text">创建class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取app-id和app-key"><span class="nav-number">8.4.</span> <span class="nav-text">获取app id和app key</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置app-id和app-key"><span class="nav-number">8.5.</span> <span class="nav-text">设置app id和app key</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#增加评论功能（来必力）"><span class="nav-number">9.</span> <span class="nav-text">增加评论功能（来必力）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#来必力注册账号"><span class="nav-number">9.1.</span> <span class="nav-text">来必力注册账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">9.2.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取uid"><span class="nav-number">9.3.</span> <span class="nav-text">获取uid</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置uid"><span class="nav-number">9.4.</span> <span class="nav-text">设置uid</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#增加本地搜索功能"><span class="nav-number">10.</span> <span class="nav-text">增加本地搜索功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装hexo-search"><span class="nav-number">10.1.</span> <span class="nav-text">安装hexo search</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置搜索功能"><span class="nav-number">10.2.</span> <span class="nav-text">配置搜索功能</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#增加腾讯移动分析"><span class="nav-number">11.</span> <span class="nav-text">增加腾讯移动分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#腾讯移动分析注册账号"><span class="nav-number">11.1.</span> <span class="nav-text">腾讯移动分析注册账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建应用-1"><span class="nav-number">11.2.</span> <span class="nav-text">创建应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取app-id"><span class="nav-number">11.3.</span> <span class="nav-text">获取app id</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置app-id"><span class="nav-number">11.4.</span> <span class="nav-text">设置app id</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#systemtap介绍"><span class="nav-number">2.</span> <span class="nav-text">systemtap介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#快速了解systemptab功能"><span class="nav-number">3.</span> <span class="nav-text">快速了解systemptab功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#最简单的systemtab脚本"><span class="nav-number">3.1.</span> <span class="nav-text">最简单的systemtab脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#另一个例子"><span class="nav-number">3.2.</span> <span class="nav-text">另一个例子</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#systemtap脚本语法"><span class="nav-number">4.</span> <span class="nav-text">systemtap脚本语法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数组"><span class="nav-number">4.1.</span> <span class="nav-text">数组</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#stap-介绍"><span class="nav-number">5.</span> <span class="nav-text">stap++介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sample-bt-sxx-perf-record"><span class="nav-number">5.1.</span> <span class="nav-text">sample-bt.sxx(perf record)</span></a></li></ol></li></ol></div>
             
 
           </div>
