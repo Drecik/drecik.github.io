@@ -87,7 +87,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="redis," />
 
 
 
@@ -103,13 +103,18 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Drecik&#39;s Blog">
-<meta property="og:url" content="http://yoursite.com/archives/index.html">
+<meta name="description" content="说明本篇文章介绍redis中的有序集合(intset)数据结构。该结构使用连续的内存存储，所以每次插入和删除都会触发内存的分配。适合数量较小，插入和删除不平凡的时候使用，不太影响效率的同时节省内存，同时可以利用它的有序性进行高效的查找">
+<meta name="keywords" content="redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis有序集合(intset)剖析">
+<meta property="og:url" content="http://yoursite.com/2018/11/06/20/index.html">
 <meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="说明本篇文章介绍redis中的有序集合(intset)数据结构。该结构使用连续的内存存储，所以每次插入和删除都会触发内存的分配。适合数量较小，插入和删除不平凡的时候使用，不太影响效率的同时节省内存，同时可以利用它的有序性进行高效的查找">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-25T04:24:40.346Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Drecik&#39;s Blog">
+<meta name="twitter:title" content="redis有序集合(intset)剖析">
+<meta name="twitter:description" content="说明本篇文章介绍redis中的有序集合(intset)数据结构。该结构使用连续的内存存储，所以每次插入和删除都会触发内存的分配。适合数量较小，插入和删除不平凡的时候使用，不太影响效率的同时节省内存，同时可以利用它的有序性进行高效的查找">
 
 
 
@@ -137,13 +142,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/archives/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/11/06/20/"/>
 
 
 
 
 
-  <title> 归档 | Drecik's Blog </title>
+  <title> redis有序集合(intset)剖析 | Drecik's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -190,7 +195,7 @@
     
   
 
-  <div class="container sidebar-position-left  page-archive  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -308,403 +313,236 @@
           <div id="content" class="content">
             
 
-  <section id="posts" class="posts-collapse">
-    <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-    <span class="archive-page-counter">
-      
-      
-      
-        
-      
-      嗯..! 目前共计 23 篇日志。 继续努力。
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/06/20/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Drecik Xu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
     </span>
 
     
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                redis有序集合(intset)剖析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-06T20:30:11+08:00">
+                2018-11-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/11/06/20/" class="leancloud_visitors" data-flag-title="redis有序集合(intset)剖析">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
 
       
       
-      
 
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本篇文章介绍redis中的有序集合(intset)数据结构。该结构使用连续的内存存储，所以每次插入和删除都会触发内存的分配。适合数量较小，插入和删除不平凡的时候使用，不太影响效率的同时节省内存，同时可以利用它的有序性进行高效的查找</p>
+<a id="more"></a>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="inset"><a href="#inset" class="headerlink" title="inset"></a>inset</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">intset</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span> encoding;          <span class="comment">// 当前集合的编码格式，例如INT16, INT32, INT64，可以理解为每个元素的大小</span></span><br><span class="line">    <span class="keyword">uint32_t</span> length;            <span class="comment">// set长度</span></span><br><span class="line">    <span class="keyword">int8_t</span> contents[];</span><br><span class="line">&#125; intset;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>同样为了节约内存，intset使用了INT16，INT32，INT64三种编码来存储集合中的元素。编码存放再encoding中</li>
+<li>length存放集合元素的个数</li>
+<li>contents指向实际存放元素数组的地址，通过encoding和length，就可以知道contents实际上是一个int16[length]、int32[length]还是int64[length]数组，这样就能很方便操作集合里面的元素</li>
+<li>intset是一个有序集合，实际上只需要维护好插入节点之后也保持有序即可，插入步骤可以分为：<ul>
+<li>从contents中通过二分查找插入元素，如果找到，则不插入该元素，如果找不到，则返回该元素应该插入的pos</li>
+<li>从pos开始一直到尾部的元素往后移动一位</li>
+<li>将该节点赋值到该位置</li>
+</ul>
+</li>
+</ul>
+<h3 id="函数分析"><a href="#函数分析" class="headerlink" title="函数分析"></a>函数分析</h3><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+<th>时间复杂度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>intsetNew</td>
+<td>创建一个空的intset，长度为0，encode为INT16</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>intsetAdd</td>
+<td>插入一个元素，如果value比原来编码大，就会扩大原来的编码</td>
+<td>O(N)，N为元素个数</td>
+</tr>
+<tr>
+<td>intsetRemove</td>
+<td>移除元素</td>
+<td>O(N)，N为元素个数</td>
+</tr>
+<tr>
+<td>intsetFind</td>
+<td>查找元素，找不到返回0，找到返回1</td>
+<td>O(log(N))，N为元素个数</td>
+</tr>
+<tr>
+<td>intsetRandom</td>
+<td>从set中随机取一个元素，我看的版本(3.2.12)直接%，如果长度为0，应该会导致宕机</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>intsetGet</td>
+<td>从set指定位置取元素，pos无效返回0，有效返回1，值存放在value参数中</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>intsetLen</td>
+<td>返回当前set的长度</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>intsetBlobLen</td>
+<td>返回当前set的内存占用空间大小，单位Byte</td>
+<td>O(1)</td>
+</tr>
+</tbody>
+</table>
+<p>每个函数的声明及作用，具体细节可以查看我注释的redis源码<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">intset *<span class="title">intsetNew</span><span class="params">(<span class="keyword">void</span>)</span></span>;        <span class="comment">// 创建一个空的intset，长度为0，encode为INT16</span></span><br><span class="line"><span class="function">intset *<span class="title">intsetAdd</span><span class="params">(intset *is, <span class="keyword">int64_t</span> value, <span class="keyword">uint8_t</span> *success)</span></span>;     <span class="comment">// 插入一个元素，如果value比原来编码大，就会扩大原来的编码</span></span><br><span class="line"><span class="function">intset *<span class="title">intsetRemove</span><span class="params">(intset *is, <span class="keyword">int64_t</span> value, <span class="keyword">int</span> *success)</span></span>;      <span class="comment">// 移除一个元素</span></span><br><span class="line"><span class="keyword">uint8_t</span> intsetFind(intset *is, <span class="keyword">int64_t</span> value);                      <span class="comment">// 查找一个元素，找不到返回0，找到返回1</span></span><br><span class="line"><span class="keyword">int64_t</span> intsetRandom(intset *is);                                   <span class="comment">// 从set中随机取一个元素，如果length为0，会导致宕机</span></span><br><span class="line"><span class="keyword">uint8_t</span> intsetGet(intset *is, <span class="keyword">uint32_t</span> pos, <span class="keyword">int64_t</span> *value);        <span class="comment">// 从指定位置中取一个元素，如果pos在范围内，返回1，否则返回0</span></span><br><span class="line"><span class="keyword">uint32_t</span> intsetLen(intset *is);                                     <span class="comment">// 返回当前set的长度</span></span><br><span class="line"><span class="keyword">size_t</span> intsetBlobLen(intset *is);                                   <span class="comment">// 返回当前set的内存占用空间大小，单位Byte</span></span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
       
         
-        <div class="collection-title">
-          <h2 class="archive-year motion-element" id="archive-year-2018">2018</h2>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/redis/" rel="tag"><i class="fa fa-tag"></i> redis</a>
+          
         </div>
       
+
+      
+        
       
 
       
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/04/19/" rel="next" title="redis字符串剖析">
+                <i class="fa fa-chevron-left"></i> redis字符串剖析
+              </a>
+            
+          </div>
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+          <span class="post-nav-divider"></span>
 
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/11/25/23/" itemprop="url">
-              
-                <span itemprop="name">redis zipmap剖析</span>
-              
-            </a>
-        
-      </h1>
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/10/21/" rel="prev" title="redis双向链表剖析">
+                redis双向链表剖析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-11-25T11:49:53+08:00"
-              content="2018-11-25" >
-          11-25
-        </time>
-      </div>
-
-    </header>
+      
+      
+    </footer>
   </article>
 
 
 
-    
-
+    <div class="post-spread">
       
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/11/23/22/" itemprop="url">
-              
-                <span itemprop="name">redis dict(hash表)剖析</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-11-23T19:15:07+08:00"
-              content="2018-11-23" >
-          11-23
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/11/10/21/" itemprop="url">
-              
-                <span itemprop="name">redis双向链表剖析</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-11-10T11:09:33+08:00"
-              content="2018-11-10" >
-          11-10
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/11/06/20/" itemprop="url">
-              
-                <span itemprop="name">redis有序集合(intset)剖析</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-11-06T20:30:11+08:00"
-              content="2018-11-06" >
-          11-06
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/11/04/19/" itemprop="url">
-              
-                <span itemprop="name">redis字符串剖析</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-11-04T14:37:01+08:00"
-              content="2018-11-04" >
-          11-04
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/11/04/18/" itemprop="url">
-              
-                <span itemprop="name">lua 5.4分代研究及luajit分代移植</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-11-04T10:26:13+08:00"
-              content="2018-11-04" >
-          11-04
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/07/10/17/" itemprop="url">
-              
-                <span itemprop="name">linux systemtap, stap++使用</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-07-10T15:35:55+08:00"
-              content="2018-07-10" >
-          07-10
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/07/09/16/" itemprop="url">
-              
-                <span itemprop="name">linux perf使用</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-07-09T19:14:34+08:00"
-              content="2018-07-09" >
-          07-09
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/07/06/15/" itemprop="url">
-              
-                <span itemprop="name">unity c++扩展开发坑点总结</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-07-06T19:37:12+08:00"
-              content="2018-07-06" >
-          07-06
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/06/17/14/" itemprop="url">
-              
-                <span itemprop="name">hexo+next配置</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-06-17T11:38:50+08:00"
-              content="2018-06-17" >
-          06-17
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-  </section>
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><a class="extend next" rel="next" href="/archives/page/2/"><i class="fa fa-angle-right"></i></a>
-  </nav>
-
-
+    </div>
+  </div>
 
 
           </div>
@@ -712,6 +550,12 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+    
+  </div>
+
 
         </div>
         
@@ -731,8 +575,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.jpg"
@@ -785,6 +638,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#inset"><span class="nav-number">2.1.</span> <span class="nav-text">inset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数分析"><span class="nav-number">2.2.</span> <span class="nav-text">函数分析</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -894,11 +763,9 @@
   
 
   
-  
-    <script type="text/javascript" id="motion.page.archive">
-      $('.archive-year').velocity('transition.slideLeftIn');
-    </script>
-  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
 
 
   

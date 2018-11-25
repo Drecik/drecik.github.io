@@ -87,7 +87,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="c++,stl,algorithm," />
+  <meta name="keywords" content="redis," />
 
 
 
@@ -103,18 +103,18 @@
 
 
 
-<meta name="description" content="函数声明12template&amp;lt; class ForwardIt, class UnaryPredicate &amp;gt;ForwardIt partition( ForwardIt first, ForwardIt last, UnaryPredicate p ); 作用对[first, last)元素进行处理，使得满足p的元素移到[first, last)前部，不满足的移到后部，返回第一个不满">
-<meta name="keywords" content="c++,stl,algorithm">
+<meta name="description" content="说明本篇文章介绍redis的双向链表。redis用很简洁的代码实现了每本数据结构书籍必有的双向链表结构。可以推荐给正在学习数据结构的同学看看这代码">
+<meta name="keywords" content="redis">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C++ stl算法——partition">
-<meta property="og:url" content="http://yoursite.com/2018/02/01/2/index.html">
+<meta property="og:title" content="redis双向链表剖析">
+<meta property="og:url" content="http://yoursite.com/2018/11/10/21/index.html">
 <meta property="og:site_name" content="Drecik&#39;s Blog">
-<meta property="og:description" content="函数声明12template&amp;lt; class ForwardIt, class UnaryPredicate &amp;gt;ForwardIt partition( ForwardIt first, ForwardIt last, UnaryPredicate p ); 作用对[first, last)元素进行处理，使得满足p的元素移到[first, last)前部，不满足的移到后部，返回第一个不满">
+<meta property="og:description" content="说明本篇文章介绍redis的双向链表。redis用很简洁的代码实现了每本数据结构书籍必有的双向链表结构。可以推荐给正在学习数据结构的同学看看这代码">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-06-17T01:59:43.919Z">
+<meta property="og:updated_time" content="2018-11-25T04:24:23.531Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="C++ stl算法——partition">
-<meta name="twitter:description" content="函数声明12template&amp;lt; class ForwardIt, class UnaryPredicate &amp;gt;ForwardIt partition( ForwardIt first, ForwardIt last, UnaryPredicate p ); 作用对[first, last)元素进行处理，使得满足p的元素移到[first, last)前部，不满足的移到后部，返回第一个不满">
+<meta name="twitter:title" content="redis双向链表剖析">
+<meta name="twitter:description" content="说明本篇文章介绍redis的双向链表。redis用很简洁的代码实现了每本数据结构书籍必有的双向链表结构。可以推荐给正在学习数据结构的同学看看这代码">
 
 
 
@@ -142,13 +142,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/02/01/2/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/11/10/21/"/>
 
 
 
 
 
-  <title> C++ stl算法——partition | Drecik's Blog </title>
+  <title> redis双向链表剖析 | Drecik's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -323,7 +323,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/01/2/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/10/21/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Drecik Xu">
@@ -344,7 +344,7 @@
             
             
               
-                C++ stl算法——partition
+                redis双向链表剖析
               
             
           </h1>
@@ -359,8 +359,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-01T18:06:25+08:00">
-                2018-02-01
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-10T11:09:33+08:00">
+                2018-11-10
               </time>
             
 
@@ -377,7 +377,7 @@
 
           
           
-             <span id="/2018/02/01/2/" class="leancloud_visitors" data-flag-title="C++ stl算法——partition">
+             <span id="/2018/11/10/21/" class="leancloud_visitors" data-flag-title="redis双向链表剖析">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -406,16 +406,118 @@
       
 
       
-        <h3 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">template&lt; class ForwardIt, class UnaryPredicate &gt;</span><br><span class="line">ForwardIt partition( ForwardIt first, ForwardIt last, UnaryPredicate p );</span><br></pre></td></tr></table></figure>
-<h3 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h3><p>对[first, last)元素进行处理，使得满足p的元素移到[first, last)前部，不满足的移到后部，返回第一个不满足p元素所在的迭代器，如果都满足的话返回last</p>
-<a id="more"></a> 
-<h3 id="可能的实现代码"><a href="#可能的实现代码" class="headerlink" title="可能的实现代码"></a>可能的实现代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">ForwardIt</span>, <span class="title">class</span> <span class="title">UnaryPredicate</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">ForwardIt</span> <span class="title">partition</span>(<span class="title">ForwardIt</span> <span class="title">first</span>, <span class="title">ForwardIt</span> <span class="title">last</span>, <span class="title">UnaryPredicate</span> <span class="title">p</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    first = <span class="built_in">std</span>::find_if_not(first, last, p);</span><br><span class="line">    <span class="keyword">if</span> (first == last) <span class="keyword">return</span> first;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">for</span>(ForwardIt i = <span class="built_in">std</span>::next(first); i != last; ++i)&#123;</span><br><span class="line">        <span class="keyword">if</span>(p(*i))&#123;</span><br><span class="line">            <span class="built_in">std</span>::iter_swap(i, first);</span><br><span class="line">            ++first;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> first;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h3><ol>
-<li>一次循环，所以时间复杂度为O(N)</li>
-<li>最坏会进行O(N)次swap, (有且仅有第一个为不满足的情况)</li>
-</ol>
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>使用partition进行一般操作，并用partition实现了一个快排<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iterator&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;forward_list&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">ForwardIt</span>&gt;</span></span><br><span class="line"><span class="class"> <span class="title">void</span> <span class="title">quicksort</span>(<span class="title">ForwardIt</span> <span class="title">first</span>, <span class="title">ForwardIt</span> <span class="title">last</span>)</span></span><br><span class="line"><span class="class"> &#123;</span></span><br><span class="line">    <span class="keyword">if</span>(first == last) <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">auto</span> pivot = *<span class="built_in">std</span>::next(first, <span class="built_in">std</span>::distance(first,last)/<span class="number">2</span>);</span><br><span class="line">    ForwardIt middle1 = <span class="built_in">std</span>::partition(first, last, </span><br><span class="line">                         [pivot](<span class="keyword">const</span> <span class="keyword">auto</span>&amp; em)&#123; <span class="keyword">return</span> em &lt; pivot; &#125;);</span><br><span class="line">    quicksort(first, middle1);</span><br><span class="line">    quicksort(<span class="built_in">std</span>::next(middle1, <span class="number">1</span>), last);</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; v = &#123;<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>&#125;;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Original vector:\n    "</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> elem : v) <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; elem &lt;&lt; <span class="string">' '</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">auto</span> it = <span class="built_in">std</span>::partition(v.begin(), v.end(), [](<span class="keyword">int</span> i)&#123;<span class="keyword">return</span> i % <span class="number">2</span> == <span class="number">0</span>;&#125;);</span><br><span class="line"> </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"\nPartitioned vector:\n    "</span>;</span><br><span class="line">    <span class="built_in">std</span>::copy(<span class="built_in">std</span>::begin(v), it, <span class="built_in">std</span>::ostream_iterator&lt;<span class="keyword">int</span>&gt;(<span class="built_in">std</span>::<span class="built_in">cout</span>, <span class="string">" "</span>));</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">" * "</span>;</span><br><span class="line">    <span class="built_in">std</span>::copy(it, <span class="built_in">std</span>::end(v), <span class="built_in">std</span>::ostream_iterator&lt;<span class="keyword">int</span>&gt;(<span class="built_in">std</span>::<span class="built_in">cout</span>, <span class="string">" "</span>));</span><br><span class="line"> </span><br><span class="line">    <span class="built_in">std</span>::forward_list&lt;<span class="keyword">int</span>&gt; fl = &#123;<span class="number">1</span>, <span class="number">30</span>, <span class="number">-4</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">-4</span>, <span class="number">1</span>, <span class="number">6</span>, <span class="number">-8</span>, <span class="number">2</span>, <span class="number">-5</span>, <span class="number">64</span>, <span class="number">1</span>, <span class="number">92</span>&#125;;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"\nUnsorted list:\n    "</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> n : fl) <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; n &lt;&lt; <span class="string">' '</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">'\n'</span>;  </span><br><span class="line"> </span><br><span class="line">    quicksort(<span class="built_in">std</span>::begin(fl), <span class="built_in">std</span>::end(fl));</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Sorted using quicksort:\n    "</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> fi : fl) <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; fi &lt;&lt; <span class="string">' '</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Original vector:</span><br><span class="line">    0 1 2 3 4 5 6 7 8 9 </span><br><span class="line">Partitioned vector:</span><br><span class="line">    0 8 2 6 4  *  5 3 7 1 9 </span><br><span class="line">Unsorted list:</span><br><span class="line">    1 30 -4 3 5 -4 1 6 -8 2 -5 64 1 92 </span><br><span class="line">Sorted using quicksort:</span><br><span class="line">    -8 -5 -4 -4 1 1 1 2 3 5 6 30 64 92</span><br></pre></td></tr></table></figure></p>
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本篇文章介绍redis的双向链表。redis用很简洁的代码实现了每本数据结构书籍必有的双向链表结构。可以推荐给正在学习数据结构的同学看看这代码</p>
+<a id="more"></a>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>redis使用两个结构体实现了双向链表，即list和listNode。另外还有一个listIter用来实现遍历list每个节点的迭代器</p>
+<h3 id="listNode"><a href="#listNode" class="headerlink" title="listNode"></a>listNode</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">prev</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">next</span>;</span></span><br><span class="line">    <span class="keyword">void</span> *value;</span><br><span class="line">&#125; listNode;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>双向链表节点，只有三个变量，两个指向前后节点的指针，这两个指针就能串起来整个链表，另外还有一个存放value地址的指针</li>
+</ul>
+<h3 id="list"><a href="#list" class="headerlink" title="list"></a>list</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">list</span> &#123;</span></span><br><span class="line">    listNode *head;         <span class="comment">// 指向链表头节点</span></span><br><span class="line">    listNode *tail;         <span class="comment">// 指向链表尾节点</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// dup, free, match操作的函数指针，可自定义设置</span></span><br><span class="line">    <span class="keyword">void</span> *(*dup)(<span class="keyword">void</span> *ptr);</span><br><span class="line">    <span class="keyword">void</span> (*<span class="built_in">free</span>)(<span class="keyword">void</span> *ptr);</span><br><span class="line">    <span class="keyword">int</span> (*match)(<span class="keyword">void</span> *ptr, <span class="keyword">void</span> *key);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> len;      <span class="comment">// 链表长度</span></span><br><span class="line">&#125; <span class="built_in">list</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>双向链表结构体，实际上也可以很简单，只需要三个变量，两个指向链表头尾节点的指针，还有一个记录链表长度。</li>
+<li>redis为了提供更强大的接口，实现了三个可以自定义的函数回调，用来实现特殊的需求<ul>
+<li>dup: 在listDup中使用，复制链表的时候，如果自定义该函数，则每个listNode的value变量会使用该回调进行复制，如果该函数返回NULL，则会导致整个复制链表过程失败</li>
+<li>free：在listDelNode和listRelease中使用，如果自定义该函数，则释放listNode的时候就会先调用一次该函数以确保正确的可以释放value这个指针</li>
+<li>match：在listSearchKey中使用，如果自定义该函数，则在search过程中，调用该函数进行匹配操作</li>
+</ul>
+</li>
+</ul>
+<h3 id="listIter"><a href="#listIter" class="headerlink" title="listIter"></a>listIter</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 链表迭代器，存放下一个节点以及一个代表方向(往前还是往后)的变量</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">listIter</span> &#123;</span></span><br><span class="line">    listNode *next;</span><br><span class="line">    <span class="keyword">int</span> direction;</span><br><span class="line">&#125; listIter;</span><br><span class="line"></span><br><span class="line"><span class="comment">// list迭代器方向</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AL_START_HEAD 0     <span class="comment">// 从头开始往后遍历</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AL_START_TAIL 1     <span class="comment">// 从尾部开始往前遍历</span></span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>可以通过listGetIterator创建指定list，指定方向的一个迭代器，遍历完之后可以通过listReleaseIterator释放</li>
+<li>遍历过程中也可以通过listRewind和listRewindTail来重置迭代器状态</li>
+<li>迭代器可以控制方向（从后往前/从前往后），该方向可以通过宏变量指定</li>
+<li>迭代器遍历链表的一个简单例子<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">iter = listGetIterator(<span class="built_in">list</span>,&lt;direction&gt;);</span><br><span class="line"><span class="keyword">while</span> ((node = listNext(iter)) != <span class="literal">NULL</span>) &#123;</span><br><span class="line">    doSomethingWith(listNodeValue(node));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="函数分析"><a href="#函数分析" class="headerlink" title="函数分析"></a>函数分析</h3><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+<th>时间复杂度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>listCreate</td>
+<td>创建一个空的链表</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>listRelease</td>
+<td>释放整个list，包括list的各个节点</td>
+<td>O(N)，N为元素个数</td>
+</tr>
+<tr>
+<td>listAddNodeHead</td>
+<td>增加一个值为value的节点到list的头部</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>listAddNodeTail</td>
+<td>增加一个值为value的节点到list的尾部</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>listInsertNode</td>
+<td>增加一个节点到指定节点的前/后，after表示插入前还是后</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>listDelNode</td>
+<td>删除指定的节点，因为效率问题，没有判断node是否真的是该list的节点</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>listGetIterator</td>
+<td>创建指定list，指定方向的一个迭代器</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>listNext</td>
+<td>获取迭代器的下一个节点</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>listRewind</td>
+<td>重置迭代器为从头往后遍历</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>listRewindTail</td>
+<td>重置迭代器为从后往前遍历</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>listReleaseIterator</td>
+<td>释放迭代器内存</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>listDup</td>
+<td>完整的复制一个链表</td>
+<td>O(N)，N为元素个数</td>
+</tr>
+<tr>
+<td>listSearchKey</td>
+<td>从list中查找指定节点</td>
+<td>O(N)，N为元素个数</td>
+</tr>
+<tr>
+<td>listIndex</td>
+<td>返回list中下标为index的节点，index如果为正值，表示从头开始的小标，且下标从0开始，即0为head，如果index为负值，表示从后往前的下标，且下标从-1开始，即-1表示tail</td>
+<td>O(abs(index))</td>
+</tr>
+<tr>
+<td>listRotate</td>
+<td>顺时针旋转list，将list的tail节点从尾部移除，插入到list头部</td>
+<td>O(1)</td>
+</tr>
+</tbody>
+</table>
+<p>每个函数及宏的声明及作用，具体细节可以查看我注释的redis源码<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 一些get/set函数直接使用宏来实现，来增加效率</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listLength(l) ((l)-&gt;len)            <span class="comment">// 获取链表长度</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listFirst(l) ((l)-&gt;head)            <span class="comment">// 获取链表第一个节点</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listLast(l) ((l)-&gt;tail)             <span class="comment">// 获取链表最后一个节点</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listPrevNode(n) ((n)-&gt;prev)         <span class="comment">// 获取节点的前一个节点</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listNextNode(n) ((n)-&gt;next)         <span class="comment">// 获取节点的后一个节点</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listNodeValue(n) ((n)-&gt;value)       <span class="comment">// 获取节点的值</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listSetDupMethod(l,m) ((l)-&gt;dup = (m))      <span class="comment">// 设置自定义dup函数</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listSetFreeMethod(l,m) ((l)-&gt;free = (m))    <span class="comment">// 设置自定义free函数</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listSetMatchMethod(l,m) ((l)-&gt;match = (m))  <span class="comment">// 设置自定义match函数</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listGetDupMethod(l) ((l)-&gt;dup)      <span class="comment">// 获取dup函数</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listGetFree(l) ((l)-&gt;free)          <span class="comment">// 获取free函数</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listGetMatchMethod(l) ((l)-&gt;match)  <span class="comment">// 获取match函数</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Prototypes */</span></span><br><span class="line"><span class="function"><span class="built_in">list</span> *<span class="title">listCreate</span><span class="params">(<span class="keyword">void</span>)</span></span>;                     <span class="comment">// 创建一个空的链表结构</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">listRelease</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>)</span></span>;               <span class="comment">// 释放整个list，包括list内的各个节点</span></span><br><span class="line"><span class="function"><span class="built_in">list</span> *<span class="title">listAddNodeHead</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, <span class="keyword">void</span> *value)</span></span>;     <span class="comment">// 增加一个值为value的节点到list的头部</span></span><br><span class="line"><span class="function"><span class="built_in">list</span> *<span class="title">listAddNodeTail</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, <span class="keyword">void</span> *value)</span></span>;     <span class="comment">// 增加一个值为value的节点到list的尾部</span></span><br><span class="line"><span class="function"><span class="built_in">list</span> *<span class="title">listInsertNode</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, listNode *old_node, <span class="keyword">void</span> *value, <span class="keyword">int</span> after)</span></span>;       <span class="comment">// 增加一个节点到指定节点的前/后，after表示插入前还是后</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">listDelNode</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, listNode *node)</span></span>;           <span class="comment">// 删除指定的节点，因为效率问题，没有判断node是否真的是该list的节点</span></span><br><span class="line"><span class="function">listIter *<span class="title">listGetIterator</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, <span class="keyword">int</span> direction)</span></span>;   <span class="comment">// 创建指定list，指定方向的一个迭代器</span></span><br><span class="line"><span class="function">listNode *<span class="title">listNext</span><span class="params">(listIter *iter)</span></span>;                     <span class="comment">// 获取迭代器的下一个节点</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">listReleaseIterator</span><span class="params">(listIter *iter)</span></span>;               <span class="comment">// 释放迭代器内存</span></span><br><span class="line"><span class="function"><span class="built_in">list</span> *<span class="title">listDup</span><span class="params">(<span class="built_in">list</span> *orig)</span></span>;                              <span class="comment">// 完整的复制一个链表</span></span><br><span class="line"><span class="function">listNode *<span class="title">listSearchKey</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, <span class="keyword">void</span> *key)</span></span>;         <span class="comment">// 从list中查找指定节点</span></span><br><span class="line"><span class="function">listNode *<span class="title">listIndex</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, <span class="keyword">long</span> index)</span></span>;            <span class="comment">// 返回list中下标为index的节点，index如果为正值，表示从头开始的小标，且下标从0开始，即0为head，如果index为负值，表示从后往前的下标，且下标从-1开始，即-1表示tail</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">listRewind</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, listIter *li)</span></span>;              <span class="comment">// 重置迭代器为从头往后遍历</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">listRewindTail</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, listIter *li)</span></span>;          <span class="comment">// 重置迭代器为从后往前遍历</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">listRotate</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>)</span></span>;                            <span class="comment">// 顺时针旋转list，将list的tail节点从尾部移除，插入到list头部</span></span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -445,11 +547,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/c/" rel="tag"><i class="fa fa-tag"></i> c++</a>
-          
-            <a href="/tags/stl/" rel="tag"><i class="fa fa-tag"></i> stl</a>
-          
-            <a href="/tags/algorithm/" rel="tag"><i class="fa fa-tag"></i> algorithm</a>
+            <a href="/tags/redis/" rel="tag"><i class="fa fa-tag"></i> redis</a>
           
         </div>
       
@@ -462,8 +560,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/02/01/1/" rel="next" title="C++对象在作为函数参数的拷贝研究">
-                <i class="fa fa-chevron-left"></i> C++对象在作为函数参数的拷贝研究
+              <a href="/2018/11/06/20/" rel="next" title="redis有序集合(intset)剖析">
+                <i class="fa fa-chevron-left"></i> redis有序集合(intset)剖析
               </a>
             
           </div>
@@ -472,8 +570,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/02/01/3/" rel="prev" title="75. Find Peak Element">
-                75. Find Peak Element <i class="fa fa-chevron-right"></i>
+              <a href="/2018/11/23/22/" rel="prev" title="redis dict(hash表)剖析">
+                redis dict(hash表)剖析 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -596,7 +694,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#函数声明"><span class="nav-number">1.</span> <span class="nav-text">函数声明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#作用"><span class="nav-number">2.</span> <span class="nav-text">作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可能的实现代码"><span class="nav-number">3.</span> <span class="nav-text">可能的实现代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#复杂度"><span class="nav-number">4.</span> <span class="nav-text">复杂度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#示例"><span class="nav-number">5.</span> <span class="nav-text">示例</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#listNode"><span class="nav-number">2.1.</span> <span class="nav-text">listNode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#list"><span class="nav-number">2.2.</span> <span class="nav-text">list</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#listIter"><span class="nav-number">2.3.</span> <span class="nav-text">listIter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数分析"><span class="nav-number">2.4.</span> <span class="nav-text">函数分析</span></a></li></ol></li></ol></div>
             
 
           </div>

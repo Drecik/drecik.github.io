@@ -87,7 +87,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="redis," />
 
 
 
@@ -103,13 +103,18 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Drecik&#39;s Blog">
-<meta property="og:url" content="http://yoursite.com/archives/index.html">
+<meta name="description" content="说明本篇文章介绍redis的zipmap表。zipmap是一个以节约内存为前提的键值对存储结构，这个结构只在内存上有优势，在查找/插入/删除/更新上跟hash表或者红黑树实现的map没有任何优势。所以只适用于元素数量比较少的情况。但实际上redis自己内部并没有使用该结构，而是使用ziplist在元素比较少的场合来替代dict。">
+<meta name="keywords" content="redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis zipmap剖析">
+<meta property="og:url" content="http://yoursite.com/2018/11/25/23/index.html">
 <meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="说明本篇文章介绍redis的zipmap表。zipmap是一个以节约内存为前提的键值对存储结构，这个结构只在内存上有优势，在查找/插入/删除/更新上跟hash表或者红黑树实现的map没有任何优势。所以只适用于元素数量比较少的情况。但实际上redis自己内部并没有使用该结构，而是使用ziplist在元素比较少的场合来替代dict。">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-25T04:23:05.729Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Drecik&#39;s Blog">
+<meta name="twitter:title" content="redis zipmap剖析">
+<meta name="twitter:description" content="说明本篇文章介绍redis的zipmap表。zipmap是一个以节约内存为前提的键值对存储结构，这个结构只在内存上有优势，在查找/插入/删除/更新上跟hash表或者红黑树实现的map没有任何优势。所以只适用于元素数量比较少的情况。但实际上redis自己内部并没有使用该结构，而是使用ziplist在元素比较少的场合来替代dict。">
 
 
 
@@ -137,13 +142,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/archives/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/11/25/23/"/>
 
 
 
 
 
-  <title> 归档 | Drecik's Blog </title>
+  <title> redis zipmap剖析 | Drecik's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -190,7 +195,7 @@
     
   
 
-  <div class="container sidebar-position-left  page-archive  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -308,403 +313,232 @@
           <div id="content" class="content">
             
 
-  <section id="posts" class="posts-collapse">
-    <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-    <span class="archive-page-counter">
-      
-      
-      
-        
-      
-      嗯..! 目前共计 23 篇日志。 继续努力。
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/25/23/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Drecik Xu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
     </span>
 
     
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                redis zipmap剖析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-25T11:49:53+08:00">
+                2018-11-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/11/25/23/" class="leancloud_visitors" data-flag-title="redis zipmap剖析">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
 
       
       
-      
 
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本篇文章介绍redis的zipmap表。zipmap是一个以节约内存为前提的键值对存储结构，这个结构只在内存上有优势，在查找/插入/删除/更新上跟hash表或者红黑树实现的map没有任何优势。所以只适用于元素数量比较少的情况。但实际上redis自己内部并没有使用该结构，而是使用ziplist在元素比较少的场合来替代dict。</p>
+<a id="more"></a>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>zipmap实际上是一个char数组，使用约定好的格式来存放这些key-value。（后面可以看到ziplist也是类似这种实现方式）<br>下面是一个zipmap的内存格式，该zipmap存放”foo” =&gt; “bar”, “hello” =&gt; “world”两个键值对：<br><code>&lt;zmlen&gt;&lt;len&gt;&quot;foo&quot;&lt;len&gt;&lt;free&gt;&quot;bar&quot;&lt;len&gt;&quot;hello&quot;&lt;len&gt;&lt;free&gt;&quot;world&quot;&lt;ZIPMAP_END&gt;</code></p>
+<ul>
+<li>zmlen：1 byte：存放zipmap拥有的key-value对数量，最大为253，如果zmlen&gt;=254，则表示该值无效，需要遍历整个zipmap才能拿到元素数量</li>
+<li>len：1/5 byte：存放后面key/value的长度，第一个byte值&lt;254则该byte就是接下去的长度，如果=254则接下去4 byte组成的unsinged int才是长度，如果=255(ZIPMAP_END)，则表示到达zipmap尾部</li>
+<li>free：1 byte：存放value之后剩余的空间长度，有这个字段的好处就是，value长度改变可以利用剩余的空间来减少内存重复申请的次数，该字段为1 byte，所以剩余空间只能&lt;=255，如果剩余空间大于这个范围，就会强制重新申请整个zipmap的内存</li>
+</ul>
+<p>对于上面例子，实际的二进制数值为：<br><code>&quot;\x02\x03foo\x03\x00bar\x05hello\x05\x00world\xff&quot;</code><br>如果将foo =&gt; bar改为 foo =&gt; hi，则二进制数值为<br><code>&quot;\x02\x03foo\x02\x01hir\x05hello\x05\x00world\xff&quot;</code><br>可以看到foo对于的value len更新为2，free更新为1，只是利用更改长度的方式避免了重新申请整个zipmap的内存</p>
+<h3 id="主要函数分析"><a href="#主要函数分析" class="headerlink" title="主要函数分析"></a>主要函数分析</h3><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+<th>时间复杂度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>zipmapNew</td>
+<td>创建一个空的zipmap内存，只有两个byte：\x00\xff</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>zipmapSet</td>
+<td>设置key和value到zipmap中，如果key不存在就会创建一个，否则更新key对应的value</td>
+<td>O(N), N为元素个数</td>
+</tr>
+<tr>
+<td>zipmapDel</td>
+<td>从zipmap中删除key</td>
+<td>O(N), N为元素个数</td>
+</tr>
+<tr>
+<td>zipmapRewind</td>
+<td>在迭代之前调用一起，类似于其他结构返回一个迭代器指针</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>zipmapNext</td>
+<td>返回下一个key，value的entry，key，klen，value，vlen用来返回当前迭代到的key，value值；如果已经到尾部，则返回NULL</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>zipmapGet</td>
+<td>搜索zipmap中key对应的的value，如果找到返回1，找不到返回0</td>
+<td>O(N), N为元素个数</td>
+</tr>
+<tr>
+<td>zipmapExists</td>
+<td>搜索zipmap中是否存在该key，如果找到返回1，找不到返回0</td>
+<td>O(N), N为元素个数</td>
+</tr>
+<tr>
+<td>zipmapLen</td>
+<td>返回zipmap键值对个数</td>
+<td>如果元素个数小于254，则O(1)，否则O(N), N为元素个数</td>
+</tr>
+<tr>
+<td>zipmapBlobLen</td>
+<td>返回zipmap占用的二进制内存大小</td>
+<td>O(N), N为元素个数</td>
+</tr>
+</tbody>
+</table>
+<p>每个函数及宏的声明及作用，具体细节可以查看我注释的redis源码<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">zipmapNew</span><span class="params">(<span class="keyword">void</span>)</span></span>;             <span class="comment">// 创建一个空的zipmap内存，只有两个byte：\x00\xff</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置key和value到zipmap中，如果key不存在就会创建一个，否则更新key对应的value；参数update用于返回是更新操作还是插入操作</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">zipmapSet</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zm, <span class="keyword">unsigned</span> <span class="keyword">char</span> *key, <span class="keyword">unsigned</span> <span class="keyword">int</span> klen, <span class="keyword">unsigned</span> <span class="keyword">char</span> *val, <span class="keyword">unsigned</span> <span class="keyword">int</span> vlen, <span class="keyword">int</span> *update)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从zipmap中删除key；deleted用来返回是否删除元素</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">zipmapDel</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zm, <span class="keyword">unsigned</span> <span class="keyword">char</span> *key, <span class="keyword">unsigned</span> <span class="keyword">int</span> klen, <span class="keyword">int</span> *deleted)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在迭代之前调用一起，类似于其他结构返回一个迭代器指针</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">zipmapRewind</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zm)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回下一个key，value的entry，key，klen，value，vlen用来返回当前迭代到的key，value值；如果已经到尾部，则返回NULL</span></span><br><span class="line"><span class="comment">// 返回的key和value只是简单指向到zipmap内部的内存</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">zipmapNext</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zm, <span class="keyword">unsigned</span> <span class="keyword">char</span> **key, <span class="keyword">unsigned</span> <span class="keyword">int</span> *klen, <span class="keyword">unsigned</span> <span class="keyword">char</span> **value, <span class="keyword">unsigned</span> <span class="keyword">int</span> *vlen)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 搜索zipmap中key对应的的value，如果找到返回1，找不到返回0</span></span><br><span class="line"><span class="comment">// 返回的value只是简单指向到zipmap内部的内存</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">zipmapGet</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zm, <span class="keyword">unsigned</span> <span class="keyword">char</span> *key, <span class="keyword">unsigned</span> <span class="keyword">int</span> klen, <span class="keyword">unsigned</span> <span class="keyword">char</span> **value, <span class="keyword">unsigned</span> <span class="keyword">int</span> *vlen)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 搜索zipmap中是否存在该key，如果找到返回1，找不到返回0</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">zipmapExists</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zm, <span class="keyword">unsigned</span> <span class="keyword">char</span> *key, <span class="keyword">unsigned</span> <span class="keyword">int</span> klen)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回zipmap键值对个数</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">zipmapLen</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zm)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回zipmap占用的二进制内存大小</span></span><br><span class="line"><span class="keyword">size_t</span> zipmapBlobLen(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zm);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">zipmapRepr</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *p)</span></span>;      <span class="comment">// for test</span></span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
       
         
-        <div class="collection-title">
-          <h2 class="archive-year motion-element" id="archive-year-2018">2018</h2>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/redis/" rel="tag"><i class="fa fa-tag"></i> redis</a>
+          
         </div>
       
+
+      
+        
       
 
       
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/23/22/" rel="next" title="redis dict(hash表)剖析">
+                <i class="fa fa-chevron-left"></i> redis dict(hash表)剖析
+              </a>
+            
+          </div>
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+          <span class="post-nav-divider"></span>
 
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/11/25/23/" itemprop="url">
-              
-                <span itemprop="name">redis zipmap剖析</span>
-              
-            </a>
-        
-      </h1>
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-11-25T11:49:53+08:00"
-              content="2018-11-25" >
-          11-25
-        </time>
-      </div>
-
-    </header>
+      
+      
+    </footer>
   </article>
 
 
 
-    
-
+    <div class="post-spread">
       
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/11/23/22/" itemprop="url">
-              
-                <span itemprop="name">redis dict(hash表)剖析</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-11-23T19:15:07+08:00"
-              content="2018-11-23" >
-          11-23
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/11/10/21/" itemprop="url">
-              
-                <span itemprop="name">redis双向链表剖析</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-11-10T11:09:33+08:00"
-              content="2018-11-10" >
-          11-10
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/11/06/20/" itemprop="url">
-              
-                <span itemprop="name">redis有序集合(intset)剖析</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-11-06T20:30:11+08:00"
-              content="2018-11-06" >
-          11-06
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/11/04/19/" itemprop="url">
-              
-                <span itemprop="name">redis字符串剖析</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-11-04T14:37:01+08:00"
-              content="2018-11-04" >
-          11-04
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/11/04/18/" itemprop="url">
-              
-                <span itemprop="name">lua 5.4分代研究及luajit分代移植</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-11-04T10:26:13+08:00"
-              content="2018-11-04" >
-          11-04
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/07/10/17/" itemprop="url">
-              
-                <span itemprop="name">linux systemtap, stap++使用</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-07-10T15:35:55+08:00"
-              content="2018-07-10" >
-          07-10
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/07/09/16/" itemprop="url">
-              
-                <span itemprop="name">linux perf使用</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-07-09T19:14:34+08:00"
-              content="2018-07-09" >
-          07-09
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/07/06/15/" itemprop="url">
-              
-                <span itemprop="name">unity c++扩展开发坑点总结</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-07-06T19:37:12+08:00"
-              content="2018-07-06" >
-          07-06
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2018/06/17/14/" itemprop="url">
-              
-                <span itemprop="name">hexo+next配置</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-06-17T11:38:50+08:00"
-              content="2018-06-17" >
-          06-17
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-  </section>
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><a class="extend next" rel="next" href="/archives/page/2/"><i class="fa fa-angle-right"></i></a>
-  </nav>
-
-
+    </div>
+  </div>
 
 
           </div>
@@ -712,6 +546,12 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+    
+  </div>
+
 
         </div>
         
@@ -731,8 +571,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.jpg"
@@ -785,6 +634,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#主要函数分析"><span class="nav-number">2.1.</span> <span class="nav-text">主要函数分析</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -894,11 +759,9 @@
   
 
   
-  
-    <script type="text/javascript" id="motion.page.archive">
-      $('.archive-year').velocity('transition.slideLeftIn');
-    </script>
-  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
 
 
   
