@@ -103,18 +103,18 @@
 
 
 
-<meta name="description" content="说明本篇文章介绍redis的双向链表。redis用很简洁的代码实现了每本数据结构书籍必有的双向链表结构。可以推荐给正在学习数据结构的同学看看这代码">
+<meta name="description" content="说明本篇文章介绍redis的ziplist结构。ziplist跟zipmap一样，是在以节约内存为前提下的一个双向链表存储结构，他有着比zipmap更高的压缩率：  字符串如果能转成整形的话会转成整形存储 不会向zipmap一样预留free空间，所以所有插入和删除操作都会导致内存重新分配  redis在元素较少的情况下使用ziplist来替代dict">
 <meta name="keywords" content="redis">
 <meta property="og:type" content="article">
-<meta property="og:title" content="redis双向链表剖析">
-<meta property="og:url" content="http://yoursite.com/2018/11/10/21/index.html">
+<meta property="og:title" content="redis ziplist剖析">
+<meta property="og:url" content="http://yoursite.com/2018/12/01/24/index.html">
 <meta property="og:site_name" content="Drecik&#39;s Blog">
-<meta property="og:description" content="说明本篇文章介绍redis的双向链表。redis用很简洁的代码实现了每本数据结构书籍必有的双向链表结构。可以推荐给正在学习数据结构的同学看看这代码">
+<meta property="og:description" content="说明本篇文章介绍redis的ziplist结构。ziplist跟zipmap一样，是在以节约内存为前提下的一个双向链表存储结构，他有着比zipmap更高的压缩率：  字符串如果能转成整形的话会转成整形存储 不会向zipmap一样预留free空间，所以所有插入和删除操作都会导致内存重新分配  redis在元素较少的情况下使用ziplist来替代dict">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-11-25T04:24:23.531Z">
+<meta property="og:updated_time" content="2018-12-02T00:12:01.151Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="redis双向链表剖析">
-<meta name="twitter:description" content="说明本篇文章介绍redis的双向链表。redis用很简洁的代码实现了每本数据结构书籍必有的双向链表结构。可以推荐给正在学习数据结构的同学看看这代码">
+<meta name="twitter:title" content="redis ziplist剖析">
+<meta name="twitter:description" content="说明本篇文章介绍redis的ziplist结构。ziplist跟zipmap一样，是在以节约内存为前提下的一个双向链表存储结构，他有着比zipmap更高的压缩率：  字符串如果能转成整形的话会转成整形存储 不会向zipmap一样预留free空间，所以所有插入和删除操作都会导致内存重新分配  redis在元素较少的情况下使用ziplist来替代dict">
 
 
 
@@ -142,13 +142,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/11/10/21/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/12/01/24/"/>
 
 
 
 
 
-  <title> redis双向链表剖析 | Drecik's Blog </title>
+  <title> redis ziplist剖析 | Drecik's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -323,7 +323,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/10/21/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/01/24/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Drecik Xu">
@@ -344,7 +344,7 @@
             
             
               
-                redis双向链表剖析
+                redis ziplist剖析
               
             
           </h1>
@@ -359,8 +359,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-10T11:09:33+08:00">
-                2018-11-10
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-01T10:55:51+08:00">
+                2018-12-01
               </time>
             
 
@@ -377,7 +377,7 @@
 
           
           
-             <span id="/2018/11/10/21/" class="leancloud_visitors" data-flag-title="redis双向链表剖析">
+             <span id="/2018/12/01/24/" class="leancloud_visitors" data-flag-title="redis ziplist剖析">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -406,32 +406,38 @@
       
 
       
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本篇文章介绍redis的双向链表。redis用很简洁的代码实现了每本数据结构书籍必有的双向链表结构。可以推荐给正在学习数据结构的同学看看这代码</p>
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本篇文章介绍redis的ziplist结构。ziplist跟zipmap一样，是在以节约内存为前提下的一个双向链表存储结构，他有着比zipmap更高的压缩率：</p>
+<ul>
+<li>字符串如果能转成整形的话会转成整形存储</li>
+<li>不会向zipmap一样预留free空间，所以所有插入和删除操作都会导致内存重新分配</li>
+</ul>
+<p>redis在元素较少的情况下使用ziplist来替代dict</p>
 <a id="more"></a>
-<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>redis使用两个结构体实现了双向链表，即list和listNode。另外还有一个listIter用来实现遍历list每个节点的迭代器</p>
-<h3 id="listNode"><a href="#listNode" class="headerlink" title="listNode"></a>listNode</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">prev</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">next</span>;</span></span><br><span class="line">    <span class="keyword">void</span> *value;</span><br><span class="line">&#125; listNode;</span><br></pre></td></tr></table></figure>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>同样跟zipmap一样，ziplist也是一个char数组，使用约定好的格式来存放每一个元素，但是格式会比zipmap复杂很多，特别是插入和删除可能会导致一系列瀑布式更改后面entry的内存。下面是ziplist的内存格式：<br><code>&lt;zlbytes&gt;&lt;zltail&gt;&lt;zllen&gt;&lt;entry&gt;&lt;entry&gt;&lt;zlend&gt;</code></p>
 <ul>
-<li>双向链表节点，只有三个变量，两个指向前后节点的指针，这两个指针就能串起来整个链表，另外还有一个存放value地址的指针</li>
-</ul>
-<h3 id="list"><a href="#list" class="headerlink" title="list"></a>list</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">list</span> &#123;</span></span><br><span class="line">    listNode *head;         <span class="comment">// 指向链表头节点</span></span><br><span class="line">    listNode *tail;         <span class="comment">// 指向链表尾节点</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// dup, free, match操作的函数指针，可自定义设置</span></span><br><span class="line">    <span class="keyword">void</span> *(*dup)(<span class="keyword">void</span> *ptr);</span><br><span class="line">    <span class="keyword">void</span> (*<span class="built_in">free</span>)(<span class="keyword">void</span> *ptr);</span><br><span class="line">    <span class="keyword">int</span> (*match)(<span class="keyword">void</span> *ptr, <span class="keyword">void</span> *key);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> len;      <span class="comment">// 链表长度</span></span><br><span class="line">&#125; <span class="built_in">list</span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>双向链表结构体，实际上也可以很简单，只需要三个变量，两个指向链表头尾节点的指针，还有一个记录链表长度。</li>
-<li>redis为了提供更强大的接口，实现了三个可以自定义的函数回调，用来实现特殊的需求<ul>
-<li>dup: 在listDup中使用，复制链表的时候，如果自定义该函数，则每个listNode的value变量会使用该回调进行复制，如果该函数返回NULL，则会导致整个复制链表过程失败</li>
-<li>free：在listDelNode和listRelease中使用，如果自定义该函数，则释放listNode的时候就会先调用一次该函数以确保正确的可以释放value这个指针</li>
-<li>match：在listSearchKey中使用，如果自定义该函数，则在search过程中，调用该函数进行匹配操作</li>
+<li>zlbytes：4 bytes，unsigned int，存放ziplist实际使用的内存大小，通过它能够迅速的定位到ziplist的尾部</li>
+<li>zltail：4 bytes，unsigned int，存放尾部元素entry地址的偏移量，通过它能够迅速定位到尾部元素的地址</li>
+<li>zllen：2 bytes，存放ziplist中的元素个数，如果ziplist实际元素超过2^16-2的话，就需要遍历整个ziplist来获取元素个数，这个跟zipmap中的zmlen，但zmlen是1 byte</li>
+<li>zlend：1 byte，值为255，ziplist结束标记位</li>
+<li>entry: 每个entry里也有固定的二进制格式：<code>&lt;prevlen&gt;&lt;encode+len&gt;&lt;value&gt;</code><ul>
+<li>prevlen：1 byte/5 bytes，前一个元素的entry占用大小，如果前一个entry长度&lt;254则，使用1 byte来存储，否则第一个byte赋值为254，后面4 bytes存放前一个entry的长度。有了该变量，ziplist就可以做到从后往前遍历</li>
+<li>encode+len：value编码方式和实际占用的长度，value传入的时候为字符串，但redis会尝试将它转为整形，以节约内存。所以最终存储的value可能是字符串或者是整形，下面是一系列可能的编码方式：<ul>
+<li>|00pppppp|：1 byte，value为字符串，且字符串长度&lt;=63(2^6-1)，长度存放在低6位中</li>
+<li>|01pppppp|qqqqqqqq|：2 bytes，value为字符串，且长度&lt;=16384(2^14-1)，长度存放在这两个bytes的低14位中</li>
+<li>|10<strong>__</strong>|qqqqqqqq|rrrrrrrr|ssssssss|tttttttt|： 5 bytes，value为字符串，且长度&gt;=16384，长度存放在后4 bytes中</li>
+<li>|11000000|：1 byte，value为整形，值&gt;=2^8且&lt;2^16，值存放在跟在后面的两个bytes中</li>
+<li>|11010000|：1 byte，value为整形，值&gt;=2^32且&lt;2^32，值存放在跟在后面的四个bytes中</li>
+<li>|11100000|：1 byte，value为整形，值&gt;=2^32且&lt;2^64，值存放在跟在后面的八个bytes中</li>
+<li>|11110000|：1 byte，value为整形，值&gt;=2^16且&lt;2^24，值存放在跟在后面的三个bytes中</li>
+<li>|11111110|：1 byte，value为整形，值&gt;=13且&lt;2^8，值存放在跟在后面的一个byte中</li>
+<li>|1111xxxx|：1 byte，除去上面5中整形编码，xxxx可以存放0001到1101，即1-13，redis对这种编码做了下加减1的偏移处理，所以这种编码可以存放的范围为0-12，这样可以完整的存放所有大小的整形</li>
 </ul>
 </li>
 </ul>
-<h3 id="listIter"><a href="#listIter" class="headerlink" title="listIter"></a>listIter</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 链表迭代器，存放下一个节点以及一个代表方向(往前还是往后)的变量</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">listIter</span> &#123;</span></span><br><span class="line">    listNode *next;</span><br><span class="line">    <span class="keyword">int</span> direction;</span><br><span class="line">&#125; listIter;</span><br><span class="line"></span><br><span class="line"><span class="comment">// list迭代器方向</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AL_START_HEAD 0     <span class="comment">// 从头开始往后遍历</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AL_START_TAIL 1     <span class="comment">// 从尾部开始往前遍历</span></span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>可以通过listGetIterator创建指定list，指定方向的一个迭代器，遍历完之后可以通过listReleaseIterator释放</li>
-<li>遍历过程中也可以通过listRewind和listRewindTail来重置迭代器状态</li>
-<li>迭代器可以控制方向（从后往前/从前往后），该方向可以通过宏变量指定</li>
-<li>迭代器遍历链表的一个简单例子<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">iter = listGetIterator(<span class="built_in">list</span>,&lt;direction&gt;);</span><br><span class="line"><span class="keyword">while</span> ((node = listNext(iter)) != <span class="literal">NULL</span>) &#123;</span><br><span class="line">    doSomethingWith(listNodeValue(node));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-<h3 id="函数分析"><a href="#函数分析" class="headerlink" title="函数分析"></a>函数分析</h3><table>
+<p>因为prevlen的编码方式，所以当插入和删除节点的时候可能会导致后续一系列瀑布式更改后面entry的内存。例如：现在ziplist中存放每个entry长度正好都是253，则每个entry的prevlen只需要1 byte编码即可；这个时候如果在中间插入个entry，长度大于253，则需要更改后面那个entry的prevlen的编码方式，因为根据prevlen的编码规则，1 byte不够存储大于253的数据，需要改成5 bytes，这样会导致该entry长度原本是253长度的，变成了257，同样该entry后面的entry也需要改prevlen的编码…..这样就有可能导致一系列的内存修改操作。当然这比较极端，一般不会出现这种情况。所以redis还是采用了这种编码方式来进行节约内存的操作。</p>
+<h3 id="主要函数分析"><a href="#主要函数分析" class="headerlink" title="主要函数分析"></a>主要函数分析</h3><table>
 <thead>
 <tr>
 <th>函数</th>
@@ -441,83 +447,78 @@
 </thead>
 <tbody>
 <tr>
-<td>listCreate</td>
-<td>创建一个空的链表</td>
+<td>ziplistNew</td>
+<td>创建一个空的ziplist</td>
 <td>O(1)</td>
 </tr>
 <tr>
-<td>listRelease</td>
-<td>释放整个list，包括list的各个节点</td>
-<td>O(N)，N为元素个数</td>
+<td>ziplistMerge</td>
+<td>合并两个ziplist, second会被追加到first的ziplist中；合并的时候采用长度较长的ziplist进行relloc，具体是哪个通过first或者second返回，没有被选择relloc的将会返回NULL</td>
+<td>O(N)</td>
 </tr>
 <tr>
-<td>listAddNodeHead</td>
-<td>增加一个值为value的节点到list的头部</td>
+<td>ziplistPush</td>
+<td>插入元素到ziplist中，where表示插入的位置ZIPLIST_HEAD or ZIPLIST_TAIL</td>
+<td>O(N), N为元素个数</td>
+</tr>
+<tr>
+<td>ziplistIndex</td>
+<td>返回ziplist中index为下标的元素，如果index为正值，则从头往后开始，下标从0开始；如果index为负值，则从后往前开始小标从-1开始，index超出范围或者ziplist为空，则会返回NULL</td>
+<td>O(N), N为元素个数</td>
+</tr>
+<tr>
+<td>ziplistNext</td>
+<td>返回p指向的entry的后一个节点；如果p已经是尾部，或者p下一个元素就是尾部，则返回NULL</td>
 <td>O(1)</td>
 </tr>
 <tr>
-<td>listAddNodeTail</td>
-<td>增加一个值为value的节点到list的尾部</td>
+<td>ziplistPrev</td>
+<td>返回p指向的entry的前一个节点；如果p已经是头部，则返回NULL</td>
 <td>O(1)</td>
 </tr>
 <tr>
-<td>listInsertNode</td>
-<td>增加一个节点到指定节点的前/后，after表示插入前还是后</td>
+<td>ziplistGet</td>
+<td>获取p指向的entry里面的值，根据encoding方式，返回的值可能存储在sstr/sval中，如果编码为整形的话，*sstr将设置为NULL；如果p指向尾部，则返回0，否则返回1</td>
 <td>O(1)</td>
 </tr>
 <tr>
-<td>listDelNode</td>
-<td>删除指定的节点，因为效率问题，没有判断node是否真的是该list的节点</td>
+<td>ziplistInsert</td>
+<td>插入数据到ziplist中的p位置</td>
+<td>O(N), N为元素个数</td>
+</tr>
+<tr>
+<td>ziplistDelete</td>
+<td>删除ziplist中p指向的entry；因为删除操作会造成ziplist内存重新分配，为了循环方便，p将重新指向ziplist中原p指向的内存，即原p的下一个entry的地址</td>
+<td>O(N), N为元素个数</td>
+</tr>
+<tr>
+<td>ziplistDeleteRange</td>
+<td>从ziplist的index下标开始，删除num个数量的entry</td>
+<td>O(N), N为元素个数</td>
+</tr>
+<tr>
+<td>ziplistCompare</td>
+<td>比较p指向的entry的内容与指定值相等，不等返回0，否则返回1</td>
 <td>O(1)</td>
 </tr>
 <tr>
-<td>listGetIterator</td>
-<td>创建指定list，指定方向的一个迭代器</td>
-<td>O(1)</td>
+<td>ziplistFind</td>
+<td>从p指向的entry开始查找指定的值，找到返回entry的地址，否则返回NULL；skip参数表示，每次比较之间忽略多少个entry，例如如果是1的话，且p的小标为1的话，则会比较1，3，5，7，9小标的entry</td>
+<td>O(N), N为元素个数</td>
 </tr>
 <tr>
-<td>listNext</td>
-<td>获取迭代器的下一个节点</td>
-<td>O(1)</td>
+<td>ziplistLen</td>
+<td>返回ziplist中元素数量</td>
+<td>O(1)，如果元素超过2^16-1则为O(N), N为元素个数</td>
 </tr>
 <tr>
-<td>listRewind</td>
-<td>重置迭代器为从头往后遍历</td>
-<td>O(1)</td>
-</tr>
-<tr>
-<td>listRewindTail</td>
-<td>重置迭代器为从后往前遍历</td>
-<td>O(1)</td>
-</tr>
-<tr>
-<td>listReleaseIterator</td>
-<td>释放迭代器内存</td>
-<td>O(1)</td>
-</tr>
-<tr>
-<td>listDup</td>
-<td>完整的复制一个链表</td>
-<td>O(N)，N为元素个数</td>
-</tr>
-<tr>
-<td>listSearchKey</td>
-<td>从list中查找指定节点</td>
-<td>O(N)，N为元素个数</td>
-</tr>
-<tr>
-<td>listIndex</td>
-<td>返回list中下标为index的节点，index如果为正值，表示从头开始的小标，且下标从0开始，即0为head，如果index为负值，表示从后往前的下标，且下标从-1开始，即-1表示tail</td>
-<td>O(abs(index))</td>
-</tr>
-<tr>
-<td>listRotate</td>
-<td>顺时针旋转list，将list的tail节点从尾部移除，插入到list头部</td>
+<td>ziplistBlobLen</td>
+<td>返回ziplist实际占用的内存大小</td>
 <td>O(1)</td>
 </tr>
 </tbody>
 </table>
-<p>每个函数及宏的声明及作用，具体细节可以查看我注释的redis源码<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 一些get/set函数直接使用宏来实现，来增加效率</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listLength(l) ((l)-&gt;len)            <span class="comment">// 获取链表长度</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listFirst(l) ((l)-&gt;head)            <span class="comment">// 获取链表第一个节点</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listLast(l) ((l)-&gt;tail)             <span class="comment">// 获取链表最后一个节点</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listPrevNode(n) ((n)-&gt;prev)         <span class="comment">// 获取节点的前一个节点</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listNextNode(n) ((n)-&gt;next)         <span class="comment">// 获取节点的后一个节点</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listNodeValue(n) ((n)-&gt;value)       <span class="comment">// 获取节点的值</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listSetDupMethod(l,m) ((l)-&gt;dup = (m))      <span class="comment">// 设置自定义dup函数</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listSetFreeMethod(l,m) ((l)-&gt;free = (m))    <span class="comment">// 设置自定义free函数</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listSetMatchMethod(l,m) ((l)-&gt;match = (m))  <span class="comment">// 设置自定义match函数</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listGetDupMethod(l) ((l)-&gt;dup)      <span class="comment">// 获取dup函数</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listGetFree(l) ((l)-&gt;free)          <span class="comment">// 获取free函数</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> listGetMatchMethod(l) ((l)-&gt;match)  <span class="comment">// 获取match函数</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Prototypes */</span></span><br><span class="line"><span class="function"><span class="built_in">list</span> *<span class="title">listCreate</span><span class="params">(<span class="keyword">void</span>)</span></span>;                     <span class="comment">// 创建一个空的链表结构</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">listRelease</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>)</span></span>;               <span class="comment">// 释放整个list，包括list内的各个节点</span></span><br><span class="line"><span class="function"><span class="built_in">list</span> *<span class="title">listAddNodeHead</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, <span class="keyword">void</span> *value)</span></span>;     <span class="comment">// 增加一个值为value的节点到list的头部</span></span><br><span class="line"><span class="function"><span class="built_in">list</span> *<span class="title">listAddNodeTail</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, <span class="keyword">void</span> *value)</span></span>;     <span class="comment">// 增加一个值为value的节点到list的尾部</span></span><br><span class="line"><span class="function"><span class="built_in">list</span> *<span class="title">listInsertNode</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, listNode *old_node, <span class="keyword">void</span> *value, <span class="keyword">int</span> after)</span></span>;       <span class="comment">// 增加一个节点到指定节点的前/后，after表示插入前还是后</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">listDelNode</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, listNode *node)</span></span>;           <span class="comment">// 删除指定的节点，因为效率问题，没有判断node是否真的是该list的节点</span></span><br><span class="line"><span class="function">listIter *<span class="title">listGetIterator</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, <span class="keyword">int</span> direction)</span></span>;   <span class="comment">// 创建指定list，指定方向的一个迭代器</span></span><br><span class="line"><span class="function">listNode *<span class="title">listNext</span><span class="params">(listIter *iter)</span></span>;                     <span class="comment">// 获取迭代器的下一个节点</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">listReleaseIterator</span><span class="params">(listIter *iter)</span></span>;               <span class="comment">// 释放迭代器内存</span></span><br><span class="line"><span class="function"><span class="built_in">list</span> *<span class="title">listDup</span><span class="params">(<span class="built_in">list</span> *orig)</span></span>;                              <span class="comment">// 完整的复制一个链表</span></span><br><span class="line"><span class="function">listNode *<span class="title">listSearchKey</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, <span class="keyword">void</span> *key)</span></span>;         <span class="comment">// 从list中查找指定节点</span></span><br><span class="line"><span class="function">listNode *<span class="title">listIndex</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, <span class="keyword">long</span> index)</span></span>;            <span class="comment">// 返回list中下标为index的节点，index如果为正值，表示从头开始的小标，且下标从0开始，即0为head，如果index为负值，表示从后往前的下标，且下标从-1开始，即-1表示tail</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">listRewind</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, listIter *li)</span></span>;              <span class="comment">// 重置迭代器为从头往后遍历</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">listRewindTail</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>, listIter *li)</span></span>;          <span class="comment">// 重置迭代器为从后往前遍历</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">listRotate</span><span class="params">(<span class="built_in">list</span> *<span class="built_in">list</span>)</span></span>;                            <span class="comment">// 顺时针旋转list，将list的tail节点从尾部移除，插入到list头部</span></span><br></pre></td></tr></table></figure></p>
+<p>每个函数的声明及作用，具体细节可以查看我注释的redis源码<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建一个空的ziplist</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">ziplistNew</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 合并两个ziplist, second会被追加到first的ziplist中</span></span><br><span class="line"><span class="comment">// 合并的时候采用长度较长的ziplist进行relloc，具体是哪个通过first或者second返回，没有被选择relloc的将会返回NULL</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">ziplistMerge</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> **first, <span class="keyword">unsigned</span> <span class="keyword">char</span> **second)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 插入元素到ziplist中，where表示插入的位置ZIPLIST_HEAD or ZIPLIST_TAIL</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">ziplistPush</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zl, <span class="keyword">unsigned</span> <span class="keyword">char</span> *s, <span class="keyword">unsigned</span> <span class="keyword">int</span> slen, <span class="keyword">int</span> where)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回ziplist中index为下标的元素，如果index为正值，则从头往后开始，下标从0开始</span></span><br><span class="line"><span class="comment">// 如果index为负值，则从后往前开始小标从-1开始，index超出范围或者ziplist为空，则会返回NULL</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">ziplistIndex</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zl, <span class="keyword">int</span> index)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回p指向的entry的后一个节点</span></span><br><span class="line"><span class="comment">// 如果p已经是尾部，或者p下一个元素就是尾部，则返回NULL</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">ziplistNext</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zl, <span class="keyword">unsigned</span> <span class="keyword">char</span> *p)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回p指向的entry的前一个节点</span></span><br><span class="line"><span class="comment">// 如果p已经是头部，则返回NULL</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">ziplistPrev</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zl, <span class="keyword">unsigned</span> <span class="keyword">char</span> *p)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取p指向的entry里面的值，根据encoding方式，返回的值可能存储在sstr/sval中，如果编码为整形的话，*sstr将设置为NULL</span></span><br><span class="line"><span class="comment">// 如果p指向尾部，则返回0，否则返回1</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">ziplistGet</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *p, <span class="keyword">unsigned</span> <span class="keyword">char</span> **sval, <span class="keyword">unsigned</span> <span class="keyword">int</span> *slen, <span class="keyword">long</span> <span class="keyword">long</span> *lval)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 插入数据到ziplist中的p位置</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">ziplistInsert</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zl, <span class="keyword">unsigned</span> <span class="keyword">char</span> *p, <span class="keyword">unsigned</span> <span class="keyword">char</span> *s, <span class="keyword">unsigned</span> <span class="keyword">int</span> slen)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除ziplist中p指向的entry</span></span><br><span class="line"><span class="comment">// 因为删除操作会造成ziplist内存重新分配，为了循环方便，p将重新指向ziplist中原p指向的内存，即原p的下一个entry的地址</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">ziplistDelete</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zl, <span class="keyword">unsigned</span> <span class="keyword">char</span> **p)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从ziplist的index下标开始，删除num个数量的entry</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">ziplistDeleteRange</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zl, <span class="keyword">int</span> index, <span class="keyword">unsigned</span> <span class="keyword">int</span> num)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 比较p指向的entry的内容与指定值相等，不等返回0，否则返回1</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">ziplistCompare</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *p, <span class="keyword">unsigned</span> <span class="keyword">char</span> *s, <span class="keyword">unsigned</span> <span class="keyword">int</span> slen)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从p指向的entry开始查找指定的值，找到返回entry的地址，否则返回NULL</span></span><br><span class="line"><span class="comment">// skip参数表示，每次比较之间忽略多少个entry，例如如果是1的话，且p的小标为1的话，则会比较1，3，5，7，9小标的entry</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">ziplistFind</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *p, <span class="keyword">unsigned</span> <span class="keyword">char</span> *vstr, <span class="keyword">unsigned</span> <span class="keyword">int</span> vlen, <span class="keyword">unsigned</span> <span class="keyword">int</span> skip)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回ziplist中元素数量</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">ziplistLen</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zl)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回ziplist实际占用的内存大小</span></span><br><span class="line"><span class="keyword">size_t</span> ziplistBlobLen(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zl);</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -560,8 +561,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/11/06/20/" rel="next" title="redis有序集合(intset)剖析">
-                <i class="fa fa-chevron-left"></i> redis有序集合(intset)剖析
+              <a href="/2018/11/25/23/" rel="next" title="redis zipmap剖析">
+                <i class="fa fa-chevron-left"></i> redis zipmap剖析
               </a>
             
           </div>
@@ -570,8 +571,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/11/23/22/" rel="prev" title="redis dict(hash表)剖析">
-                redis dict(hash表)剖析 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/12/01/25/" rel="prev" title="linux性能优化实战学习笔记">
+                linux性能优化实战学习笔记 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -694,7 +695,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#listNode"><span class="nav-number">2.1.</span> <span class="nav-text">listNode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#list"><span class="nav-number">2.2.</span> <span class="nav-text">list</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#listIter"><span class="nav-number">2.3.</span> <span class="nav-text">listIter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数分析"><span class="nav-number">2.4.</span> <span class="nav-text">函数分析</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#主要函数分析"><span class="nav-number">2.1.</span> <span class="nav-text">主要函数分析</span></a></li></ol></li></ol></div>
             
 
           </div>

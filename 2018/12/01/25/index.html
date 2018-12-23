@@ -1,0 +1,1117 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="linux,linux优化,笔记," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="说明这篇博客用于记录学习linux性能优化实战专栏的一些总结，巩固自己知识点的同时也能够方便以后查询">
+<meta name="keywords" content="linux,linux优化,笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux性能优化实战学习笔记">
+<meta property="og:url" content="http://yoursite.com/2018/12/01/25/index.html">
+<meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="说明这篇博客用于记录学习linux性能优化实战专栏的一些总结，巩固自己知识点的同时也能够方便以后查询">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-12-23T09:22:55.324Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux性能优化实战学习笔记">
+<meta name="twitter:description" content="说明这篇博客用于记录学习linux性能优化实战专栏的一些总结，巩固自己知识点的同时也能够方便以后查询">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/12/01/25/"/>
+
+
+
+
+
+  <title> linux性能优化实战学习笔记 | Drecik's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=65896483";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+<script>
+  	var _mtac = {};
+  	(function() {
+  		var mta = document.createElement("script");
+  		mta.src = "https://pingjs.qq.com/h5/stats.js?v2.0.2";
+  		mta.setAttribute("name", "MTAH5");
+  		mta.setAttribute("sid", "500620013");
+
+  		var s = document.getElementsByTagName("script")[0];
+  		s.parentNode.insertBefore(mta, s);
+  	})();
+</script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Drecik's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/01/25/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Drecik Xu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                linux性能优化实战学习笔记
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-01T16:38:32+08:00">
+                2018-12-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/12/01/25/" class="leancloud_visitors" data-flag-title="linux性能优化实战学习笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>这篇博客用于记录学习linux性能优化实战专栏的一些总结，巩固自己知识点的同时也能够方便以后查询</p>
+<a id="more"></a>
+<h2 id="平均负载"><a href="#平均负载" class="headerlink" title="平均负载"></a>平均负载</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>可运行状态和不可中断状态的平均进程数</p>
+<ul>
+<li>可运行状态：即为正在运行或者等待被运行的进程（进程状态为R）</li>
+<li>不可中断状态：正在处于关键流程的进程（进程状态为D），例如为了保证数据一致性，在写入数据时候，磁盘没用回应之前，该进程试不可被中断，这是系统对进程和硬件设备的一种保护措施</li>
+</ul>
+<p>平均负载可以简单理解为单位时间内活跃的进程数。<strong>如果超过cpu核数的70%了</strong>，就应该去查看原因。如果该值大于cpu核数的话就是过载了</p>
+<h3 id="如何查看"><a href="#如何查看" class="headerlink" title="如何查看"></a>如何查看</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:/home/drecik# uptime</span><br><span class="line">01:01:21 up  6:27,  4 users,  load average: 4.57, 4.12, 3.58</span><br></pre></td></tr></table></figure>
+<p>load average后面的值分别代表了最近1分钟，3分钟，5分钟的平均负载值</p>
+<h3 id="排查引起过载的方式"><a href="#排查引起过载的方式" class="headerlink" title="排查引起过载的方式"></a>排查引起过载的方式</h3><p>工具：</p>
+<ul>
+<li>sysstat：包含了linux常用的多核性能分析工具，用来监控核分析系统的性能</li>
+</ul>
+<p>我们用到两个命令：</p>
+<ul>
+<li>mpstat：用来实时查看每个cpu的性能指标，常用方式<code>mpstat -P ALL 3 10</code>，表示3秒一次显示10次所有cpu的状态</li>
+<li>pidstat：用来实时查看进程的cpu，内存，I/O及上下文切换等性能指标，常用方式<code>pidstat -u 3 10</code>，表示3秒一次显示10次进程cpu，io状态</li>
+</ul>
+<h2 id="进程上下文切换"><a href="#进程上下文切换" class="headerlink" title="进程上下文切换"></a>进程上下文切换</h2><h3 id="概念-1"><a href="#概念-1" class="headerlink" title="概念"></a>概念</h3><p>Linux是一个多任务操作系统，可以支持远大于cpu数量的任务同时运行。这里的同时指的是并发，Linux在很短的时间内把CPU轮流分配给它们去执行。</p>
+<h4 id="进程上下文"><a href="#进程上下文" class="headerlink" title="进程上下文"></a>进程上下文</h4><p>为了能够支持CPU轮流给不同进程去执行，所以在该进程让出CPU之前，我们需要保存该进程正在运行的现场（CPU中该进程的各个寄存器值，程序当前执行的位置，虚拟内存等信息）。这样下次轮到该进程再次执行的时候能够恢复当时的运行现场，进程就能够继续往下执行。保存和恢复的现场就是进程的上下文。</p>
+<h4 id="内核上下文切换"><a href="#内核上下文切换" class="headerlink" title="内核上下文切换"></a>内核上下文切换</h4><p>Linux按照特权等级，把运行空间分为内核空间和用户空间。每个运行空间都有独立的堆栈。当进程处于用户态的时候调用系统调用就会进入到内核态。这个时候需要保存该进程用户空间的当前的现场（寄存器，程序当前位置等），然后恢复内核空间的现场，进入到内核空间执行内核代码。系统调用完毕之后，保存内核空间现场，恢复用户空间现场。继续执行用户空间代码。所以一次系统调用会发生两次CPU上下文切换。但是因为这还是属于同一个进程中，保存和恢复的现场会比进程切换的小，所以开销没有进程切换的大。</p>
+<h4 id="线程上下文切换"><a href="#线程上下文切换" class="headerlink" title="线程上下文切换"></a>线程上下文切换</h4><p>线程是CPU调度和运行的基本单位，而进程是资源申请的基本单位。当一个进程拥有多个线程的时候，多个线程将共享进程的很多资源（内存空间，硬件资源等）。所以如果发生线程上下文切换的时候，切换的内容会比进程切换少很多。</p>
+<h4 id="发生进程-线程上下文切换的场景"><a href="#发生进程-线程上下文切换的场景" class="headerlink" title="发生进程/线程上下文切换的场景"></a>发生进程/线程上下文切换的场景</h4><ol>
+<li>CPU时间片跑满，被动释放CPU给另外个进程</li>
+<li>系统资源不足（内存/硬盘），挂起进程，等待资源满足</li>
+<li>硬件中断，挂起进程，去执行内核相关中断代码</li>
+<li>主动sleep，主动释放CPU给另外个进程</li>
+<li>更高优先级进程运行，保证高优先级进程优先执行</li>
+</ol>
+<h3 id="如何查看-1"><a href="#如何查看-1" class="headerlink" title="如何查看"></a>如何查看</h3><p>工具：</p>
+<ul>
+<li><p>sysstat：包含了linux常用的多核性能分析工具，用来监控核分析系统的性能</p>
+<h4 id="查看系统总体情况"><a href="#查看系统总体情况" class="headerlink" title="查看系统总体情况"></a>查看系统总体情况</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">drecik@ubuntu:~$ vmstat 5</span><br><span class="line">procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----</span><br><span class="line"> r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st</span><br><span class="line"> 0  0   3596  74136  30260 517752    0    2   425   251  121  214  2  2 96  0  0</span><br><span class="line"> 0  0   3596  74136  30260 517736    0    0     0     0  105  153  0  0 99  0  0</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>5表示5秒输出一组数据</p>
+</li>
+<li>cs(context switch)：每秒上下文切换次数</li>
+<li>in(interrupt)：每秒中断次数</li>
+<li>r(Running or Runnable：就绪队列长度，也就是正在运行或者正在等待运行的进程数</li>
+<li>b(Blocked)：处于不可中断睡眠状态的进程数</li>
+</ul>
+<h4 id="查看进程的情况"><a href="#查看进程的情况" class="headerlink" title="查看进程的情况"></a>查看进程的情况</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">drecik@ubuntu:~$ pidstat -w 5</span><br><span class="line">Linux 4.15.0-29-generic (ubuntu) 	12/02/2018 	_x86_64_	(2 CPU)</span><br><span class="line"></span><br><span class="line">03:50:08 AM   UID       PID   cswch/s nvcswch/s  Command</span><br><span class="line">03:50:13 AM     0         1      0.20      0.00  systemd</span><br><span class="line">03:50:13 AM     0         7      0.20      0.00  ksoftirqd/0</span><br><span class="line">03:50:13 AM     0         8     10.18      0.00  rcu_sched</span><br><span class="line">03:50:13 AM     0        11      0.20      0.00  watchdog/0</span><br><span class="line">03:50:13 AM     0        14      0.20      0.00  watchdog/1</span><br><span class="line">03:50:13 AM     0       184      1.80      0.00  irq/16-vmwgfx</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>cswch：每秒自愿上下文切换次数（获取不到资源，或者主动sleep）<br>nvcswch：每秒非自愿上下文切换次数（时间片跑满，被系统切换），大量进程抢占的时候会导致该值偏高</p>
+<h3 id="如何判断异常"><a href="#如何判断异常" class="headerlink" title="如何判断异常"></a>如何判断异常</h3><p>这些切换列取值多少该合适：<strong>取决于cpu性能</strong>，但是这些数值应该稳定才行，如果某一个数值出现增长，那可能就导致性能问题：</p>
+<ol>
+<li>如果是cswch增长，说明等待资源的进程变多，可能是I/O等其他问题</li>
+<li>如果是nvcswch增长，说明CPU紧张了</li>
+<li>如果是in增长了，说明CPU被中断处理程序占用，需要进一步分析什么中断导致</li>
+</ol>
+<h3 id="排查问题"><a href="#排查问题" class="headerlink" title="排查问题"></a>排查问题</h3><p>工具：</p>
+<ul>
+<li>sysstat：包含了linux常用的多核性能分析工具，用来监控核分析系统的性能</li>
+</ul>
+<p>用到的命令：</p>
+<ol>
+<li>用<code>vmstat</code>查看系统总体情况</li>
+<li>用<code>pidstat -w -u</code>查看进程cpu和上下文切换情况，如果vmstat的switch很大，但是pidstat没有异常，可能是线程切换导致，这时候可以使用<code>pidstat -w -u -t</code>来看线程切换</li>
+<li>可以用<code>watch -d cat /proc/interrupts</code>查看什么中断类型导致in列上升</li>
+</ol>
+<h2 id="CPU使用率"><a href="#CPU使用率" class="headerlink" title="CPU使用率"></a>CPU使用率</h2><h3 id="概念-2"><a href="#概念-2" class="headerlink" title="概念"></a>概念</h3><p>CPU使用率是一个更常用更直观的一个指标来描述机器或者某个进程的负载情况。了解CPU使用率之前需要知道CPU把时间划分为很短的时间片，在通过调度器将这些时间片分配给任务使用。Linux通过节拍率（HZ）来表示这些时间片的长度。并使用全局变量Jiffies来记录开机以来的节拍数。节拍率是内核选项，可以通过命令<code>grep &#39;CONFIG_HZ=&#39; /boot/config-$(uname -r)</code>查询查看。该值在不同操作系统可能不一样。<br>Linux提供另外一个用户空间的接拍率(USER_HZ)，该值固定为100。   </p>
+<h3 id="如何查看CPU数据"><a href="#如何查看CPU数据" class="headerlink" title="如何查看CPU数据"></a>如何查看CPU数据</h3><h4 id="最底层的方式"><a href="#最底层的方式" class="headerlink" title="最底层的方式"></a>最底层的方式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">drecik@ubuntu:~$ cat /proc/stat | grep ^cpu</span><br><span class="line">cpu  7771 674 6646 214059 2570 0 194 0 0 0</span><br><span class="line">cpu0 3804 426 3198 107438 1154 0 40 0 0 0</span><br><span class="line">cpu1 3966 248 3447 106620 1415 0 154 0 0 0</span><br></pre></td></tr></table></figure>
+<p>通过查看虚拟文件/proc/stat查看，第一行cpu是总的CPU使用情况，第二行开始是每个CPU每个核的使用情况。每一列的数值代表该cpu在这种模式下的(USER_HZ)次数，每一列的意思：</p>
+<ul>
+<li>user（缩写为us）：用户态的CPU时间，不包括nice，但包括guest时间。<strong>如果该值过高，则说明用户进程负载比较严重，需要重点查看用户进程的性能问题</strong></li>
+<li>nice（缩写为ni）：处于低优先级用户态的CPU时间</li>
+<li>system（缩写为sys）：处于内核态的CPU时间。<strong>如果该值过高，说明占用了过多的内核时间，需要重点排查内核线程或者系统调用相关的性能问题。</strong></li>
+<li>idle（缩写为id）：空闲时间。不包括iowait时间。</li>
+<li>iowait（缩写为wa）：等待I/O的时间。该值可能不太准确。<strong>如果该值过高，说明等待I/O时间过长，需要重点排查存储系统是否出问题</strong></li>
+<li>irq（缩写为hi）：处理中断的时间。</li>
+<li>softirq（缩写为si）：处理软中断的时间。<strong>如果该值与irq值过高，说明系统中断处理程序占用了较多CPU，需要重点排查内核的终端服务程序</strong></li>
+<li>steal（缩写为st）：当处于虚拟机环境时，cpu被其他虚拟系统占用的时间</li>
+<li>guest：运行虚拟机的CPU时间（为什么是0）</li>
+<li>guest_nice（缩写为gnice）：以低优先级运行虚拟机的时间</li>
+</ul>
+<p>上面数据记录的是开机到现在CPU处于这些状态的所有USER_HZ次数。所以如果要计算从开机到现在的CPU使用率可以通过1-空间时间/总时间得到。如果要得到要得到某一个时间间隔的CPU使用率，则可以在这个时间间隔开始时候查看该文件记录各个数据，时间间隔结束的时候再记录一次，通过1-(空闲时间2-空间时间1)/(总时间2-总时间1)得到。<br>通过查看/proc/[pid]/stat可以得到某个进程的CPU使用情况。但这个数据列会更多，可以通过<code>man proc</code>查看详细数据</p>
+<h4 id="最直观的方式"><a href="#最直观的方式" class="headerlink" title="最直观的方式"></a>最直观的方式</h4><ul>
+<li><p>top命令<br>top默认使用3秒的采集间隔，显示了系统总体的CPU和内存使用情况，以及各个进程的资源使用情况。使用很简单，直接输入top即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">drecik@ubuntu:~$ top</span><br><span class="line"></span><br><span class="line">top - 02:02:48 up 41 min,  1 user,  load average: 0.07, 0.02, 0.06</span><br><span class="line">Tasks: 276 total,   2 running, 206 sleeping,   0 stopped,   1 zombie</span><br><span class="line">%Cpu(s):  1.4 us,  3.5 sy,  0.0 ni, 95.1 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st</span><br><span class="line">KiB Mem :  2017328 total,   716840 free,   870536 used,   429952 buff/cache</span><br><span class="line">KiB Swap:  1942896 total,  1365360 free,   577536 used.   976576 avail Mem </span><br><span class="line"></span><br><span class="line">   PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND    </span><br><span class="line">  1584 drecik    20   0  412884  38316   8248 R   7.9  1.9   0:18.23 Xorg       </span><br><span class="line">  1709 drecik    20   0 3454448 147916  43732 S   6.3  7.3   0:35.21 gnome-she+ </span><br><span class="line">  2649 drecik    20   0  752160  42212  30812 S   4.6  2.1   0:06.05 gnome-ter+ </span><br><span class="line">  2925 drecik    20   0   51320   4016   3328 R   1.0  0.2   0:00.09 top        </span><br><span class="line">     1 root      20   0  225360   5424   3812 S   0.3  0.3   0:02.48 systemd    </span><br><span class="line">     8 root      20   0       0      0      0 I   0.3  0.0   0:00.78 rcu_sched  </span><br><span class="line">   275 root     -51   0       0      0      0 S   0.3  0.0   0:00.52 irq/16-vm+ </span><br><span class="line">  1905 drecik    20   0  527684   9216   7824 S   0.3  0.5   0:03.20 vmtoolsd   </span><br><span class="line">     2 root      20   0       0      0      0 S   0.0  0.0   0:00.01 kthreadd   </span><br><span class="line">     4 root       0 -20       0      0      0 I   0.0  0.0   0:00.00 kworker/0+ </span><br><span class="line">     6 root       0 -20       0      0      0 I   0.0  0.0   0:00.00 mm_percpu+ </span><br><span class="line">     7 root      20   0       0      0      0 S   0.0  0.0   0:00.06 ksoftirqd+ </span><br><span class="line">     9 root      20   0       0      0      0 I   0.0  0.0   0:00.00 rcu_bh     </span><br><span class="line">    10 root      rt   0       0      0      0 S   0.0  0.0   0:00.00 migration+ </span><br><span class="line">    11 root      rt   0       0      0      0 S   0.0  0.0   0:00.00 watchdog/0 </span><br><span class="line">    12 root      20   0       0      0      0 S   0.0  0.0   0:00.00 cpuhp/0    </span><br><span class="line">    13 root      20   0       0      0      0 S   0.0  0.0   0:00.00 cpuhp/1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>第三列%CPU就是当前系统的CPU使用率情况（后面跟着是每种情况的CPU使用率），按下1就可以查看每个核的CPU使用率</p>
+</li>
+<li>空行之后是每个进程的资源使用情况：每个进程有一个%CPU列，表示进程的使用率，它是用户态和内核态的CPU使用率总和，包括进程在用户空间使用CPU、通过系统调用执行内核空间CPU，就绪队列等待运行的CPU，以及虚拟机环境下运行虚拟机的CPU。</li>
+<li><p>pidstat<br>top命令CPU没有区别各种情况的使用率，可以使用pidstat来显示进程更细分的CPU使用情况</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"># 1秒为间隔，输出5组数组，最后还有个平均值</span><br><span class="line">drecik@ubuntu:~$ pidstat 1 5</span><br><span class="line">Linux 4.15.0-29-generic (ubuntu) 	12/08/2018 	_x86_64_	(2 CPU)</span><br><span class="line"></span><br><span class="line">02:08:27 AM   UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command</span><br><span class="line">02:08:28 AM  1000      1584    0.99    0.00    0.00    0.00    0.99     0  Xorg</span><br><span class="line">02:08:28 AM  1000      1709    0.00    0.99    0.00    0.00    0.99     1  gnome-shell</span><br><span class="line">02:08:28 AM  1000      2649    0.99    0.00    0.00    0.00    0.99     1  gnome-terminal-</span><br><span class="line">02:08:28 AM  1000      2942    0.99    1.98    0.00    0.00    2.97     1  pidstat</span><br><span class="line"></span><br><span class="line">02:08:28 AM   UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command</span><br><span class="line">02:08:29 AM     0       419    1.00    0.00    0.00    0.00    1.00     1  vmtoolsd</span><br><span class="line">02:08:29 AM  1000      1584    3.00    0.00    0.00    0.00    3.00     0  Xorg</span><br><span class="line">02:08:29 AM  1000      1709    0.00    1.00    0.00    0.00    1.00     1  gnome-shell</span><br><span class="line">02:08:29 AM  1000      2942    0.00    1.00    0.00    0.00    1.00     1  pidstat</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">Average:      UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command</span><br><span class="line">Average:        0       170    0.00    0.20    0.00    0.00    0.20     -  kworker/1:2</span><br><span class="line">Average:        0       419    0.20    0.00    0.00    0.00    0.20     -  vmtoolsd</span><br><span class="line">Average:     1000      1584    1.80    0.40    0.00    0.00    2.20     -  Xorg</span><br><span class="line">Average:     1000      1709    0.00    1.20    0.00    0.20    1.20     -  gnome-shell</span><br><span class="line">Average:     1000      1905    0.20    0.00    0.00    0.00    0.20     -  vmtoolsd</span><br><span class="line">Average:     1000      2649    0.40    0.20    0.00    0.00    0.60     -  gnome-terminal-</span><br><span class="line">Average:        0      2859    0.00    0.20    0.00    0.00    0.20     -  kworker/u256:0</span><br><span class="line">Average:     1000      2942    0.60    2.00    0.00    0.00    2.59     -  pidstat</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>%usr：用户空间CPU使用率</p>
+</li>
+<li>%system：系统空间CPU使用率</li>
+<li>%guest：虚拟机环境，运行虚拟机CPU使用率</li>
+<li>%wait：等待CPU使用率</li>
+<li>%CPU：总的CPU使用率<h3 id="如何排查问题"><a href="#如何排查问题" class="headerlink" title="如何排查问题"></a>如何排查问题</h3></li>
+</ul>
+<ol>
+<li>找到那个进程占用CPU</li>
+</ol>
+<ul>
+<li>top</li>
+<li>pidstat</li>
+</ul>
+<ol>
+<li>使用<a href="https://drecik.top/2018/07/09/16/" target="_blank" rel="noopener">perf</a>分析原因</li>
+</ol>
+<h3 id="可能会遇到比较棘手的问题"><a href="#可能会遇到比较棘手的问题" class="headerlink" title="可能会遇到比较棘手的问题"></a>可能会遇到比较棘手的问题</h3><ol>
+<li>进程里调用了其他进程，并且该类进程执行时间较短，如果该操作不断执行导致的CPU升高，top和pidstat等工具都不容易发现</li>
+<li>可能的一种情况就是某个进程一直在崩溃重启，而在启动的过程中会初始化资源导致CPU过高<h4 id="排查的方式"><a href="#排查的方式" class="headerlink" title="排查的方式"></a>排查的方式</h4></li>
+<li>使用pstree或者e’xecsnoop找到他们的父进程，并分析相关代码的原因</li>
+<li>使用perf工具采样分析当前CPU占用情况</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> linux</a>
+          
+            <a href="/tags/linux优化/" rel="tag"><i class="fa fa-tag"></i> linux优化</a>
+          
+            <a href="/tags/笔记/" rel="tag"><i class="fa fa-tag"></i> 笔记</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/01/24/" rel="next" title="redis ziplist剖析">
+                <i class="fa fa-chevron-left"></i> redis ziplist剖析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/23/26/" rel="prev" title="redis quicklist剖析">
+                redis quicklist剖析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Drecik Xu" />
+          <p class="site-author-name" itemprop="name">Drecik Xu</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#平均负载"><span class="nav-number">2.</span> <span class="nav-text">平均负载</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概念"><span class="nav-number">2.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何查看"><span class="nav-number">2.2.</span> <span class="nav-text">如何查看</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#排查引起过载的方式"><span class="nav-number">2.3.</span> <span class="nav-text">排查引起过载的方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程上下文切换"><span class="nav-number">3.</span> <span class="nav-text">进程上下文切换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概念-1"><span class="nav-number">3.1.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#进程上下文"><span class="nav-number">3.1.1.</span> <span class="nav-text">进程上下文</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内核上下文切换"><span class="nav-number">3.1.2.</span> <span class="nav-text">内核上下文切换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程上下文切换"><span class="nav-number">3.1.3.</span> <span class="nav-text">线程上下文切换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#发生进程-线程上下文切换的场景"><span class="nav-number">3.1.4.</span> <span class="nav-text">发生进程/线程上下文切换的场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何查看-1"><span class="nav-number">3.2.</span> <span class="nav-text">如何查看</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#查看系统总体情况"><span class="nav-number">3.2.1.</span> <span class="nav-text">查看系统总体情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查看进程的情况"><span class="nav-number">3.2.2.</span> <span class="nav-text">查看进程的情况</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何判断异常"><span class="nav-number">3.3.</span> <span class="nav-text">如何判断异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#排查问题"><span class="nav-number">3.4.</span> <span class="nav-text">排查问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU使用率"><span class="nav-number">4.</span> <span class="nav-text">CPU使用率</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概念-2"><span class="nav-number">4.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何查看CPU数据"><span class="nav-number">4.2.</span> <span class="nav-text">如何查看CPU数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#最底层的方式"><span class="nav-number">4.2.1.</span> <span class="nav-text">最底层的方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#最直观的方式"><span class="nav-number">4.2.2.</span> <span class="nav-text">最直观的方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何排查问题"><span class="nav-number">4.3.</span> <span class="nav-text">如何排查问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可能会遇到比较棘手的问题"><span class="nav-number">4.4.</span> <span class="nav-text">可能会遇到比较棘手的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#排查的方式"><span class="nav-number">4.4.1.</span> <span class="nav-text">排查的方式</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drecik Xu</span>
+</div>
+
+<!--
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+-->
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("8ur18uDJDAiMLXcqTjHKYOQo-gzGzoHsz", "FBQnJWBqt8F9IFuv3eGdn7rt");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
