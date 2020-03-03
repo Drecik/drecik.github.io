@@ -118,7 +118,7 @@
 <meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/29/7.jpg">
 <meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/29/8.jpg">
 <meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/29/9.jpg">
-<meta property="og:updated_time" content="2020-03-01T06:21:34.467Z">
+<meta property="og:updated_time" content="2020-03-03T03:10:41.317Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MySql实战学习笔记——基础篇">
 <meta name="twitter:description" content="这篇博客用于记录学习MySql实战专栏基础篇的一些总结，巩固自己知识点的同时也能够方便以后查询。">
@@ -420,7 +420,7 @@
 <h3 id="Server层"><a href="#Server层" class="headerlink" title="Server层"></a>Server层</h3><p>Server层主要包含连接器、查询缓存、分析器、优化器、执行器等，涵盖MySql大多数核心服务功能，以及一些内置函数，所有跨存储引擎的功能都在这一层实现。</p>
 <h4 id="连接器"><a href="#连接器" class="headerlink" title="连接器"></a><strong>连接器</strong></h4><p>负责跟客户端建立连接、获取权限、维持和管理连接。</p>
 <ul>
-<li>连接权限验证(用户名，密码等)在连接的时候验证，所以如果修改了某个用户的权限，已经连接的用户不会受到影响。但是对表的权限检查在执行过程中还会检查一次，所以不受影响。</li>
+<li>连接器用户名，密码验证通过之后，会获取一次该用户拥有的权限，之后的验证都是通过此时获得的权限进行。所以如果修改了某个用户的权限，已经连接的用户不会受到影响。</li>
 <li>如果客户端太长时间没有操作（默认8小时），连接器会断开连接。可以通过参数<code>wait_timeout</code>控制。</li>
 <li>如果连接一直保持在那，可能会导致内存一直上涨，因为MySql在执行过程中临时使用的内存是管理在连接上的，可以考虑以下两种方案解决：<ul>
 <li>定期主动断开重新连接，或者执行过一次占用内存的大查询之后主动断开重新连接</li>
@@ -664,7 +664,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-count">31</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
