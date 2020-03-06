@@ -87,7 +87,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="lua,gc,luajit," />
+  <meta name="keywords" content="lua,luajit,gc," />
 
 
 
@@ -104,7 +104,7 @@
 
 
 <meta name="description" content="lua垃圾回收发展历程 为什么不用引用计数？  引用计数有循环引用问题，会导致内存泄漏 应用计数嗯外开销大，赋值的时候会带来额外引用计数计算的开销。尤其是在内存比较稳定，没有新内存申请和释放的时候，你也需要承担这部分开销。   5.0及以前使用的是stop the world的标记清除法，会卡住所有操作，直到gc完成  5.1引入了分步gc，整个gc过程可以分为好几步，穿插在运行过程中 5.2引入">
-<meta name="keywords" content="lua,gc,luajit">
+<meta name="keywords" content="lua,luajit,gc">
 <meta property="og:type" content="article">
 <meta property="og:title" content="lua 5.4分代研究及luajit分代移植">
 <meta property="og:url" content="http://yoursite.com/2018/11/04/18/index.html">
@@ -537,9 +537,9 @@
           
             <a href="/tags/lua/" rel="tag"><i class="fa fa-tag"></i> lua</a>
           
-            <a href="/tags/gc/" rel="tag"><i class="fa fa-tag"></i> gc</a>
-          
             <a href="/tags/luajit/" rel="tag"><i class="fa fa-tag"></i> luajit</a>
+          
+            <a href="/tags/gc/" rel="tag"><i class="fa fa-tag"></i> gc</a>
           
         </div>
       

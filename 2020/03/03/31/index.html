@@ -114,7 +114,7 @@
 <meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/29/5.png">
 <meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/31/1.png">
 <meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/31/2.png">
-<meta property="og:updated_time" content="2020-03-03T10:20:37.031Z">
+<meta property="og:updated_time" content="2020-03-03T10:21:21.897Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MySql实战学习笔记——索引补充篇">
 <meta name="twitter:description" content="上一篇博客记录了MySql实战基础篇的一些总结，这一篇在对其中索引进行补充。">
@@ -457,7 +457,7 @@
 <li>对于其他优化器误判情况，可以使用<code>force index</code>强行指定索引，也可以通过修改语句来引导优化器，还可以通过增删索引来绕过这个问题</li>
 </ul>
 <p><em><a href="https://time.geekbang.org/column/article/71173" target="_blank" rel="noopener">这一节</a>讲解使用例子讲解了为何选错索引，过程比较复杂不太好总结，以后如果遇到了回去再查看下</em></p>
-<h2 id="如何给字符串加索引"><a href="#如何给字符串加索引" class="headerlink" title="如何给字符串加索引"></a>如何给字符串加索引</h2><p><a href="https://time.geekbang.org/column/intro/139" target="_blank" rel="noopener">MySql实战</a>基础篇介绍了索引的存储结构，对于字符串列建索引有两种方式，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; alter table SUser add index index1(email);</span><br><span class="line">mysql&gt; alter table SUser add index index2(email(6));</span><br></pre></td></tr></table></figure></p>
+<h2 id="如何给字符串加索引"><a href="#如何给字符串加索引" class="headerlink" title="如何给字符串加索引"></a>如何给字符串加索引</h2><p><a href="https://time.geekbang.org/column/intro/139" target="_blank" rel="noopener">MySql实战基础篇</a>介绍了索引的存储结构，对于字符串列建索引有两种方式，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; alter table SUser add index index1(email);</span><br><span class="line">mysql&gt; alter table SUser add index index2(email(6));</span><br></pre></td></tr></table></figure></p>
 <ul>
 <li>第一种是使用整个email字段作为索引</li>
 <li>第二种是使用email前6位作为索引</li>
