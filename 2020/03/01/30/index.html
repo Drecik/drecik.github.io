@@ -120,7 +120,7 @@
 <meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/30/7.png">
 <meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/30/8.png">
 <meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/30/9.png">
-<meta property="og:updated_time" content="2020-03-06T12:21:36.269Z">
+<meta property="og:updated_time" content="2020-03-06T12:26:03.171Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="linux性能优化实战学习笔记——内存篇">
 <meta name="twitter:description" content="说明这篇博客用于记录学习linux性能优化实战专栏内存篇的一些总结，巩固自己知识点的同时也能够方便以后查询">
@@ -431,8 +431,9 @@
 <h3 id="内存分配和回收"><a href="#内存分配和回收" class="headerlink" title="内存分配和回收"></a>内存分配和回收</h3><p>malloc是C标准库提供的函数进行分配内存，实际上调用的系统函数是brk()和mmap()</p>
 <ul>
 <li>小内存(小于128k)，使用brk来分配，也就是通过移动堆顶位置来分配，释放的时候会被缓存</li>
-<li>大内存(大于128k)，使用内存映射mmap来分配， 也就是会在内存映射段分配内存<br>内存分配的时候并没有真正的获取到物理内存，需要对这块内存进行访问的时候，出现缺页异常才会真正的分配物理内存。<br>当内存不足的时候，linux会通过一系列措施来回收内存：</li>
+<li>大内存(大于128k)，使用内存映射mmap来分配， 也就是会在内存映射段分配内存<br>内存分配的时候并没有真正的获取到物理内存，需要对这块内存进行访问的时候，出现缺页异常才会真正的分配物理内存。</li>
 </ul>
+<p>当内存不足的时候，linux会通过一系列措施来回收内存：</p>
 <ol>
 <li>回收缓存，通过特定的算法（例如LRU），回收缓存的内存页</li>
 <li>回收不常访问的内存，并把内存通过swap机制写入到磁盘</li>
@@ -631,7 +632,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

@@ -87,7 +87,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="c++,lintcode," />
+  <meta name="keywords" content="linux,linux优化,笔记," />
 
 
 
@@ -103,18 +103,26 @@
 
 
 
-<meta name="description" content="合并k个已排序的链表LintCode链接 题目描述合并k个已排序的链表">
-<meta name="keywords" content="c++,lintcode">
+<meta name="description" content="说明这篇博客用于记录学习linux性能优化实战专栏I/O篇的一些总结，巩固自己知识点的同时也能够方便以后查询。">
+<meta name="keywords" content="linux,linux优化,笔记">
 <meta property="og:type" content="article">
-<meta property="og:title" content="104. Merge k Sorted Lists">
-<meta property="og:url" content="http://yoursite.com/2018/02/06/7/index.html">
+<meta property="og:title" content="linux性能优化实战学习笔记——I&#x2F;O篇">
+<meta property="og:url" content="http://yoursite.com/2020/03/15/32/index.html">
 <meta property="og:site_name" content="Drecik&#39;s Blog">
-<meta property="og:description" content="合并k个已排序的链表LintCode链接 题目描述合并k个已排序的链表">
+<meta property="og:description" content="说明这篇博客用于记录学习linux性能优化实战专栏I/O篇的一些总结，巩固自己知识点的同时也能够方便以后查询。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-06-17T02:00:01.562Z">
+<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/32/1.png">
+<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/32/2.png">
+<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/32/3.png">
+<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/32/5.png">
+<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/32/6.png">
+<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/32/7.png">
+<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/32/8.png">
+<meta property="og:updated_time" content="2020-03-15T12:01:03.713Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="104. Merge k Sorted Lists">
-<meta name="twitter:description" content="合并k个已排序的链表LintCode链接 题目描述合并k个已排序的链表">
+<meta name="twitter:title" content="linux性能优化实战学习笔记——I&#x2F;O篇">
+<meta name="twitter:description" content="说明这篇博客用于记录学习linux性能优化实战专栏I/O篇的一些总结，巩固自己知识点的同时也能够方便以后查询。">
+<meta name="twitter:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/32/1.png">
 
 
 
@@ -142,13 +150,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/02/06/7/"/>
+  <link rel="canonical" href="http://yoursite.com/2020/03/15/32/"/>
 
 
 
 
 
-  <title> 104. Merge k Sorted Lists | Drecik's Blog </title>
+  <title> linux性能优化实战学习笔记——I/O篇 | Drecik's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -323,7 +331,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/06/7/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/15/32/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Drecik Xu">
@@ -344,7 +352,7 @@
             
             
               
-                104. Merge k Sorted Lists
+                linux性能优化实战学习笔记——I/O篇
               
             
           </h1>
@@ -359,8 +367,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-06T10:21:58+08:00">
-                2018-02-06
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-15T20:00:00+08:00">
+                2020-03-15
               </time>
             
 
@@ -377,7 +385,7 @@
 
           
           
-             <span id="/2018/02/06/7/" class="leancloud_visitors" data-flag-title="104. Merge k Sorted Lists">
+             <span id="/2020/03/15/32/" class="leancloud_visitors" data-flag-title="linux性能优化实战学习笔记——I/O篇">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -406,12 +414,84 @@
       
 
       
-        <h3 id="合并k个已排序的链表"><a href="#合并k个已排序的链表" class="headerlink" title="合并k个已排序的链表"></a>合并k个已排序的链表</h3><p><a href="http://www.lintcode.com/en/problem/merge-k-sorted-lists/" target="_blank" rel="noopener">LintCode链接</a></p>
-<h4 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h4><p>合并k个已排序的链表</p>
-<a id="more"></a> 
-<h4 id="样例"><a href="#样例" class="headerlink" title="样例"></a>样例</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">对于下面三个链表，输出-1-&gt;2-&gt;4-&gt;null</span><br><span class="line">[</span><br><span class="line">  2-&gt;4-&gt;null,</span><br><span class="line">  null,</span><br><span class="line">  -1-&gt;null</span><br><span class="line">],</span><br></pre></td></tr></table></figure>
-<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>对于写过归并排序的人来说，题目比较简单，思路就是从k个链表中，找到当前最小的元素，插入到返回的链表中，并从被选择的链表中删除这元素</p>
-<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * @param lists: a list of ListNode</span></span><br><span class="line"><span class="comment">     * @return: The head of one sorted list.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">ListNode *<span class="title">mergeKLists</span><span class="params">(<span class="built_in">vector</span>&lt;ListNode *&gt; &amp;lists)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// write your code here</span></span><br><span class="line">		ListNode *root = <span class="literal">NULL</span>, *back_node = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">int</span> min = <span class="built_in">std</span>::numeric_limits&lt;<span class="keyword">int</span>&gt;::max();</span><br><span class="line">			<span class="built_in">vector</span>&lt;ListNode *&gt;::iterator min_iter = lists.end();</span><br><span class="line">			<span class="keyword">for</span> (<span class="keyword">auto</span> iter = lists.begin(); iter != lists.end(); ++iter)</span><br><span class="line">			&#123;</span><br><span class="line">				ListNode *cur_node = *iter;</span><br><span class="line">				<span class="keyword">if</span> (cur_node != <span class="literal">NULL</span> &amp;&amp; cur_node-&gt;val &lt; min)</span><br><span class="line">				&#123;</span><br><span class="line">					min = cur_node-&gt;val;</span><br><span class="line">					min_iter = iter;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (min_iter == lists.end())</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ListNode *min_node = *min_iter;</span><br><span class="line">			<span class="keyword">if</span> (root == <span class="literal">NULL</span>)</span><br><span class="line">			&#123;</span><br><span class="line">				root = min_node;</span><br><span class="line">				back_node = min_node;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">			&#123;</span><br><span class="line">				back_node-&gt;next = min_node;</span><br><span class="line">				back_node = min_node;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			*min_iter = min_node-&gt;next;</span><br><span class="line">			min_node-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> root;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>这篇博客用于记录学习<a href="https://time.geekbang.org/column/intro/140" target="_blank" rel="noopener">linux性能优化实战</a>专栏I/O篇的一些总结，巩固自己知识点的同时也能够方便以后查询。</p>
+<a id="more"></a>
+<h2 id="linux文件系统"><a href="#linux文件系统" class="headerlink" title="linux文件系统"></a>linux文件系统</h2><p>文件系统是在磁盘系统的基础上，提供了一个用来管理文件的树状结构。根据结构方式的不同，就会形成不同的文件系统。</p>
+<p><strong>linux中一切皆文件。</strong>不仅普通的文件和目录，就连块设备，套接字，管道等，也都要通过统一的文件系统管理。</p>
+<h3 id="索引节点和目录项"><a href="#索引节点和目录项" class="headerlink" title="索引节点和目录项"></a>索引节点和目录项</h3><p>linux文件系统为每个文件分配两个数据结构，索引节点和目录项：</p>
+<ul>
+<li>索引节点：inode，用来记录文件的元数据，比如inode编号、文件大小、访问权限、修改日期、数据位置等。所以节点与文件一一对应，并且会被持久化存储到磁盘中。</li>
+<li>目录项：dentry，记录文件的名字、索引节点指针以及与其他目录项的关联关系。多个关联的目录项，就构成了文件系统的目录结构。目录项是由内核维护的一个内存数据结构。</li>
+</ul>
+<p>目录项与索引结构的关系是多对一的关系。两者的关系可以查看下图：<br><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/32/1.png" alt=""></p>
+<p>该图清晰的表达了两者的关系，补充几个磁盘这边的概念：</p>
+<ul>
+<li>超级块：存储文件系统的状态</li>
+<li>索引节点区：存储索引节点</li>
+<li>数据块区：存储文件数据</li>
+</ul>
+<h3 id="虚拟文件系统"><a href="#虚拟文件系统" class="headerlink" title="虚拟文件系统"></a>虚拟文件系统</h3><p>为了支持各种不同的文件系统，linux内核在用户进程和文件系统中间，引入了一个抽象层，即虚拟文件系统VFS（Virtual File System）</p>
+<p>VFS定义了所有文件系统都需要支持的数据结构和标准接口。这样接口的使用者就与真正文件系统的实现细节解耦。</p>
+<p>下图展示的是整个linux文件系统的架构：<br><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/32/2.png" alt=""></p>
+<p>文件系统按照存储位置不同可以分为以下三类:</p>
+<ul>
+<li>基于磁盘的文件系统，常见的Ext4, XFS, OverlayFS等</li>
+<li>基于内存的文件系统，该类文件系统不需要磁盘存储空间，只会占用内存。linux中用到的/proc和/sys文件系统就是属于这种。</li>
+<li>网络文件系统，常见的有NFS, SMB, iSSCSI等</li>
+</ul>
+<p>这些文件系统要先挂在到VFS目录树中的某个子目录，然后才能被访问。</p>
+<h3 id="文件系统-I-O"><a href="#文件系统-I-O" class="headerlink" title="文件系统 I/O"></a>文件系统 I/O</h3><h4 id="缓冲与非缓冲I-O"><a href="#缓冲与非缓冲I-O" class="headerlink" title="缓冲与非缓冲I/O"></a>缓冲与非缓冲I/O</h4><ul>
+<li>缓冲I/O，利用标准库缓存来加速文件访问，标准库内部再通过文件系统调用访问文件</li>
+<li>非缓冲I/O，直接通过系统调用来访问文件，不再经过标准库缓存</li>
+</ul>
+<p>标准库在文件系统调用基础上，自己实现了一套缓存机制。例如标准库的printf或者cout函数会在遇到换行时候才真正输出。</p>
+<h4 id="直接与非直接I-O"><a href="#直接与非直接I-O" class="headerlink" title="直接与非直接I/O"></a>直接与非直接I/O</h4><ul>
+<li>直接I/O：跳过操作系统页缓存，直接与文件系统交互来访问文件</li>
+<li>非直接I/O：文件读写时，经过系统的页缓存，来加速文件访问与写入</li>
+</ul>
+<p>页缓存利用的就是<a href="https://drecik.top/2020/03/01/30/#more" target="_blank" rel="noopener">内存篇</a>中的buffer/cache缓存模块。</p>
+<h4 id="阻塞与非阻塞I-O"><a href="#阻塞与非阻塞I-O" class="headerlink" title="阻塞与非阻塞I/O"></a>阻塞与非阻塞I/O</h4><ul>
+<li>阻塞I/O：执行I/O操作后，如果没有获得响应，就会阻塞当前线程</li>
+<li>非阻塞I/O：执行之后，不会阻塞当前线程，随后可以通过轮询或者事件通知的形式获取调用结果</li>
+</ul>
+<p>这种会在管道或者网络套接字用的比较多，通过设置<code>O_NONBLOCK</code>标志即表示非阻塞方式访问。</p>
+<h4 id="同步与异步I-O"><a href="#同步与异步I-O" class="headerlink" title="同步与异步I/O"></a>同步与异步I/O</h4><ul>
+<li>同步I/O：执行I/O操作后，一直等到整个I/O完成后，才能获得I/O相应（跟阻塞I/O一样）</li>
+<li>异步I/O：执行I/O操作后，可以继续执行其他事情，等I/O完成后，会通过事件通知方式告诉应用程序</li>
+</ul>
+<p>这个感觉跟异步I/O与非阻塞I/O有点难区分，个人基于网络编程相关理解（不知道是否对），非阻塞I/O的话，真正读取和写入还是有应用程序自己，例如epoll通知回来的时候只是告诉应用程序这个套接字能读或者能写了，应用程序自己进行都和写操作。异步I/O的话调用之后既不用管了，会在操作完成的时候通知你读或者写已经操作完成以及操作结果如何。</p>
+<h2 id="磁盘I-O"><a href="#磁盘I-O" class="headerlink" title="磁盘I/O"></a>磁盘I/O</h2><p>Linux中，磁盘是作为一个块设备来管理的，也就是以块为单位读写数据，并支持随机读写。</p>
+<h3 id="通用块层"><a href="#通用块层" class="headerlink" title="通用块层"></a>通用块层</h3><p>与VFS类似，为了减少不同块设备差异的影响，Linux通过一个统一的通用块层来管理不同的块设备，通用块层主要有两种功能：</p>
+<ol>
+<li>向上为文件系统和应用程序提供统一的访问块设备标准接口；向下把各种异构的磁盘设备抽象成统一的块设备，并提供统一的框架来管理这些设备驱动程序。</li>
+<li>对收到的I/O请求进行排队，并通过重新排序，请求合并方式提升磁盘访问利用率</li>
+</ol>
+<p>通用块层I/O调度算法：</p>
+<ol>
+<li>NONE：不进行任何操作，完全由物理机负责</li>
+<li>NOOP：先入先出，并做一些最基本的请求合并，常用于SSD</li>
+<li>CFQ：完全公平调度器，为每个进程维护一个I/O队列，并按照时间片均匀分布每个进程的I/O请求</li>
+<li>Deadline：读、写分别建立I/O队列，提高机械硬盘的吞吐量，并确保达到最终期限的请求被优先处理。</li>
+</ol>
+<h3 id="I-O栈"><a href="#I-O栈" class="headerlink" title="I/O栈"></a>I/O栈</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/32/3.png" alt=""></p>
+<p>这张图包含了介绍的存储系统I/O的层级关系：</p>
+<ul>
+<li>文件系统层：包含虚拟文件系统及其他各个文件系统的实现</li>
+<li>通用块层：包含块设备I/O队列和I/O调度器</li>
+<li>设备层：负责最终物理设备的I/O操作</li>
+</ul>
+<h2 id="磁盘性能指标"><a href="#磁盘性能指标" class="headerlink" title="磁盘性能指标"></a>磁盘性能指标</h2><ul>
+<li>使用率：磁盘处理I/O的时间百分比(uitl)</li>
+<li>饱和度：磁盘处理I/O的繁忙程度</li>
+<li>IOPS：每秒I/O请求数</li>
+<li>吞吐量：每秒I/O请求大小</li>
+<li>响应时间：I/O请求从发出到收到响应的时间间隔</li>
+</ul>
+<p>每个性能指标在不同的场景下的关注度不太一样，例如处理大量小文件的场景可能关注的是IOPS，大文件的读取可能关注的是吞吐量</p>
+<h2 id="排查问题的一般思路"><a href="#排查问题的一般思路" class="headerlink" title="排查问题的一般思路"></a>排查问题的一般思路</h2><h3 id="I-O-性能指标"><a href="#I-O-性能指标" class="headerlink" title="I/O 性能指标"></a>I/O 性能指标</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/32/5.png" alt=""></p>
+<h3 id="速查图：I-O性能指标-gt-工具"><a href="#速查图：I-O性能指标-gt-工具" class="headerlink" title="速查图：I/O性能指标 -&gt; 工具"></a>速查图：I/O性能指标 -&gt; 工具</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/32/6.png" alt=""></p>
+<h3 id="速查图：工具-gt-I-O性能指标"><a href="#速查图：工具-gt-I-O性能指标" class="headerlink" title="速查图：工具 -&gt; I/O性能指标"></a>速查图：工具 -&gt; I/O性能指标</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/32/7.png" alt=""></p>
+<h3 id="I-O性能问题查找思路图"><a href="#I-O性能问题查找思路图" class="headerlink" title="I/O性能问题查找思路图"></a>I/O性能问题查找思路图</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/32/8.png" alt=""></p>
 
       
     </div>
@@ -441,9 +521,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/c/" rel="tag"><i class="fa fa-tag"></i> c++</a>
+            <a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> linux</a>
           
-            <a href="/tags/lintcode/" rel="tag"><i class="fa fa-tag"></i> lintcode</a>
+            <a href="/tags/linux优化/" rel="tag"><i class="fa fa-tag"></i> linux优化</a>
+          
+            <a href="/tags/笔记/" rel="tag"><i class="fa fa-tag"></i> 笔记</a>
           
         </div>
       
@@ -456,8 +538,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/02/03/6/" rel="next" title="86. Binary Search Tree Iterator">
-                <i class="fa fa-chevron-left"></i> 86. Binary Search Tree Iterator
+              <a href="/2020/03/03/31/" rel="next" title="MySql实战学习笔记——索引补充篇">
+                <i class="fa fa-chevron-left"></i> MySql实战学习笔记——索引补充篇
               </a>
             
           </div>
@@ -465,10 +547,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/02/06/8/" rel="prev" title="131. Building Outline">
-                131. Building Outline <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -590,7 +668,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#合并k个已排序的链表"><span class="nav-number">1.</span> <span class="nav-text">合并k个已排序的链表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#题目描述"><span class="nav-number">1.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#样例"><span class="nav-number">1.2.</span> <span class="nav-text">样例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思路"><span class="nav-number">2.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码"><span class="nav-number">3.</span> <span class="nav-text">代码</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#linux文件系统"><span class="nav-number">2.</span> <span class="nav-text">linux文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#索引节点和目录项"><span class="nav-number">2.1.</span> <span class="nav-text">索引节点和目录项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟文件系统"><span class="nav-number">2.2.</span> <span class="nav-text">虚拟文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件系统-I-O"><span class="nav-number">2.3.</span> <span class="nav-text">文件系统 I/O</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#缓冲与非缓冲I-O"><span class="nav-number">2.3.1.</span> <span class="nav-text">缓冲与非缓冲I/O</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#直接与非直接I-O"><span class="nav-number">2.3.2.</span> <span class="nav-text">直接与非直接I/O</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#阻塞与非阻塞I-O"><span class="nav-number">2.3.3.</span> <span class="nav-text">阻塞与非阻塞I/O</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#同步与异步I-O"><span class="nav-number">2.3.4.</span> <span class="nav-text">同步与异步I/O</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#磁盘I-O"><span class="nav-number">3.</span> <span class="nav-text">磁盘I/O</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#通用块层"><span class="nav-number">3.1.</span> <span class="nav-text">通用块层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O栈"><span class="nav-number">3.2.</span> <span class="nav-text">I/O栈</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#磁盘性能指标"><span class="nav-number">4.</span> <span class="nav-text">磁盘性能指标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#排查问题的一般思路"><span class="nav-number">5.</span> <span class="nav-text">排查问题的一般思路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O-性能指标"><span class="nav-number">5.1.</span> <span class="nav-text">I/O 性能指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#速查图：I-O性能指标-gt-工具"><span class="nav-number">5.2.</span> <span class="nav-text">速查图：I/O性能指标 -&gt; 工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#速查图：工具-gt-I-O性能指标"><span class="nav-number">5.3.</span> <span class="nav-text">速查图：工具 -&gt; I/O性能指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O性能问题查找思路图"><span class="nav-number">5.4.</span> <span class="nav-text">I/O性能问题查找思路图</span></a></li></ol></li></ol></div>
             
 
           </div>
