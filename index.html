@@ -148,7 +148,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-count">43</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -171,6 +171,172 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/15/43-2022-01-15%E5%91%A8%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/01/15/43-2022-01-15%E5%91%A8%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">43.2022-01-15周总结</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-01-15 20:34:38 / 修改时间：21:51:59" itemprop="dateCreated datePublished" datetime="2023-01-15T20:34:38+08:00">2023-01-15</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+<h2 id="1-休闲游戏转微信小游戏"><a href="#1-休闲游戏转微信小游戏" class="headerlink" title="1. 休闲游戏转微信小游戏"></a>1. 休闲游戏转微信小游戏</h2><p>上周内存会不断上涨的问题没找到，但是将Unity从2020升级到2021之后这个问题貌似解决了。同时因为2021支持ASTC格式问题压缩，内存进一步减小。所以目前小游戏内存问题基本解决。</p>
+<p>剩下的工作就是修一些转成小程序之后带来的Bug，表现的Bug比较多，有些Shader在部分手机上会显示不正确。这个还在定位问题。</p>
+<p>另外的工作就是之前为了省内存做了很多比较极端的手段进行复原，提升画面整体显示质量和游戏性能。</p>
+<p>后续准备对这一个月以来的Unity转小游戏踩的一些坑点单独出一篇博客。感觉在我们踩过的这些坑点之后，目前还是比较有信心转公司其他游戏到小游戏了。</p>
+<h2 id="2-3D项目"><a href="#2-3D项目" class="headerlink" title="2. 3D项目"></a>2. 3D项目</h2><h3 id="技能"><a href="#技能" class="headerlink" title="技能"></a>技能</h3><p>继续牵头做技能这一块，这周在重构的技能表现配置基础上新增了几个角色以及技能，目前体验下来整体还是可以满足需求，可以快速配置新的角色和技能。目前算是把3D战斗表现这一块稳住了，之前这一块的整体代码结构和进度表现都很差。接下去要继续把控其他模块，同时还要花时间提升客户端的框架代码。</p>
+<h3 id="框架"><a href="#框架" class="headerlink" title="框架"></a>框架</h3><p>之前由于热更新框架选用了ILRuntime，导致用了一个简化版的Protobuf，不支持proto3的map功能。同时项目中的DOTween也是一个简化版，很多功能不支持。</p>
+<p>最近由于ILRuntime的性能问题以及使用限制问题，同时<code>hybridclr</code>在公司其他项目上有成功的接入经验，所以我们弃用了ILRuntime。虽然目前项目还没有正式接入<code>hybridclr</code>，但因为<code>hybridclr</code>对逻辑代码限制很小，所以这周再关了ILRuntime的基础上，把Protobuf升级到最新版，另外也把DOTween升级到了比较新的版本。之后再开始着手删除ILRuntime的代码，把<code>hybridclr</code>接入到项目中</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ol>
+<li>组里面有个同事对于工作内容的理解差的一塌糊涂，导致给出的时间评估相差巨大，实际花的时间2倍甚至3倍于评估时间。按照原则这种人是不应该留的，但是现在工期比较紧张也没有好的办法，只能暂时与他多进行沟通。</li>
+<li>这周五公司进行了年会加周年庆，转眼间我们公司成立两周年了，我也来公司有1年半多了，从互联网行业再次回到游戏行业，带过来了很多互联网技术的同时也提升了很多游戏技术，特别是客户端相关技术，包括Shader，打包，热更新，资源管理，优化，工作流等等。另外管理能力也得到了提升，虽然只有一年半时间，但也遇到了比较多的人员突发情况，第一次经历裁员，第一次从0开始组建新的项目组，第一次遇到员工突然的离职。。总结来说时间虽短，整体的成长很大，后续要走的路还很长，但我相信肯定是会越走越好的。</li>
+<li>今天是女儿的两周岁生日，时间好快，现在还记得两年前第一次看到她的情景，是那么的小个。转眼间现在已经是一个在我出门上班会跟我说拜拜，在我下班回家高兴的喊着爸爸，回来了的粘人小棉袄了。希望她以后每天都可以像现在一样快快乐乐健健康康的长大。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/09/42-2022-01-08%E5%91%A8%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/01/09/42-2022-01-08%E5%91%A8%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">42. 2022-01-08周总结</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-01-09 15:22:58" itemprop="dateCreated datePublished" datetime="2023-01-09T15:22:58+08:00">2023-01-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-01-15 21:42:02" itemprop="dateModified" datetime="2023-01-15T21:42:02+08:00">2023-01-15</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>这周两个项目终于有点进展</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/01/09/42-2022-01-08%E5%91%A8%E6%80%BB%E7%BB%93/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -818,166 +984,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/26/33-Invalid-pass-number-1-for-Graphics-Blit-Unity/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Drecik Xu">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drecik's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Drecik's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/11/26/33-Invalid-pass-number-1-for-Graphics-Blit-Unity/" class="post-title-link" itemprop="url">Invalid pass number (1) for Graphics.Blit (Unity)</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-11-26 10:57:51 / 修改时间：22:13:43" itemprop="dateCreated datePublished" datetime="2022-11-26T10:57:51+08:00">2022-11-26</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="现象描述"><a href="#现象描述" class="headerlink" title="现象描述"></a>现象描述</h3><p>有一个后处理脚本在自动打包机(Linux环境)打出的包会包<code>Invalid pass number (1) for Graphics.Blit</code>错误，但是手动打包(Windows环境)打出的包不会出现这个问题。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/11/26/33-Invalid-pass-number-1-for-Graphics-Blit-Unity/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/03/15/32/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Drecik Xu">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drecik's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Drecik's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/03/15/32/" class="post-title-link" itemprop="url">linux性能优化实战学习笔记——I/O篇</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-03-15 20:00:00" itemprop="dateCreated datePublished" datetime="2020-03-15T20:00:00+08:00">2020-03-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>这篇博客用于记录学习<a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/140">linux性能优化实战</a>专栏I&#x2F;O篇的一些总结，巩固自己知识点的同时也能够方便以后查询。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/15/32/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -991,7 +997,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
