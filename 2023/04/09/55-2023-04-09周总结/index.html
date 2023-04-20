@@ -29,7 +29,7 @@
 <meta property="og:image" content="http://example.com/images/55/1.jpg">
 <meta property="og:image" content="http://example.com/images/55/2.jpg">
 <meta property="article:published_time" content="2023-04-09T06:35:39.000Z">
-<meta property="article:modified_time" content="2023-04-12T12:28:07.433Z">
+<meta property="article:modified_time" content="2023-04-12T12:29:48.599Z">
 <meta property="article:author" content="Drecik Xu">
 <meta property="article:tag" content="周总结">
 <meta name="twitter:card" content="summary">
@@ -157,7 +157,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-count">55</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -226,7 +226,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-04-12 20:28:07" itemprop="dateModified" datetime="2023-04-12T20:28:07+08:00">2023-04-12</time>
+      <time title="修改时间：2023-04-12 20:29:48" itemprop="dateModified" datetime="2023-04-12T20:29:48+08:00">2023-04-12</time>
     </span>
 
   
@@ -261,15 +261,17 @@
 <h3 id="部署3D项目外网服务器"><a href="#部署3D项目外网服务器" class="headerlink" title="部署3D项目外网服务器"></a>部署3D项目外网服务器</h3><p>3D项目进入中后期，需要部署外网服务器来作为一个内部比较稳定的版本供大家体验。同时也重新理了一遍所有服务端的部署，包括配置中心，gm后台，游戏web后台，游戏逻辑服，游戏跨服。</p>
 <h3 id="新项目开始转小程序"><a href="#新项目开始转小程序" class="headerlink" title="新项目开始转小程序"></a>新项目开始转小程序</h3><p>开始新一款的unity项目转成小程序工作，前期经过分析比较，挑战还是比较大的，主要是两个问题：</p>
 <ol>
-<li>内存问题，这里用来张图对比下<br><img src="/images/55/1.jpg"></li>
+<li>内存问题，这里用来张图对比下</li>
 </ol>
+<p><img src="/images/55/1.jpg"></p>
 <p><img src="/images/55/2.jpg"></p>
 <p>上面的图是该项目的内存分析，下面的图是已经转成小程序的项目内存分析。</p>
 <p>可以看到贴图内存和代码内存相差很大，有400M，需要优化的缺口还是很大的。</p>
 <p>所以后续的内存优化方向也会以这两个方向来展开。</p>
 <ol start="2">
-<li>WebSoket问题<br>这个项目是一个Tcp长连接游戏，有服务端，所以客户端和服务端都得支持WebScoekt，这个之前转的时候是没遇到的。客户端还好，Unity封装了WebSocket，自己稍微封装统一下接口即可，但是服务端用的是skynet，支持不是很完善，在考虑是找第三方的skynet插件或者另外起一个其他语言的中间层，将WebSocket请求转成Tcp请求到我们服务器。</li>
+<li>WebSoket问题</li>
 </ol>
+<p>这个项目是一个Tcp长连接游戏，有服务端，所以客户端和服务端都得支持WebScoekt，这个之前转的时候是没遇到的。客户端还好，Unity封装了WebSocket，自己稍微封装统一下接口即可，但是服务端用的是skynet，支持不是很完善，在考虑是找第三方的skynet插件或者另外起一个其他语言的中间层，将WebSocket请求转成Tcp请求到我们服务器。</p>
 <h3 id="《最强史莱姆》小游戏上线"><a href="#《最强史莱姆》小游戏上线" class="headerlink" title="《最强史莱姆》小游戏上线"></a>《最强史莱姆》小游戏上线</h3><p>我们公司新的小游戏《最强史莱姆》上线，在部署线上服务器的时候遇到个问题，用了腾讯云的中间件《Api网关》来做负载均衡功能，一开始买的是共享版，写着可以支持500QPS，但是在只有个位数的QPS的时候，整个RT就秒级别，同时前台错误数一直很多。问了腾讯云那边给的答复是共享版不保证请求稳定性，这稳定性也太差了点，逼着别人买高配，后面改成专享型的配置才修复问题。</p>
 
     </div>
@@ -292,6 +294,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2023/04/14/56-2023-04-16%E5%91%A8%E6%80%BB%E7%BB%93/" rel="next" title="56, 2023-04-16周总结">
+                  56, 2023-04-16周总结 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
