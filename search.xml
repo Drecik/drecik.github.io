@@ -2876,4 +2876,41 @@
         <tag>周总结</tag>
       </tags>
   </entry>
+  <entry>
+    <title>57.2023-04-23周总结</title>
+    <url>/2023/04/23/57-2023-04-23%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>外包特效约定问题</li>
+<li>客户端框架完善</li>
+<li>3D项目接入AccountCenter</li>
+<li>upm和nuget两个内网之间打通</li>
+<li>vs编译的底层dll导致打包出错</li>
+</ol>
+<span id="more"></span>
+
+<h3 id="1-外包特效约定问题"><a href="#1-外包特效约定问题" class="headerlink" title="1. 外包特效约定问题"></a>1. 外包特效约定问题</h3><p>之前做了一般外包特效规范，但是漏了一个Color Space规范，导致特效那边做出来的特效放到项目里面颜色不对。之前还遇到个问题Unity PC平台和Android平台同一个特效的表现也不一样（可能跟Shader有关系）。</p>
+<p>在外包特效规范里面加了这些规范，同时为了避免以后因为其他环境不一样的表现不一样，直接发送我们的Unity工程配置给外包方。由于这一块的经验不足，只能在不断踩坑中进步。</p>
+<h3 id="2-客户端框架完善"><a href="#2-客户端框架完善" class="headerlink" title="2. 客户端框架完善"></a>2. 客户端框架完善</h3><p>给客户端框架增加了些通用的功能，包括对象池，设备号登录，打包自动设置icon，通用启动流程任务。</p>
+<p>框架还在完善中，后面随着游戏迭代应该会有更多的东西下沉到框架中，但由我一个人来去主动去发现会比较累，同时也很容易让框架一直得不到更新。后续需要提高下其他同事对于框架的意识，在做游戏过程中，什么东西比较通用可以设计成通用框架进行集成。由主动改成被动来选择他们提的功能需求来集成，这样感觉会更好点。</p>
+<h3 id="3-3D项目接入AccountCenter"><a href="#3-3D项目接入AccountCenter" class="headerlink" title="3. 3D项目接入AccountCenter"></a>3. 3D项目接入AccountCenter</h3><p>3D项目接入之前些的AccountCenter，比较顺利没什么问题。</p>
+<p>在部署线上的时候，继续用了腾讯云《Api网关》中间件来统一做流量入口（之前我吐槽过他的共享型）。这个中间件除了转发，灰度发布等功能外，还能做到上周我想做的Api级别的监控，包括流量监控，RT监控，错误请求监控等等，同时集成的报警功能可以做一些短信报警。除了贵（最便宜的独享型要4W+一年（不打折），共享型虽然便宜，但上次吐槽过几乎不能用）外，还是省了挺多事情的。</p>
+<h3 id="4-upm和nuget两个内网之间打通"><a href="#4-upm和nuget两个内网之间打通" class="headerlink" title="4. upm和nuget两个内网之间打通"></a>4. upm和nuget两个内网之间打通</h3><p>因为两个公司内网不通，不想同时两边都搭建upm和nuget服务器，就找了一台双网卡的机器（有线+无线），在两个内网用路由器把域名地址统一指定到这台服务器，然后这台服务器配置反向代理到对应的服务器。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">  listen 80;</span><br><span class="line">  listen [::]:80;</span><br><span class="line">  server_name upm.babuyo.com;</span><br><span class="line">  server_tokens off; ## Don&#x27;t show the nginx version number, a security best practice</span><br><span class="line"></span><br><span class="line">  access_log logs/upm_access.log;</span><br><span class="line">  error_log   logs/upm_error.log;</span><br><span class="line"></span><br><span class="line">  location / &#123;</span><br><span class="line">      proxy_pass http://192.168.0.42:4873;</span><br><span class="line">      proxy_redirect off;</span><br><span class="line">      proxy_set_header Host $host; #注：这个不传进去，会暴露端口号，且会影响速度</span><br><span class="line">      proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-vs编译的底层dll导致打包出错"><a href="#5-vs编译的底层dll导致打包出错" class="headerlink" title="5. vs编译的底层dll导致打包出错"></a>5. vs编译的底层dll导致打包出错</h3><p>把项目通过upm引入底层库之后，发现打包的时候报错：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;IL2CPP error for method &#x27;System.Collections.Generic.Dictionary`2&lt;K,V&gt; Babu.Core.StringConverter::ConvertToDict(System.String,System.Char,System.Char)&#x27; in assembly &#x27;/home/ab/jenkins/workspace/CangLong/Develop/BuildTestAndroid/Game.Client/Temp/StagingArea/assets/bin/Data/Managed/Babu.Core.dll&#x27;&quot;</span><br><span class="line">System.NullReferenceException: Object reference not set to an instance of an object.&#x27;</span><br><span class="line">   at Unity.IL2CPP.MethodBodyWriter.WriteMethodCallExpression(String returnVariable, Func`1 getHiddenMethodInfo, IGeneratedMethodCodeWriter writer, MethodReference callingMethod, MethodReference methodToCall, MethodReference unresolvedMethodtoCall, TypeResolver typeResolverForMethodToCall, MethodCallType callType, IRuntimeMetadataAccess runtimeMetadataAccess, IVTableBuilder vTableBuilder, IEnumerable`1 argumentArray, Boolean useArrayBoundsCheck, Func`2 addUniqueSuffix) in /Users/bokken/build/output/fmwang/il2cpp/Unity.IL2CPP/MethodBodyWriter.cs:line 2816&#x27;</span><br><span class="line">   at Unity.IL2CPP.MethodBodyWriter.WriteCallExpressionFor(MethodReference callingMethod, MethodReference unresolvedMethodToCall, MethodCallType callType, List`1 argsFor, Func`2 addUniqueSuffix, Boolean emitNullCheckForInvocation) in /Users/bokken/build/output/fmwang/il2cpp/Unity.IL2CPP/MethodBodyWriter.cs:line 2730&#x27;</span><br><span class="line">   at Unity.IL2CPP.MethodBodyWriter.WriteCallExpressionFor(MethodReference unresolvedMethodToCall, MethodCallType callType, List`1 poppedValues, Func`2 addUniqueSuffix, Boolean emitNullCheckForInvocation) in /Users/bokken/build/output/fmwang/il2cpp/Unity.IL2CPP/MethodBodyWriter.cs:line 2687&#x27;</span><br><span class="line">   at Unity.IL2CPP.MethodBodyWriter.ProcessInstruction(Node node, InstructionBlock block, Instruction&amp; ins) in /Users/bokken/build/output/fmwang/il2cpp/Unity.IL2CPP/MethodBodyWriter.cs:line 1021&#x27;</span><br><span class="line">   at Unity.IL2CPP.MethodBodyWriter.GenerateCodeRecursive(Node node) in /Users/bokken/build/output/fmwang/il2cpp/Unity.IL2CPP/MethodBodyWriter.cs:line 359&#x27;</span><br><span class="line">   at Unity.IL2CPP.MethodBodyWriter.Generate() in /Users/bokken/build/output/fmwang/il2cpp/Unity.IL2CPP/MethodBodyWriter.cs:line 191&#x27;</span><br><span class="line">   at Unity.IL2CPP.CodeWriters.CodeWriterExtensions.WriteMethodWithMetadataInitialization(IGeneratedMethodCodeWriter writer, String methodSignature, String methodFullName, Action`2 writeMethodBody, String uniqueIdentifier, MethodReference methodRef) in /Users/bokken/build/output/fmwang/il2cpp/Unity.IL2CPP/CodeWriters/CodeWriterExtensions.cs:line 117&#x27;</span><br><span class="line">   at Unity.IL2CPP.MethodWriter.WriteMethodDefinition(AssemblyWriteContext context, IGeneratedMethodCodeWriter writer, MethodReference method, Boolean addToMethodCollection) in /Users/bokken/build/output/fmwang/il2cpp/Unity.IL2CPP/MethodWriter.cs:line 70&#x27;</span><br><span class="line">   at Unity.IL2CPP.SourceWriter.WriteGenericMethodDefinition(SourceWritingContext context, IGeneratedMethodCodeWriter writer, GenericInstanceMethod method) in /Users/bokken/build/output/fmwang/il2cpp/Unity.IL2CPP/SourceWriter.cs:line 67&#x27;</span><br><span class="line">   at Unity.IL2CPP.SourceWriters.SourceWriterBase`1.WriteItem(StreamWorkItemData`2 data) in /Users/bokken/build/output/fmwang/il2cpp/Unity.IL2CPP/SourceWriters/SourceWriterBase.cs:line 86&#x27;</span><br><span class="line">   at Unity.IL2CPP.Contexts.Scheduling.Streams.FileLevelParallelStreamManager`2.WorkerWriteItemsToFile(WorkItemData`2 data) in /Users/bokken/build/output/fmwang/il2cpp/Unity.IL2CPP/Contexts.Scheduling.Streams/FileLevelParallelStreamManager.cs:line 33&#x27;</span><br><span class="line">   at Unity.IL2CPP.Contexts.Scheduling.PhaseWorkScheduler`1.WorkerLoop(Object data) in /Users/bokken/build/output/fmwang/il2cpp/Unity.IL2CPP/Contexts.Scheduling/PhaseWorkScheduler.cs:line 317&#x27;</span><br></pre></td></tr></table></figure>
+<p>一开始以为我写的函数问题，这函数整个函数体注释掉还是继续报这个错误。</p>
+<p>后来对比了下之前可以打出包的情况，除了现在是通过UPM引入以外，还有个不同是之前的dll是用Unity的编译器编译的，现在的dll是VS编译的。所以怀疑到VS编译选择的平台上。</p>
+<p>查了下Unity各个版本.net的支持情况</p>
+<p><img src="/../images/57/1.jpg"></p>
+<p>Unity 2020.3用的是.net 4.x&#x2F;.net standard 2.0 相当于.net framework 4.6</p>
+<p>而我VS编译选择的Target是.net standard 2.1，所以导致打包出错。将VS Target改成.net framework 4.6.2进行编译就可以了。</p>
+<p>唯一的问题是VS不论是.netstandard 2.0还是.net framework 4.x都不支持C# 8.0导致一些写法要改下，比如<code>var a ??= new A()</code>，稍微麻烦点。（但是Unity的.net 4.x却又是可以支持C# 8.0的）</p>
+<p>另外我看了下Unity 2021.3版本已经支持了.net standard 2.1了，但是另外一个选项虽然不叫.net 4.x，但是还是叫.net framework，看介绍是可以即支持.net standard 2.1同时也支持最新的.net framework。所以如果是Unity 2021.3以后的版本可以直接使用VS编译出来的.net standard 2.1版本的库了。<br><img src="/../images/57/2.jpg"></p>
+<h3 id="6-其他"><a href="#6-其他" class="headerlink" title="6. 其他"></a>6. 其他</h3><p>这周有个组员突然间提了离职，有点难受，比较看重他，自身能力也确实突出，比较出色的完成了每次给的挑战，一步步看着他从萌新到能独挡一面。小公司留人还是太难了。</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
 </search>
