@@ -3012,6 +3012,8 @@
 <li>显存报错问题</li>
 <li>特效不显示问题</li>
 </ol>
+<span id="more"></span>
+
 <h3 id="1-完善客户端框架"><a href="#1-完善客户端框架" class="headerlink" title="1. 完善客户端框架"></a>1. 完善客户端框架</h3><ul>
 <li><p>仿MotionFramework进行模块化<br>  将底层及扩展组件模块化，上层可以按需加入需要的模块</p>
 </li>
@@ -3042,6 +3044,73 @@
 ]]></content>
       <tags>
         <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>61. 2023-05-21周总结</title>
+    <url>/2023/05/15/61-2023-05-21%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>篮球项目转小程序</li>
+<li>PS插件 Vue</li>
+</ol>
+<span id="more"></span>
+
+<h3 id="1-篮球项目转小程序"><a href="#1-篮球项目转小程序" class="headerlink" title="1. 篮球项目转小程序"></a>1. 篮球项目转小程序</h3><p>这项目之前其他人负责的，但是离职了，我接手继续这个项目。</p>
+<p>之前转的时候太激进了，小程序这边和app两边不兼容，这样会导致后期维护成本会比较大。所以决定重新以比较小的代价进行转，保证app开发的功能能直接合并到小程序分支。</p>
+<p>计划按照下面的安排进行：</p>
+<ul>
+<li><p>通用修改<br>【x】删除不必要的插件（减少编译的wasm大小）<br>【x】配置表改用二进制（减少GC，加快加载速度）<br>【x】使用YooAsset替换Addressable（YooAsset用着更顺手，同时打包收集策略更好点）<br>【x】静态图片和动态图片整理（图集比较乱）<br>【 】动态图片懒加载（改动比较大，很容易出bug）</p>
+</li>
+<li><p>webgl修改<br>【x】服务器和客户端支持websocket<br>【 】打webgl包测试<br>【 】Http访问方式修改(webgl不支持System.Net下的Http)<br>【 】资源卸载<br>【 】音频修改<br>【 】打包小程序测试<br>【 】图片压缩<br>【 】优化性能</p>
+</li>
+</ul>
+<p>要做的东西还是比较多的，这周把打x的完成了。遇到了几个问题：</p>
+<ol>
+<li>YooAsset替换Addressable的时候发现预制体引入的静态图片，而这个图片又被通过图集打到另外一个包的时候，打开预制体的时候就不能正确找到这张图片，而Addressable是可以正确找到图片的，暂时没找到解决方案，只能先把静态图片和动态图片进行整理，静态图片不打进图集。</li>
+<li>服务器用的是skynet，要支持websocket得引入其他人写的第三方插件，同时还要修改服务端配套的gate代码，容易出问题，所以找了另外第三方开源代理：<a href="https://github.com/novnc/websockify">websockify</a>，将websocket协议转成Tcp，这样服务端不需要修改任何代码。</li>
+</ol>
+<h3 id="2-PS-AI插件"><a href="#2-PS-AI插件" class="headerlink" title="2. PS AI插件"></a>2. PS AI插件</h3><p>在<a href="https://github.com/isekaidev/stable.art">stable.art</a>扩展了他的功能，包括ctrolnet，lora的支持。之前也是同一个离职的同时负责，这周抽时间优化了下，同时对这个插件进行服务端化，下次更新美术那边可以不用重新安装插件。</p>
+<p>插件用的是vue开发的，UI事件绑定这块比游戏这边好用太多了。</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+        <tag>小程序</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>62. 2023-05-28周总结</title>
+    <url>/2023/05/23/62-2023-05-28%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>篮球项目转小程序</li>
+<li>ParticleForUGUI问题</li>
+</ol>
+<span id="more"></span>
+
+<h3 id="1-篮球项目转小程序"><a href="#1-篮球项目转小程序" class="headerlink" title="1. 篮球项目转小程序"></a>1. 篮球项目转小程序</h3><ul>
+<li><p>通用修改<br>【x】删除不必要的插件（减少编译的wasm大小）<br>【x】配置表改用二进制（减少GC，加快加载速度）<br>【x】使用YooAsset替换Addressable（YooAsset用着更顺手，同时打包收集策略更好点）<br>【x】静态图片和动态图片整理（图集比较乱）<br>【x】动态图片懒加载（改动比较大，很容易出bug）<br>【x】UI框架支持资源卸载   </p>
+</li>
+<li><p>webgl修改<br>【x】服务器和客户端支持websocket<br>【x】打webgl包测试<br>【x】Http访问方式修改(webgl不支持System.Net下的Http)<br>【x】资源释放<br>【 】音频修改<br>【 】打包小程序测试<br>【 】图片压缩<br>【 】优化性能</p>
+</li>
+</ul>
+<p>过程中的问题</p>
+<ol>
+<li><p>Shader找不到问题<br>历史原因，这块代码不太好同步，写的时候直接用Shader.Find来做，但是会找不到，将Shader放到Unity Graphics配置中解决</p>
+</li>
+<li><p>Mono找不到问题<br>加载某个预制体的时候出现大量Mono找不到问题，暂时还没定位到原因</p>
+</li>
+<li><p>UI异步打开中，又调用关闭的问题<br>UI因为是异步加载，有可能加载中的时候又调用关闭，这时候关闭会不成功，之后的打开的加载回调了又会被加载出来，加了一个closing的flag把问题解决。这种就是典型的同步改异步加载会出现的问题。</p>
+</li>
+<li><p>Task.Delay问题<br>WebGL不支持Task.Delay，表现得效果就是await不会返回，且没有任何错误。Task系列函数WebGL有些支持有些不支持，不知道有没有某个地方能汇总下这些函数。</p>
+</li>
+<li><p>看不见堆栈问题，开启异常全部日志<br>调试得过程中发现有个报空就只有一行文本，不知道哪里有错，修改这个设置之后打出来的包就能看到消息错误堆栈了，但会影响性能和包体，所以release不能开。</p>
+</li>
+</ol>
+<p><img src="/../images/62/1.jpg"></p>
+<h3 id="ParticleForUGUI问题"><a href="#ParticleForUGUI问题" class="headerlink" title="ParticleForUGUI问题"></a>ParticleForUGUI问题</h3><p>美术用3D特效做了一个扫光特效，然后发现放到UI里面没有扫光效果。我们用的是ParticleForUGUI来把3D特效集成到UI里面的。测试过程中发现ParticleForUGUI会自动关闭3D粒子的Render，而我们的扫光效果用了一个Custom Data，如果Render关了，就不会把Custom Data数据发送给Shader，导致扫光失效了。搜了下相关issue，发现已经有人<a href="https://github.com/mob-sakai/ParticleEffectForUGUI/issues/160">提问</a>了，但是也没给出一个比较明白的解决方案，所以先放弃继续走这条路，扫光改用UIEffect来实现。</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+        <tag>小程序</tag>
       </tags>
   </entry>
 </search>
