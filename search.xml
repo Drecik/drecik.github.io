@@ -3351,4 +3351,265 @@
         <tag>周总结</tag>
       </tags>
   </entry>
+  <entry>
+    <title>70. 2023-07-23周总结</title>
+    <url>/2023/07/19/70-2023-07-23%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>小游戏充值流程补充</li>
+<li>小游戏进不去问题</li>
+<li>游戏服务端每个玩家Tick功能</li>
+</ol>
+<span id="more"></span>
+<h3 id="1-小游戏充值流程补充"><a href="#1-小游戏充值流程补充" class="headerlink" title="1. 小游戏充值流程补充"></a>1. 小游戏充值流程补充</h3><p>上周充值流程里说到Android流程里面，如果微信服务器notify到我们服务器这一步丢失了，但可能造成丢单。这周同事发现微信提供<a href="https://pay.weixin.qq.com/wiki/doc/apiv3_partner/apis/chapter4_1_2.shtml">接口</a>，根据微信订单号或者商户订单号（自己内部拼接的订单号）来查询订单状态。因为最终游戏服务器加钻石的记录会与商户订单号绑定，所以充值有没有加成功可以根据这个接口进行查询和补发。而且这个不发流程未来可以集成到客服接口里面进行自动补发。</p>
+<h3 id="2-小游戏进不去问题"><a href="#2-小游戏进不去问题" class="headerlink" title="2. 小游戏进不去问题"></a>2. 小游戏进不去问题</h3><p>发现小游戏偶现无法进入问题，而且没有任何异常。最终发现网络层回调的到业务逻辑层的时候业务逻辑层抛异常了，但是Unity没有捕获这异常（或者捕获了没有输出异常信息），导致消息接收循环逻辑乱了。为了安全在网络层回调业务层的时候手动自己加了异常捕获，确保整个消息接收循环不受业务层影响。</p>
+<h3 id="3-游戏服务端每个玩家Tick功能"><a href="#3-游戏服务端每个玩家Tick功能" class="headerlink" title="3. 游戏服务端每个玩家Tick功能"></a>3. 游戏服务端每个玩家Tick功能</h3><p>服务端经常会有倒计时的功能，比如各种刷新（日刷，周刷，月刷），功能倒计时（解锁某个技能倒计时，升级倒计时）等等，这种一般会用定时器去做，但是定时器的时候会涉及到一些问题：</p>
+<ul>
+<li>定时器的回调是否在统一线程（框架保证）</li>
+<li>如果玩家下线了，如何取消所有注册的定时器</li>
+</ul>
+<h4 id="定时器的回调是否在统一线程（框架保证）"><a href="#定时器的回调是否在统一线程（框架保证）" class="headerlink" title="定时器的回调是否在统一线程（框架保证）"></a>定时器的回调是否在统一线程（框架保证）</h4><p>这个一般框架来保证回调会和业务处理在同一个线程，不会造成线程安全问题</p>
+<h4 id="如果玩家下线了，如何取消所有注册的定时器"><a href="#如果玩家下线了，如何取消所有注册的定时器" class="headerlink" title="如果玩家下线了，如何取消所有注册的定时器"></a>如果玩家下线了，如何取消所有注册的定时器</h4><p>这里有两种方式去取消：</p>
+<ol>
+<li>每个用到定时器的模块，下线的时候自己取消（比较繁琐）</li>
+<li>Player身上封装定时器模块，所有其他模块注册定时器的时候用改模块来注册，定时器模块下线的时候自己取消所有注册的定时器（比较简单）</li>
+</ol>
+<p>推荐第二种方式，略微封装之后会带来很大的便利。</p>
+<h4 id="增加Tick功能"><a href="#增加Tick功能" class="headerlink" title="增加Tick功能"></a>增加Tick功能</h4><p>除了上面说的通过常规定时器实现功能外，最近在框架里面增加了一个没500ms tick的功能，这样各个模块写定时功能会比较简单。要倒计时的功能放在tick里面检查就行。而且上线的时候也不用单独写加定时器的函数。用起来感觉比定时器方便。唯一的问题就是每500ms，tick一次，可能会导致cpu空消耗，但可以增加代码便捷性以及降低出问题的风险，还是比较值的的。</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+        <tag>小游戏</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>71. 2023-07-30周总结</title>
+    <url>/2023/07/27/71-2023-07-30%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>配置表多语言</li>
+<li>正常功能推进</li>
+<li>其他</li>
+</ol>
+<span id="more"></span>
+
+<h3 id="1-配置表多语言"><a href="#1-配置表多语言" class="headerlink" title="1. 配置表多语言"></a>1. 配置表多语言</h3><p>我们的配置表会经过导表工具生成一份二进制文件和配置表读入、使用的代码文件。</p>
+<p>为了支持多语言，需要做一些流程上的补充。</p>
+<ol>
+<li>新增一张特殊的多语言表用来处理做多语言替换，里面第一列为id，第二列为中文，后面列的话分别是中文对应该语言的翻译。</li>
+<li>配置表列属性增加一个多语言属性，标记该属性的列说明要进行多语言替换。</li>
+<li>导表工具支持读取到多语言列的时候进行中文判定以及将中文与多语言表的中文列进行匹配（如果匹配不到，则将这个中文新增到多语言表中），匹配到多语言表的id之后，将该列的内容已<code>$$&#123;id&#125;</code>方式进行替换</li>
+<li>多语言列的使用代码进行封装，由原来直接获取列内容的方式修改为经过多语言模块拿列内容。</li>
+</ol>
+<p>修改之前的获取方式</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public string Confirm &#123; get; private set; &#125;</span><br></pre></td></tr></table></figure>
+<p>改之后</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">private string _Confirm;</span><br><span class="line">public string Confirm &#123; get =&gt; Babu.Client.Globalization.Globalizer.Instance.GetGlobalizationText(_Confirm); private set &#123; _Confirm = value; &#125; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这是导表过程流程上的补充。</p>
+<p>导表流程补充过程中遇到个Excel写入问题，写入的Excel会损坏打不开，最后才考这个<a href="https://stackoverflow.com/questions/36142337/npoi-writing-to-file-corrupts-xlsx-workbook">地址</a>，将打开文件时候的FileMode由FileMode.Open改为FileMode.Create，原因是FileMode.Open不会覆盖文件，如果写入的内容比之前短，之前的文件内容没有覆盖全就会有这个问题。之前做文件服务器的时候踩过这个坑，现在又踩了。</p>
+<p>运行期之后需要新增多语言模块，该模块主要负责读取默认的系统语言，根据系统语言选择合适的我们内部的语言类型。另外还需要读取多语言表，用于根据传入的id进行替换。</p>
+<p>核心的替换代码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/// &lt;summary&gt;</span><br><span class="line">/// 获取包内部的多语言文字</span><br><span class="line">/// &lt;/summary&gt;</span><br><span class="line">/// &lt;param name=&quot;text&quot;&gt;&lt;/param&gt;</span><br><span class="line">/// &lt;returns&gt;&lt;/returns&gt;</span><br><span class="line">public string GetBuildinGlobalizationText(string text)</span><br><span class="line">&#123;</span><br><span class="line">    if (text.StartsWith(&quot;$$&quot;) == false)</span><br><span class="line">    &#123;</span><br><span class="line">        return text;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    int index;</span><br><span class="line">    if (int.TryParse(text.Substring(2), out index) == false)</span><br><span class="line">    &#123;</span><br><span class="line">        return text;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (index &gt; _buildinGlobalizationConfigTable.DataRows.Count)</span><br><span class="line">    &#123;</span><br><span class="line">        return text;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    string fieldName = &quot;Text&quot; + _curLanguage.Suffix;</span><br><span class="line">    int fieldIndex = _buildinGlobalizationConfigTable.Fileds.IndexOf(fieldName);</span><br><span class="line">    if (fieldIndex == -1)</span><br><span class="line">    &#123;</span><br><span class="line">        return text;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return _buildinGlobalizationConfigTable.DataRows[index - 1].GetString(fieldIndex);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里是包内多语言的替换，翻译表用的是csv直接放在Resources下不能热更。多语言还得支持热更，并且还得走之前的配置表读取流程，我给多语言里面扩展了下接口，外部可以实现该接口来支持热更层多语言。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/// &lt;summary&gt;</span><br><span class="line">/// 热更层多语言接口</span><br><span class="line">/// &lt;/summary&gt;</span><br><span class="line">public interface IHotfixGlobalizer</span><br><span class="line">&#123;</span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 加载多语言配置</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    Task LoadGlobalizationConfig();</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 获取多语言文字</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    /// &lt;param name=&quot;text&quot;&gt;&lt;/param&gt;</span><br><span class="line">    /// &lt;returns&gt;&lt;/returns&gt;</span><br><span class="line">    string GetGlobalizationText(string text);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#region 热更多语言</span><br><span class="line"></span><br><span class="line">/// &lt;summary&gt;</span><br><span class="line">/// 设置热更层多语言接口</span><br><span class="line">/// &lt;/summary&gt;</span><br><span class="line">/// &lt;param name=&quot;hotfixGlobalizer&quot;&gt;&lt;/param&gt;</span><br><span class="line">public void SetHotfixGlobalizer(IHotfixGlobalizer hotfixGlobalizer)</span><br><span class="line">&#123;</span><br><span class="line">    _hotfixGlobalizer = hotfixGlobalizer;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// &lt;summary&gt;</span><br><span class="line">/// 加载多语言配置</span><br><span class="line">/// &lt;/summary&gt;</span><br><span class="line">/// &lt;returns&gt;&lt;/returns&gt;</span><br><span class="line">public Task LoadGlobalizationConfig()</span><br><span class="line">&#123;</span><br><span class="line">    return _hotfixGlobalizer.LoadGlobalizationConfig();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// &lt;summary&gt;</span><br><span class="line">/// 获取多语言文字</span><br><span class="line">/// &lt;/summary&gt;</span><br><span class="line">/// &lt;param name=&quot;text&quot;&gt;&lt;/param&gt;</span><br><span class="line">/// &lt;returns&gt;&lt;/returns&gt;</span><br><span class="line">public string GetGlobalizationText(string text)</span><br><span class="line">&#123;</span><br><span class="line">    return _hotfixGlobalizer.GetGlobalizationText(text);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#endregion</span><br></pre></td></tr></table></figure>
+
+<p>目前这块多语言只能支持配置表，后续要的继续支持UI层的文字和图片。后续写好了再补充。</p>
+<h3 id="2-正常的项目推进"><a href="#2-正常的项目推进" class="headerlink" title="2. 正常的项目推进"></a>2. 正常的项目推进</h3><p>项目需求功能正常推进中。</p>
+<h3 id="3-其他"><a href="#3-其他" class="headerlink" title="3. 其他"></a>3. 其他</h3><p>周五的时候，和女儿一起玩的小孩突然发烧（后面确诊手足口），担惊受怕了两天之后，女儿还是在周六晚上10点多开始发烧。</p>
+<p>这次发烧比之前的都可怕，周日早上7点第一次高热惊厥了1分钟，之后去了医院，也确诊了手足口，同时进行了挂针。快挂完的时候开始升温，不断在发抖，体温到了39度多，随后停止了挂针，吃了美林。但在回去路上突然再次高热惊厥3分钟，并且口中有泡沫，吓得我一路闯红灯到了医院。但是那家医院医生没什么办法，我只能看着她躺那没什么神智的样子干着急，医院也没有条件接收手足口儿童住院，给她灌了水合氯醛(安定药物，防惊厥)之后叫120转院到了市妇保进行入院治疗。</p>
+<p>住院之后医生给开了口服的安定药物继续防止惊厥，然后的过程就是靠她自己抗了，一种退烧药的药效根本撑不了4个小时，经过一夜的照顾来回换了几次药之后终于在周一早上发热稳定下来了。第一次带过去医生的时候医生就建议有高热惊厥，而且还是手足口就建议住院，我当时没想考虑周全拒绝了住院。如果当时就住进去后面就会让她少受一点苦了。以后一定要听医生的建议，避免再出现这种情况。</p>
+<p>另外当女儿稍微稳定下来，好不容易心情有点平复之后，另外一个消息又打乱了我们，家里4个月的二宝开始发烧了。真的是心里憔悴，二宝太小只能吃一种药，就怕烧的扛不住又跟大的一样，老婆当天回去继续连夜照顾小的，这种精神焦虑只有经历过才会理解。好在二宝比大宝转好的更快点，一晚上就靠自己基本上就退下来了。这几天过的真的是太艰难了。</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+        <tag>多语言</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>72. 2023-08-06周总结</title>
+    <url>/2023/08/03/72-2023-08-06%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>AudioManager PlayOneShot问题</li>
+<li>skynet配置表内存问题</li>
+</ol>
+<span id="more"></span>
+
+<h3 id="1-AudioManager-PlayOneShot问题"><a href="#1-AudioManager-PlayOneShot问题" class="headerlink" title="1. AudioManager PlayOneShot问题"></a>1. AudioManager PlayOneShot问题</h3><p>之前播放的音效，因为会同时播，所以使用的是PlayOneShot来播放，但是发现有些时候音效会播放不出来。不确定什么原因导致。</p>
+<p>后面全部改成AudioSound的Play来播放，为了实现多个音效同时播放的需求，每个播放的音效都会有一个AudioSound来驱动播放，为了提高性能把AudioSound做了一个内存池。</p>
+<p>另外Audio在游戏中会有多种类型，比如背景音乐，环境音，音效，语言，需要对Audio进行分层。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">   /// &lt;summary&gt;</span><br><span class="line">/// 音频层级类型</span><br><span class="line">/// &lt;/summary&gt;</span><br><span class="line">public enum EAudioLayerType</span><br><span class="line">   &#123;</span><br><span class="line">       /// &lt;summary&gt;</span><br><span class="line">       /// 音乐</span><br><span class="line">       /// &lt;/summary&gt;</span><br><span class="line">       Music,</span><br><span class="line"></span><br><span class="line">       /// &lt;summary&gt;</span><br><span class="line">       /// 环境</span><br><span class="line">       /// &lt;/summary&gt;</span><br><span class="line">       Ambient,</span><br><span class="line"></span><br><span class="line">       /// &lt;summary&gt;</span><br><span class="line">       /// 语音</span><br><span class="line">       /// &lt;/summary&gt;</span><br><span class="line">       Voice,</span><br><span class="line"></span><br><span class="line">       /// &lt;summary&gt;</span><br><span class="line">       /// 音效</span><br><span class="line">       /// &lt;/summary&gt;</span><br><span class="line">       Sound,</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>每个层级类型需要实现一个层级接口。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">internal abstract class AudioLayer</span><br><span class="line">&#123;</span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 层级类型</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    protected EAudioLayerType _layerType;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 承载的GameObject</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    protected GameObject _gameObject;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 静音设置</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public virtual bool Mute</span><br><span class="line">    &#123;</span><br><span class="line">        get =&gt; PlayerPrefs.GetInt($&quot;_Audio_&#123;_layerType&#125;_Mute&quot;) == 1;</span><br><span class="line">        set =&gt; PlayerPrefs.SetInt($&quot;_Audio_&#123;_layerType&#125;_Mute&quot;, value ? 1 : 0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 音量设置</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public virtual float Volume</span><br><span class="line">    &#123;</span><br><span class="line">        get =&gt; PlayerPrefs.GetFloat($&quot;_Audio_&#123;_layerType&#125;_Volume&quot;, 1);</span><br><span class="line">        set =&gt; PlayerPrefs.SetFloat($&quot;_Audio_&#123;_layerType&#125;_Volume&quot;, value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public AudioLayer(EAudioLayerType layerType, GameObject parent)</span><br><span class="line">    &#123;</span><br><span class="line">        _layerType = layerType;</span><br><span class="line"></span><br><span class="line">        _gameObject = new GameObject(layerType.ToString());</span><br><span class="line">        _gameObject.transform.SetParent(parent.transform);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 播放音频</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    /// &lt;param name=&quot;clip&quot;&gt;&lt;/param&gt;</span><br><span class="line">    /// &lt;param name=&quot;loop&quot;&gt;&lt;/param&gt;</span><br><span class="line">    public abstract void Play(AudioClip clip, bool loop);</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 过度方式播放音频</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    /// &lt;param name=&quot;clip&quot;&gt;&lt;/param&gt;</span><br><span class="line">    /// &lt;param name=&quot;loop&quot;&gt;&lt;/param&gt;</span><br><span class="line">    /// &lt;param name=&quot;fadeOutTime&quot;&gt;上一首淡出时间&lt;/param&gt;</span><br><span class="line">    /// &lt;param name=&quot;fadeInTime&quot;&gt;下一首淡入时间&lt;/param&gt;</span><br><span class="line">    public abstract void Play(AudioClip clip, bool loop, float fadeOutTime, float fadeInTime);</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 停止播放音频</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public abstract void Stop();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中Music，Ambient，Voice因为都只能同时播放一个，所以这三种是一种层级实现。</p>
+<p>另外一个音效因为需要支持同时播放，所以是另外一种层级实现。</p>
+<h3 id="2-skynet配置表内存问题"><a href="#2-skynet配置表内存问题" class="headerlink" title="2. skynet配置表内存问题"></a>2. skynet配置表内存问题</h3><p>之前设计每个player对应一个service，因为skynet框架设计是每个service都是一个独立的lua虚拟机，所以在player中require的配置表都会占一份内存，导致每个player内存在7M左右，1台8G的内存也只能支持500~800人同时在线。</p>
+<p>通过优化改成skynet的sharetable，将player的内存降到了2M，还是挺可观的。</p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>女儿稳定几天没有发烧之后，于周五早上出院，结果晚上又发烧了（心力憔悴），好在这次跟之前比不算严重，最高直到39，而且药效也比较久，整个人精神也还行，只是连续的折腾，搞得一家人都特别辛苦，心理上的压力也很大。</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+        <tag>Audio</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>73. 2023-08-13周总结</title>
+    <url>/2023/08/09/73-2023-08-13%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>sdk框架</li>
+<li>git clone Out of memory, malloc failed (tried to allocate 2147483648 bytes)</li>
+<li>新手引导讨论</li>
+<li>弧线问题</li>
+</ol>
+<span id="more"></span>
+
+<h3 id="1-SDK框架"><a href="#1-SDK框架" class="headerlink" title="1. SDK框架"></a>1. SDK框架</h3><p>计划在框架集成一套SDK框架，具体使用就是如果项目想接某个SDK，那直接在Package Manager里面引入这个包（比如Babu.Client.SDK.Facebook），引入之后配置项目的参数就可以用Facebook的指定功能了，整个过程不会对业务代码有侵入。</p>
+<p>设计核心就是用代理模式+工厂模式来封装SDK实现，定义了常用的需要SDK功能的管理类以及对应的SDK实现接口，比如充值我们会有一个PurchaseServiceManager，以及一个IPurchaseService，IPurchaseServiceFactory。</p>
+<p>PurchaseServiceManager代理了IPurchaseService的接口，上层只通过PurchaseServiceManager操作所有的充值接口，不用关心里面具体是哪个IPurchaseService实现。</p>
+<p>为了在编辑器下使用PurchaseServiceManager，还需要一套编辑器下的IPurchaseService实现，只是简单模拟下充值过程。</p>
+<p>其他SDK如果想替换PurchaseServiceManager，为了避免对业务逻辑的侵入，可以使用Unity的属性[RuntimeInitializeOnLoadMethod]来自动注入到PurchaseServiceManager中。</p>
+<p>其他细节：</p>
+<ol>
+<li>为了避免SDK之间需要修改android或者ios配置工程产生冲突，可以使用<a href="https://github.com/googlesamples/unity-jar-resolver">unity-jar-resolver</a>来避免</li>
+<li>有些情况可能接了Facebook但是不想用它的账号，可以通过配置开关在RuntimeInitializeOnLoadMethod中不去注入到AccountServiceManager中即可</li>
+<li>如果海外GP和AppStore的充值，推荐使用Unity的In App Purchasing来做，避免很多繁琐问题，唯一的不好就是引入这个之后还得关联Unity Service项目</li>
+</ol>
+<h3 id="2-git-clone-Out-of-memory-malloc-failed-tried-to-allocate-2147483648-bytes"><a href="#2-git-clone-Out-of-memory-malloc-failed-tried-to-allocate-2147483648-bytes" class="headerlink" title="2. git clone Out of memory, malloc failed (tried to allocate 2147483648 bytes)"></a>2. git clone Out of memory, malloc failed (tried to allocate 2147483648 bytes)</h3><p>原因是因为http&#x2F;postBuffer开太大了，调用<code>git config --global http.postBuffer 100m</code>后解决</p>
+<h3 id="3-新手引导讨论"><a href="#3-新手引导讨论" class="headerlink" title="3. 新手引导讨论"></a>3. 新手引导讨论</h3><p>之前同事做了一版新手引导，效率慢而且很容易出问题，所以组织一次新手引导怎么设计问题，这个后续等验证过了再单独发</p>
+<h3 id="4-UIParticle曲线运动问题"><a href="#4-UIParticle曲线运动问题" class="headerlink" title="4. UIParticle曲线运动问题"></a>4. UIParticle曲线运动问题</h3><p>在使用UIParticle attractor component做曲线运动的时候遇到个问题，如果在屏幕边缘飞的话会几率朝屏幕外拉曲线，导致飞出屏幕外。</p>
+<p>所以想改他的实现增加一个屏幕边缘判断，如果接近边缘，就朝屏幕里面拉曲线。</p>
+<p>看了下代码主要使用<code>Vector3.Slerp</code>实现的，这个东西不太好理解，也是看了下其他资料和打印实际的坐标之后才有一些认识。</p>
+<p>这里有三个点一个是源点（0，0），另外两个就是起始点start_pos和目标点target_pos，曲线运动的中心在(0, 0)，如果你起始点在target_pos - (0, 0) 方向右边，则生成的曲线就会往右拐</p>
+<p>因为特效做的时候是范围生成，所以会出现一下往左拐，一下往右拐的情况。</p>
+<p>修复方式就是在代码里判断如果在屏幕边缘，强行将particle的位置设置到target_pos - (0, 0)的右边。在UIParticleAttractor的Attract中增加相关代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">if (adjustPosition == false)</span><br><span class="line">&#123;</span><br><span class="line">   Vector2 viewPos = uiCamera.WorldToViewportPoint(StartObj.transform.position);</span><br><span class="line">   //Debug.Log($&quot;viewPos: &#123;viewPos&#125;&quot;);</span><br><span class="line">   if (viewPos.y &gt; 0.8)</span><br><span class="line">   &#123;</span><br><span class="line">      Debug.Log($&quot;adjust position: &#123;p.position&#125;, &#123;dstPos&#125;&quot;);</span><br><span class="line">      if (p.position.x &lt; dstPos.x)</span><br><span class="line">      &#123;</span><br><span class="line">            var dir = (new Vector3(dstPos.y, -dstPos.x)).normalized;</span><br><span class="line">            p.position = dir * 0.5f;</span><br><span class="line">      &#125;</span><br><span class="line">      else</span><br><span class="line">      &#123;</span><br><span class="line">            var dir = (new Vector3(-dstPos.y, dstPos.x)).normalized;</span><br><span class="line">            p.position = dir * 0.5f;</span><br><span class="line">      &#125;</span><br><span class="line">      //Debug.Log($&quot;adjust position: &#123;p.position&#125;, &#123;dstPos&#125;, &#123;p.position&#125;&quot;);</span><br><span class="line">   &#125;</span><br><span class="line">   adjustPosition = true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>75. 2023-08-27周总结</title>
+    <url>/2023/08/22/75-2023-08-27%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>Unity接H5 SDK</li>
+<li>Verdaccio包找不到问题</li>
+<li>打包问题</li>
+<li>谷歌登录接入问题</li>
+<li>特效放UIParticle中不显示问题</li>
+</ol>
+<span id="more"></span>
+
+<h3 id="1-Unity接H5-SDK"><a href="#1-Unity接H5-SDK" class="headerlink" title="1. Unity接H5 SDK"></a>1. Unity接H5 SDK</h3><p>H5 SDK一版提供的是js代码，所以需要研究Unity中C#调用JavaScrip代码，JavaScript调用Unity的流程，具体可以参考这个<a href="https://docs.unity3d.com/Manual/webgl-interactingwithbrowserscripting.html">文档</a></p>
+<p>H5 SDK一般需要自己设置src标签去下载和初始化，可以用下面的方式提供js接口来由Unity发起初始化H5 SDK，这样就不需要修改index.html去插入代码了</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mergeInto(LibraryManager.library, &#123;</span><br><span class="line"></span><br><span class="line">  Init: function () &#123;</span><br><span class="line">    var url = &quot;https://cdn.askb48.com/sdk/iwan/AK48.js&quot;;</span><br><span class="line">    var sdk = document.createElement(&quot;script&quot;);</span><br><span class="line">    sdk.src = url + &quot;?ts=&quot; + new Date().getTime();</span><br><span class="line">    sdk.onload = function (ev) &#123;</span><br><span class="line">        console.log(&quot;sdk onload&quot;);</span><br><span class="line">    &#125;;</span><br><span class="line">    document.body.appendChild(sdk);</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>另外js要调用Unity的话一定要拿到UnityInstance，unityInstance的初始化代码会自动生成到index.html中，所以这一块一定得需要修改index.html，把unityInstance赋值给全局变量。</p>
+<p>还有个问题就是unityInstance.SendMessage第三个参数只能是字符串，所以无参或者单个参数，所以如果是多个参数则需要把参数通过JSON.stringify转成json字符串，C#解析json字符串来获取多个参数。</p>
+<h3 id="2-Verdaccio包找不到问题"><a href="#2-Verdaccio包找不到问题" class="headerlink" title="2. Verdaccio包找不到问题"></a>2. Verdaccio包找不到问题</h3><p>利用nginx的proxy机制将域名转发给verdaccio，发现里面的包都不见了，需要重新add-user。但是直接ip访问verdaccio是不需要的。</p>
+<p>找了好一会资料发现都不太对，最终修改verdaccio配置（AppData\Roaming\verdaccio\config.yaml），将<code>publish: $authenticated</code>改成<code>publish: $all</code>后可以直接拿到里面的包</p>
+<h3 id="3-打包问题"><a href="#3-打包问题" class="headerlink" title="3. 打包问题"></a>3. 打包问题</h3><p>打包遇到<code>error: resource android:attr/lStar not found.</code>，将target sdk版本从30升级到31后修复</p>
+<h3 id="4-谷歌登录接入问题"><a href="#4-谷歌登录接入问题" class="headerlink" title="4. 谷歌登录接入问题"></a>4. 谷歌登录接入问题</h3><p>谷歌登录接入的时候一直报Sign Error，暂时不知道什么原因</p>
+<h3 id="5-特效放UIParticle中不显示问题"><a href="#5-特效放UIParticle中不显示问题" class="headerlink" title="5. 特效放UIParticle中不显示问题"></a>5. 特效放UIParticle中不显示问题</h3><ol>
+<li>检查是否用了CustomData，UIParticle不支持CustomData</li>
+<li>检查UI摄像机改成正交</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+        <tag>H5</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>74. 2023-08-20周总结</title>
+    <url>/2023/08/18/74-2023-08-20%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>新手引导</li>
+</ol>
+<span id="more"></span>
+
+<p>这周主要是在在之前讨论过的基础上进行新手引导的实现，工作量很大，过程中也遇到了一些问题，这一块后续在新手引导里面总结。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>76. 2023-09-03周总结</title>
+    <url>/2023/08/30/76-2023-09-03%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>谷歌登录接入问题，play service绑定</li>
+<li>动画问题</li>
+<li>Firebase问题</li>
+</ol>
+<span id="more"></span>
+
+<h3 id="1-谷歌登录问题"><a href="#1-谷歌登录问题" class="headerlink" title="1. 谷歌登录问题"></a>1. 谷歌登录问题</h3><p>上周谷歌登录一直返回Sign Error，最后在谷歌后台Play游戏服务-设置管理-配置-凭据下添加凭据解决。</p>
+<p>虽然有点质疑谷歌登录和Play游戏不是一个东西，但确实解决了。</p>
+<h3 id="2-动画问题"><a href="#2-动画问题" class="headerlink" title="2. 动画问题"></a>2. 动画问题</h3><p>我们的3D项目需要做剧情动画，前期框架虽然设计为可配置版，但是是一个半成品，动画只能程序来配置。导致的问题就是后续调效果程序介入很频繁，做的很累。</p>
+<p><strong>吸取教训</strong>，动画做成完全可配置版，由策划或美术进行配置，程序只负责添加新的动画节点。后续不参与调效果。</p>
+<h3 id="3-Firebase问题"><a href="#3-Firebase问题" class="headerlink" title="3. Firebase问题"></a>3. Firebase问题</h3><p>接入的时候，运行遇到问题，<code>Failed to read Firebase options from the app&#39;s resources</code>。</p>
+<p>定位到打包的过程中Firebase没有生成一个google-services.xml。这个是Firebase打包的时候自动生成的，不知道为啥没有生成。</p>
+<p>定位到原因是因为下载的google-services.json与这个项目不匹配，重新下载新的问题解决。</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>77. 2023-09-10周总结</title>
+    <url>/2023/09/04/77-2023-09-10%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>.net core正在启动调试适配器解决方法</li>
+<li>闪屏问题</li>
+<li>3D游戏准备第一轮测试</li>
+</ol>
+<span id="more"></span>
+
+<h3 id="1-net-core正在启动调试适配器解决方法"><a href="#1-net-core正在启动调试适配器解决方法" class="headerlink" title="1. .net core正在启动调试适配器解决方法"></a>1. .net core正在启动调试适配器解决方法</h3><p>.net想进行remote调试的时候，一直卡在<code>正在启动调试适配器</code>，找相关资料发现是因为下载调试包下载太慢的原因。</p>
+<p>最后开启代理，然后手动调用<code>/bin/sh /home/xuchen/.vs-debugger/GetVsDbg.sh -v vs2022 -l /home/xuchen/.vs-debugger/vs2022 -a /remote_debugger</code>，成功之后再启动远程调试问题解决。</p>
+<h3 id="2-特效闪屏问题"><a href="#2-特效闪屏问题" class="headerlink" title="2. 特效闪屏问题"></a>2. 特效闪屏问题</h3><p>3D游戏测试在模拟器下会有闪屏问题，抓帧发现某些不存在的模型出现在不正确的问题。</p>
+<p>后续美术大佬那边找到了问题所在，<strong>shader的精度不够</strong>，修改后问题修复。</p>
+<h3 id="3-3D游戏准备第一轮测试"><a href="#3-3D游戏准备第一轮测试" class="headerlink" title="3. 3D游戏准备第一轮测试"></a>3. 3D游戏准备第一轮测试</h3><p>经过一年开发，也经过这段时间高强度加班，终于在这周赶出了版本。</p>
+<p>算是第一次完整的从0开始一个中大型的3D项目开发，也意识到自己的一些问题:</p>
+<ol>
+<li>没做好代码把控，组员放开了写，导致后续加需求的情况下各种坑，后续还得花时间重构。</li>
+<li>没持续跟进文件夹标准的执行，一开始指定过文件夹的标准，但是随着项目推进，没有持续跟进标准的执行，导致资源放的随心所欲，管理困难。</li>
+<li>游戏设计经验缺乏，新手引导虽然重新设计了一版有一定的改进，但整体还是设计失败的，需要花大量时间解决引导卡死问题。另外剧情动画的配置化思想还不是很坚定，占用程序大量时间。</li>
+<li>3D工作流经验缺乏，主要是美术和程序这边的配合，没有一套好的工作流标准，中间出现很多问题，需要来来回回磨合比较久。这一块需要利用这个项目好好总结，以便下个类似项目不要出现问题。</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>78. 2023-09-17周总结</title>
+    <url>/2023/09/11/78-2023-09-17%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>账号系统完善</li>
+<li>3D项目资源整理，代码重构</li>
+<li>安装Android SDK 28问题</li>
+<li>nginx证书缓存</li>
+</ol>
+<span id="more"></span>
+
+<h3 id="1-账号系统完善"><a href="#1-账号系统完善" class="headerlink" title="1. 账号系统完善"></a>1. 账号系统完善</h3><p>为账号系统增加了绑定、解绑功能，另外还增加了一个操作表，好追溯玩家的登录、绑定、解绑的操作。</p>
+<p>在做这个功能的时候遇到了个报错：<code>Entity Framework Core Could not save changes. Please configure your entity type accordingly.</code></p>
+<p>看了半天找不到问题，最后通过注释大法，发现其中的<code>string AccoutId</code>字段注释掉之后就能正常，最后发现数据库中的char的长度设置太小了，比较坑爹的报错，不提示哪个字段有问题。</p>
+<p>另外还遇到个中文乱码问题，检查了数据库的编码和存储的编码都是Utf8，但还是乱码，最后在ConnectionString里面补充：CharSet&#x3D;utf8;才解决。</p>
+<h3 id="2-3D项目资源整理，代码重构"><a href="#2-3D项目资源整理，代码重构" class="headerlink" title="2. 3D项目资源整理，代码重构"></a>2. 3D项目资源整理，代码重构</h3><p>版本发完了，上周也总结了一些问题，这周抽时间牵头做了一些资源整理和代码重构。</p>
+<p>资源整理主要整理了下Sprite的文件夹，UI和场景中的Sprite穿插在一起使用比较混乱，按照UI和场景分开，同时UI按照界面分开，场景按照功能部件分开。</p>
+<p>代码重构主要思路就是解耦，之前太多的管理类，所有东西堆在管理类里面。按照组件化的思想去重新设计，每个脚本是一个功能脚本，只干较少的较为独立的事情，场景中的障碍，建筑，小人都是实体，按照需求包含不同的功能脚本，这样既能解耦也能复用代码。</p>
+<p>这一块预计还得花2~3周才能彻底整理完成。</p>
+<h3 id="3-安装Android-SDK-28问题"><a href="#3-安装Android-SDK-28问题" class="headerlink" title="3. 安装Android SDK 28问题"></a>3. 安装Android SDK 28问题</h3><p>Unity安装的时候默认只安装了29和30的SDK，但是我们的发行那边只支持28的SDK，所以需要手动安装下28的SDK。</p>
+<p>按照之前的流程进入到Unity对应的SDK目录下执行<code>./sdkmanager install &quot;platforms;android-28&quot;</code>即可，但是在打包机上执行之后报<code>Failed to install android-sdk: &quot;java.lang.NoClassDefFoundError: javax/xml/bind/annotation/XmlSchema&quot;</code></p>
+<p>这个原因是使用高版本的Java导致，安装Java8之后，通过<code>export JAVA_HOME=java8/path</code>映射到Java8目录之后，再次执行之后可以正常安装</p>
+<h3 id="4-nginx证书缓存"><a href="#4-nginx证书缓存" class="headerlink" title="4. nginx证书缓存"></a>4. nginx证书缓存</h3><p>周末证书到期了，但是明明已经替换成新证书，并且调用<code>nginx -s reload</code>了，但是还是出现用的旧的证书，导致证书过期问题。</p>
+<p>猜想nginx有缓存，因为比较紧急，最后换了个证书文件名来解决。</p>
+<p>查了资料发现nginx确实会缓存证书，并且<code>nginx -s reload</code>不会刷新证书，需要通过重启nginx才能刷新。</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
 </search>
