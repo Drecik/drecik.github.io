@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="说明这篇博客用于记录学习linux性能优化实战专栏CPU篇的一些总结，巩固自己知识点的同时也能够方便以后查询">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux性能优化实战学习笔记——CPU篇">
+<meta property="og:url" content="http://example.com/2018/12/01/25/index.html">
+<meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="说明这篇博客用于记录学习linux性能优化实战专栏CPU篇的一些总结，巩固自己知识点的同时也能够方便以后查询">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/25/1.png">
+<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/25/2.png">
+<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/25/3.png">
+<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/25/4.png">
+<meta property="article:published_time" content="2018-12-01T08:38:32.000Z">
+<meta property="article:modified_time" content="2022-06-25T13:14:58.023Z">
+<meta property="article:author" content="Drecik Xu">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="linux优化">
+<meta property="article:tag" content="笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/25/1.png">
+
+
+<link rel="canonical" href="http://example.com/2018/12/01/25/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2018/12/01/25/","path":"2018/12/01/25/","title":"linux性能优化实战学习笔记——CPU篇"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>linux性能优化实战学习笔记——CPU篇 | Drecik's Blog</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Drecik's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B3%E5%9D%87%E8%B4%9F%E8%BD%BD"><span class="nav-number">2.</span> <span class="nav-text">平均负载</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">2.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B"><span class="nav-number">2.2.</span> <span class="nav-text">如何查看</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">3.</span> <span class="nav-text">CPU上下文切换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5-1"><span class="nav-number">3.1.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="nav-number">3.1.1.</span> <span class="nav-text">进程上下文</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">3.1.2.</span> <span class="nav-text">内核上下文切换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">3.1.3.</span> <span class="nav-text">线程上下文切换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">3.1.4.</span> <span class="nav-text">中断上下文切换</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E7%94%9FCPU%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="nav-number">3.2.</span> <span class="nav-text">发生CPU上下文切换的场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B-1"><span class="nav-number">3.3.</span> <span class="nav-text">如何查看</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%B3%BB%E7%BB%9F%E6%80%BB%E4%BD%93%E6%83%85%E5%86%B5"><span class="nav-number">3.3.1.</span> <span class="nav-text">查看系统总体情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-number">3.3.2.</span> <span class="nav-text">查看进程的情况</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%BC%82%E5%B8%B8"><span class="nav-number">3.4.</span> <span class="nav-text">如何判断异常</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU%E4%BD%BF%E7%94%A8%E7%8E%87"><span class="nav-number">4.</span> <span class="nav-text">CPU使用率</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5-2"><span class="nav-number">4.1.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8BCPU%E6%95%B0%E6%8D%AE"><span class="nav-number">4.1.1.</span> <span class="nav-text">查看CPU数据</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8BCPU%E4%BD%BF%E7%94%A8%E7%8E%87"><span class="nav-number">4.2.</span> <span class="nav-text">查看CPU使用率</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#top%E5%91%BD%E4%BB%A4"><span class="nav-number">4.2.1.</span> <span class="nav-text">top命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pidstat"><span class="nav-number">4.2.2.</span> <span class="nav-text">pidstat</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E6%9F%A5CPU%E9%97%AE%E9%A2%98%E4%B8%80%E8%88%AC%E6%80%9D%E8%B7%AF"><span class="nav-number">5.</span> <span class="nav-text">排查CPU问题一般思路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84CPU%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87"><span class="nav-number">5.1.</span> <span class="nav-text">常用的CPU性能指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9F%E6%9F%A5%E5%9B%BE%EF%BC%9ACPU%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87-gt-%E5%B7%A5%E5%85%B7"><span class="nav-number">5.2.</span> <span class="nav-text">速查图：CPU性能指标 -&gt; 工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9F%E6%9F%A5%E5%9B%BE%EF%BC%9A%E5%B7%A5%E5%85%B7-gt-CPU%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87"><span class="nav-number">5.3.</span> <span class="nav-text">速查图：工具 -&gt; CPU性能指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E6%9F%A5%E6%89%BE%E6%80%9D%E8%B7%AF%E5%9B%BE"><span class="nav-number">5.4.</span> <span class="nav-text">CPU性能问题查找思路图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%8F%AF%E8%83%BD%E9%81%87%E5%88%B0%E6%AF%94%E8%BE%83%E6%A3%98%E6%89%8B%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">5.5.</span> <span class="nav-text">其他可能遇到比较棘手的问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%80%9D%E8%B7%AF"><span class="nav-number">6.</span> <span class="nav-text">CPU性能优化思路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%89%8D%E9%9C%80%E8%A6%81%E8%80%83%E8%99%91%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">6.1.</span> <span class="nav-text">性能优化前需要考虑的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%80%9D%E8%B7%AF"><span class="nav-number">6.2.</span> <span class="nav-text">优化思路</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E4%BC%98%E5%8C%96"><span class="nav-number">6.2.1.</span> <span class="nav-text">应用程序优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E4%BC%98%E5%8C%96"><span class="nav-number">6.2.2.</span> <span class="nav-text">系统优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%81%BF%E5%85%8D%E8%BF%87%E6%97%A9%E4%BC%98%E5%8C%96"><span class="nav-number">6.3.</span> <span class="nav-text">避免过早优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AA%E4%BA%BA%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E8%BF%87%E7%A8%8B%E7%9A%84%E6%80%BB%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">个人性能分析过程的总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Drecik Xu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/12/01/25/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="linux性能优化实战学习笔记——CPU篇 | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          linux性能优化实战学习笔记——CPU篇
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-12-01 16:38:32" itemprop="dateCreated datePublished" datetime="2018-12-01T16:38:32+08:00">2018-12-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>这篇博客用于记录学习<a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/140">linux性能优化实战</a>专栏CPU篇的一些总结，巩固自己知识点的同时也能够方便以后查询</p>
+<span id="more"></span>
+
+<h2 id="平均负载"><a href="#平均负载" class="headerlink" title="平均负载"></a>平均负载</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>可运行状态和不可中断状态的平均进程数</p>
+<ul>
+<li>可运行状态：即为正在运行或者等待被运行的进程（进程状态为R）</li>
+<li>不可中断状态：正在处于关键流程的进程（进程状态为D），常用的是等待硬件I&#x2F;O响应，例如为了保证数据一致性，在写入数据时候，磁盘没用回应之前，该进程是不可被中断，这是系统对进程和硬件设备的一种保护措施</li>
+</ul>
+<p>平均负载可以简单理解为单位时间内活跃的进程数，如果该值大于cpu核数的话就是过载了。一般情况下<strong>平均负载超过cpu核数的70%了</strong>，就应该去查看原因。</p>
+<h3 id="如何查看"><a href="#如何查看" class="headerlink" title="如何查看"></a>如何查看</h3><p>两种方法查看：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:/home/drecik# uptime</span><br><span class="line">01:01:21 up  6:27,  4 users,  load average: 4.57, 4.12, 3.58</span><br></pre></td></tr></table></figure>
+<p>load average后面的值分别代表了最近1分钟，3分钟，5分钟的平均负载值<br>或者使用top命令，第一行的最后数据就是平均负载</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:/home/drecik# top</span><br><span class="line">top - 10:37:39 up 114 days, 23:15,  1 user,  load average: 0.04, 0.11, 0.09</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h2 id="CPU上下文切换"><a href="#CPU上下文切换" class="headerlink" title="CPU上下文切换"></a>CPU上下文切换</h2><h3 id="概念-1"><a href="#概念-1" class="headerlink" title="概念"></a>概念</h3><p>Linux是一个多任务操作系统，可以支持远大于cpu数量的任务同时运行。这里的同时指的是并发，Linux在很短的时间内把CPU轮流分配给它们去执行。CPU上下文切换是保证Linux系统该功能正常工作的核心之一，过多的上下文切换会把CPU时间消耗在寄存器、内核栈以及虚拟内存等数据的保存和恢复上，从而缩短进程真正的执行时间，导致系统整体的性能大幅下降。</p>
+<h4 id="进程上下文"><a href="#进程上下文" class="headerlink" title="进程上下文"></a>进程上下文</h4><p>为了能够支持CPU轮流给不同进程去执行，所以在该进程让出CPU之前，我们需要保存该进程正在运行的现场（CPU中该进程的各个寄存器值，程序当前执行的位置，虚拟内存等信息）。这样下次轮到该进程再次执行的时候能够恢复当时的运行现场，进程就能够继续往下执行。保存和恢复的现场就是进程的上下文。</p>
+<h4 id="内核上下文切换"><a href="#内核上下文切换" class="headerlink" title="内核上下文切换"></a>内核上下文切换</h4><p>Linux按照特权等级，把运行空间分为内核空间和用户空间。每个运行空间都有独立的堆栈。当进程处于用户态的时候调用系统调用就会进入到内核态。这个时候需要保存该进程用户空间的当前的现场（寄存器，程序当前位置等），然后恢复内核空间的现场，进入到内核空间执行内核代码。系统调用完毕之后，保存内核空间现场，恢复用户空间现场。继续执行用户空间代码。所以一次系统调用会发生两次CPU上下文切换。但是因为这还是属于同一个进程中，保存和恢复的现场会比进程切换的小，所以开销没有进程切换的大。</p>
+<h4 id="线程上下文切换"><a href="#线程上下文切换" class="headerlink" title="线程上下文切换"></a>线程上下文切换</h4><p>线程是CPU调度和运行的基本单位，而进程是资源申请的基本单位。当一个进程拥有多个线程的时候，多个线程将共享进程的很多资源（内存空间，硬件资源等）。所以如果发生线程上下文切换的时候，切换的内容会比进程切换少很多。</p>
+<h4 id="中断上下文切换"><a href="#中断上下文切换" class="headerlink" title="中断上下文切换"></a>中断上下文切换</h4><p>为了快速响应硬件的事件，中断处理会打断进程的正常调度和执行，转而调用中断处理程序，相应设备事件。而在打断其他进程时，就需要将进程当前的状态保存下来，这样在中断结束后，进程仍然可以从原来的状态恢复运行。</p>
+<h3 id="发生CPU上下文切换的场景"><a href="#发生CPU上下文切换的场景" class="headerlink" title="发生CPU上下文切换的场景"></a>发生CPU上下文切换的场景</h3><ol>
+<li>CPU时间片跑满，被动释放CPU给另外个进程</li>
+<li>系统资源不足（内存&#x2F;硬盘），挂起进程，等待资源满足</li>
+<li>硬件中断，挂起进程，去执行内核相关中断代码</li>
+<li>主动sleep，主动释放CPU给另外个进程</li>
+<li>更高优先级进程运行，保证高优先级进程优先执行</li>
+<li>调用内核函数</li>
+</ol>
+<h3 id="如何查看-1"><a href="#如何查看-1" class="headerlink" title="如何查看"></a>如何查看</h3><p>工具：</p>
+<ul>
+<li>sysstat：包含了linux常用的多核性能分析工具，用来监控核分析系统的性能</li>
+</ul>
+<h4 id="查看系统总体情况"><a href="#查看系统总体情况" class="headerlink" title="查看系统总体情况"></a>查看系统总体情况</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">drecik@ubuntu:~$ vmstat 5</span><br><span class="line">procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----</span><br><span class="line"> r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st</span><br><span class="line"> 0  0   3596  74136  30260 517752    0    2   425   251  121  214  2  2 96  0  0</span><br><span class="line"> 0  0   3596  74136  30260 517736    0    0     0     0  105  153  0  0 99  0  0</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<ul>
+<li>5表示5秒输出一组数据</li>
+<li>cs(context switch)：每秒上下文切换次数</li>
+<li>in(interrupt)：每秒中断次数</li>
+<li>r(Running or Runnable：就绪队列长度，也就是正在运行或者正在等待运行的进程数</li>
+<li>b(Blocked)：处于不可中断睡眠状态的进程数</li>
+</ul>
+<h4 id="查看进程的情况"><a href="#查看进程的情况" class="headerlink" title="查看进程的情况"></a>查看进程的情况</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">drecik@ubuntu:~$ pidstat -w 5</span><br><span class="line">Linux 4.15.0-29-generic (ubuntu) 	12/02/2018 	_x86_64_	(2 CPU)</span><br><span class="line"></span><br><span class="line">03:50:08 AM   UID       PID   cswch/s nvcswch/s  Command</span><br><span class="line">03:50:13 AM     0         1      0.20      0.00  systemd</span><br><span class="line">03:50:13 AM     0         7      0.20      0.00  ksoftirqd/0</span><br><span class="line">03:50:13 AM     0         8     10.18      0.00  rcu_sched</span><br><span class="line">03:50:13 AM     0        11      0.20      0.00  watchdog/0</span><br><span class="line">03:50:13 AM     0        14      0.20      0.00  watchdog/1</span><br><span class="line">03:50:13 AM     0       184      1.80      0.00  irq/16-vmwgfx</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>cswch：每秒自愿上下文切换次数（获取不到资源，或者主动sleep）<br>nvcswch：每秒非自愿上下文切换次数（时间片跑满，被系统切换），大量进程抢占的时候会导致该值偏高<br>pidstat还有另外两个参数<code>-u -t</code>，-u表示输出CPU指标，-t表示显示现场的上下文切换情况</p>
+<h3 id="如何判断异常"><a href="#如何判断异常" class="headerlink" title="如何判断异常"></a>如何判断异常</h3><p>这些切换列取值多少该合适：<strong>取决于cpu性能</strong>，但是这些数值应该稳定才行，如果某一个数值出现增长，那可能就导致性能问题：</p>
+<ol>
+<li>如果是cswch增长，说明等待资源的进程变多，可能是I&#x2F;O等其他问题</li>
+<li>如果是nvcswch增长，说明CPU紧张了</li>
+<li>如果是in增长了，说明CPU被中断处理程序占用，需要进一步分析什么中断导致，例如查看<code>/proc/interrupts</code>文件查看是什么中断导致</li>
+</ol>
+<h2 id="CPU使用率"><a href="#CPU使用率" class="headerlink" title="CPU使用率"></a>CPU使用率</h2><h3 id="概念-2"><a href="#概念-2" class="headerlink" title="概念"></a>概念</h3><p>CPU使用率是一个更常用更直观的一个指标来描述机器或者某个进程的负载情况。了解CPU使用率之前需要知道CPU把时间划分为很短的时间片，在通过调度器将这些时间片分配给任务使用。Linux通过节拍率（HZ）来表示这些时间片的长度。并使用全局变量Jiffies来记录开机以来的节拍数。节拍率是内核选项，可以通过命令<code>grep &#39;CONFIG_HZ=&#39; /boot/config-$(uname -r)</code>查询查看。该值在不同操作系统可能不一样。<br>Linux提供另外一个用户空间的接拍率(USER_HZ)，该值固定为100。   </p>
+<h4 id="查看CPU数据"><a href="#查看CPU数据" class="headerlink" title="查看CPU数据"></a>查看CPU数据</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">drecik@ubuntu:~$ cat /proc/stat | grep ^cpu</span><br><span class="line">cpu  7771 674 6646 214059 2570 0 194 0 0 0</span><br><span class="line">cpu0 3804 426 3198 107438 1154 0 40 0 0 0</span><br><span class="line">cpu1 3966 248 3447 106620 1415 0 154 0 0 0</span><br></pre></td></tr></table></figure>
+<p>通过查看虚拟文件&#x2F;proc&#x2F;stat查看，第一行cpu是总的CPU使用情况，第二行开始是每个CPU每个核的使用情况。每一列的数值代表该cpu在这种模式下的(USER_HZ)次数，每一列的意思：</p>
+<ul>
+<li>user（缩写为us）：用户态的CPU时间，不包括nice，但包括guest时间。<strong>如果该值过高，则说明用户进程负载比较严重，需要重点查看用户进程的性能问题</strong></li>
+<li>nice（缩写为ni）：处于低优先级用户态的CPU时间</li>
+<li>system（缩写为sys）：处于内核态的CPU时间。<strong>如果该值过高，说明占用了过多的内核时间，需要重点排查内核线程或者系统调用相关的性能问题。</strong></li>
+<li>idle（缩写为id）：空闲时间。不包括iowait时间。</li>
+<li>iowait（缩写为wa）：等待I&#x2F;O的时间。该值可能不太准确。<strong>如果该值过高，说明等待I&#x2F;O时间过长，需要重点排查存储系统是否出问题</strong></li>
+<li>irq（缩写为hi）：处理中断的时间。</li>
+<li>softirq（缩写为si）：处理软中断的时间。<strong>如果该值与irq值过高，说明系统中断处理程序占用了较多CPU，需要重点排查内核的终端服务程序</strong></li>
+<li>steal（缩写为st）：当处于虚拟机环境时，cpu被其他虚拟系统占用的时间</li>
+<li>guest：运行虚拟机的CPU时间（为什么是0）</li>
+<li>guest_nice（缩写为gnice）：以低优先级运行虚拟机的时间</li>
+</ul>
+<p>上面数据记录的是开机到现在CPU处于这些状态的所有USER_HZ次数。所以如果要计算从开机到现在的CPU使用率可以通过公式<strong>1-空间时间&#x2F;总时间</strong>得到。如果要得到要得到某一个时间间隔的CPU使用率，则可以在这个时间间隔开始时候查看该文件记录各个数据，时间间隔结束的时候再记录一次，通过公式**平均CPU使用率&#x3D;1-(空闲时间2-空间时间1)&#x2F;(总时间2-总时间1)**得到。<br>通过查看&#x2F;proc&#x2F;[pid]&#x2F;stat可以得到某个进程的CPU使用情况。但这个数据列会更多，可以通过<code>man proc</code>查看详细数据</p>
+<h3 id="查看CPU使用率"><a href="#查看CPU使用率" class="headerlink" title="查看CPU使用率"></a>查看CPU使用率</h3><h4 id="top命令"><a href="#top命令" class="headerlink" title="top命令"></a>top命令</h4><p>top默认使用3秒的采集间隔，显示了系统总体的CPU和内存使用情况，以及各个进程的资源使用情况。使用很简单，直接输入top即可：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">drecik@ubuntu:~$ top</span><br><span class="line"></span><br><span class="line">top - 02:02:48 up 41 min,  1 user,  load average: 0.07, 0.02, 0.06</span><br><span class="line">Tasks: 276 total,   2 running, 206 sleeping,   0 stopped,   1 zombie</span><br><span class="line">%Cpu(s):  1.4 us,  3.5 sy,  0.0 ni, 95.1 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st</span><br><span class="line">KiB Mem :  2017328 total,   716840 free,   870536 used,   429952 buff/cache</span><br><span class="line">KiB Swap:  1942896 total,  1365360 free,   577536 used.   976576 avail Mem </span><br><span class="line"></span><br><span class="line">   PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND    </span><br><span class="line">  1584 drecik    20   0  412884  38316   8248 R   7.9  1.9   0:18.23 Xorg       </span><br><span class="line">  1709 drecik    20   0 3454448 147916  43732 S   6.3  7.3   0:35.21 gnome-she+ </span><br><span class="line">  2649 drecik    20   0  752160  42212  30812 S   4.6  2.1   0:06.05 gnome-ter+ </span><br><span class="line">  2925 drecik    20   0   51320   4016   3328 R   1.0  0.2   0:00.09 top        </span><br><span class="line">     1 root      20   0  225360   5424   3812 S   0.3  0.3   0:02.48 systemd    </span><br><span class="line">     8 root      20   0       0      0      0 I   0.3  0.0   0:00.78 rcu_sched  </span><br><span class="line">   275 root     -51   0       0      0      0 S   0.3  0.0   0:00.52 irq/16-vm+ </span><br><span class="line">  1905 drecik    20   0  527684   9216   7824 S   0.3  0.5   0:03.20 vmtoolsd   </span><br><span class="line">     2 root      20   0       0      0      0 S   0.0  0.0   0:00.01 kthreadd   </span><br><span class="line">     4 root       0 -20       0      0      0 I   0.0  0.0   0:00.00 kworker/0+ </span><br><span class="line">     6 root       0 -20       0      0      0 I   0.0  0.0   0:00.00 mm_percpu+ </span><br><span class="line">     7 root      20   0       0      0      0 S   0.0  0.0   0:00.06 ksoftirqd+ </span><br><span class="line">     9 root      20   0       0      0      0 I   0.0  0.0   0:00.00 rcu_bh     </span><br><span class="line">    10 root      rt   0       0      0      0 S   0.0  0.0   0:00.00 migration+ </span><br><span class="line">    11 root      rt   0       0      0      0 S   0.0  0.0   0:00.00 watchdog/0 </span><br><span class="line">    12 root      20   0       0      0      0 S   0.0  0.0   0:00.00 cpuhp/0    </span><br><span class="line">    13 root      20   0       0      0      0 S   0.0  0.0   0:00.00 cpuhp/1</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第三列%CPU就是当前系统的CPU使用率情况（后面跟着是每种情况的CPU使用率），按下1就可以查看每个核的CPU使用率</li>
+<li>空行之后是每个进程的资源使用情况：每个进程有一个%CPU列，表示进程的使用率，它是用户态和内核态的CPU使用率总和，包括进程在用户空间使用CPU、通过系统调用执行内核空间CPU，就绪队列等待运行的CPU，以及虚拟机环境下运行虚拟机的CPU。</li>
+</ul>
+<h4 id="pidstat"><a href="#pidstat" class="headerlink" title="pidstat"></a>pidstat</h4><p>top命令CPU没有区别各种情况的使用率，可以使用pidstat来显示进程更细分的CPU使用情况</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"># 1秒为间隔，输出5组数组，最后还有个平均值</span><br><span class="line">drecik@ubuntu:~$ pidstat 1 5</span><br><span class="line">Linux 4.15.0-29-generic (ubuntu) 	12/08/2018 	_x86_64_	(2 CPU)</span><br><span class="line"></span><br><span class="line">02:08:27 AM   UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command</span><br><span class="line">02:08:28 AM  1000      1584    0.99    0.00    0.00    0.00    0.99     0  Xorg</span><br><span class="line">02:08:28 AM  1000      1709    0.00    0.99    0.00    0.00    0.99     1  gnome-shell</span><br><span class="line">02:08:28 AM  1000      2649    0.99    0.00    0.00    0.00    0.99     1  gnome-terminal-</span><br><span class="line">02:08:28 AM  1000      2942    0.99    1.98    0.00    0.00    2.97     1  pidstat</span><br><span class="line"></span><br><span class="line">02:08:28 AM   UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command</span><br><span class="line">02:08:29 AM     0       419    1.00    0.00    0.00    0.00    1.00     1  vmtoolsd</span><br><span class="line">02:08:29 AM  1000      1584    3.00    0.00    0.00    0.00    3.00     0  Xorg</span><br><span class="line">02:08:29 AM  1000      1709    0.00    1.00    0.00    0.00    1.00     1  gnome-shell</span><br><span class="line">02:08:29 AM  1000      2942    0.00    1.00    0.00    0.00    1.00     1  pidstat</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">Average:      UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command</span><br><span class="line">Average:        0       170    0.00    0.20    0.00    0.00    0.20     -  kworker/1:2</span><br><span class="line">Average:        0       419    0.20    0.00    0.00    0.00    0.20     -  vmtoolsd</span><br><span class="line">Average:     1000      1584    1.80    0.40    0.00    0.00    2.20     -  Xorg</span><br><span class="line">Average:     1000      1709    0.00    1.20    0.00    0.20    1.20     -  gnome-shell</span><br><span class="line">Average:     1000      1905    0.20    0.00    0.00    0.00    0.20     -  vmtoolsd</span><br><span class="line">Average:     1000      2649    0.40    0.20    0.00    0.00    0.60     -  gnome-terminal-</span><br><span class="line">Average:        0      2859    0.00    0.20    0.00    0.00    0.20     -  kworker/u256:0</span><br><span class="line">Average:     1000      2942    0.60    2.00    0.00    0.00    2.59     -  pidstat</span><br></pre></td></tr></table></figure>
+<ul>
+<li>%usr：用户空间CPU使用率</li>
+<li>%system：系统空间CPU使用率</li>
+<li>%guest：虚拟机环境，运行虚拟机CPU使用率</li>
+<li>%wait：等待CPU使用率</li>
+<li>%CPU：总的CPU使用率</li>
+</ul>
+<h2 id="排查CPU问题一般思路"><a href="#排查CPU问题一般思路" class="headerlink" title="排查CPU问题一般思路"></a>排查CPU问题一般思路</h2><h3 id="常用的CPU性能指标"><a href="#常用的CPU性能指标" class="headerlink" title="常用的CPU性能指标"></a>常用的CPU性能指标</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/25/1.png"></p>
+<h3 id="速查图：CPU性能指标-gt-工具"><a href="#速查图：CPU性能指标-gt-工具" class="headerlink" title="速查图：CPU性能指标 -&gt; 工具"></a>速查图：CPU性能指标 -&gt; 工具</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/25/2.png"></p>
+<h3 id="速查图：工具-gt-CPU性能指标"><a href="#速查图：工具-gt-CPU性能指标" class="headerlink" title="速查图：工具 -&gt; CPU性能指标"></a>速查图：工具 -&gt; CPU性能指标</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/25/3.png"></p>
+<h3 id="CPU性能问题查找思路图"><a href="#CPU性能问题查找思路图" class="headerlink" title="CPU性能问题查找思路图"></a>CPU性能问题查找思路图</h3><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/25/4.png"></p>
+<h3 id="其他可能遇到比较棘手的问题"><a href="#其他可能遇到比较棘手的问题" class="headerlink" title="其他可能遇到比较棘手的问题"></a>其他可能遇到比较棘手的问题</h3><p>进程里调用了其他进程，并且该类进程执行时间较短，如果该操作不断执行导致的CPU升高，top和pidstat等工具都不容易发现。可能的一种情况就是某个进程一直在崩溃重启，而在启动的过程中会初始化资源导致CPU过高。这种情况下可以尝试下面的排查方式：</p>
+<ol>
+<li>使用pstree或者execsnoop找到他们的父进程，并分析相关代码的原因</li>
+<li>使用perf工具采样分析当前CPU占用情况</li>
+</ol>
+<h2 id="CPU性能优化思路"><a href="#CPU性能优化思路" class="headerlink" title="CPU性能优化思路"></a>CPU性能优化思路</h2><h3 id="性能优化前需要考虑的问题"><a href="#性能优化前需要考虑的问题" class="headerlink" title="性能优化前需要考虑的问题"></a>性能优化前需要考虑的问题</h3><ol>
+<li>如何判断优化后是否有效，及提升性能提升多少？</li>
+<li>性能问题不是独立的，在有多个性能问题同时发生的时候，应该首先优化哪个？</li>
+<li>提升性能的方法不是唯一的，当有多种方法选择的时候，该选择哪个？<br>这三个问题在优化性能的时候要考虑清楚，特别是第一个问题，需要考虑优化前后，该使用哪个指标来进行对比。同时也要考虑多维度的指标，例如web应用情况下，可以考虑两个维度：</li>
+</ol>
+<ul>
+<li>应用程序维度，我们可以通过<strong>吞吐量和请求延迟</strong>来评估应用程序性能</li>
+<li>系统资源维度，我们可以通过<strong>CPU使用率</strong>来评估系统CPU使用情况</li>
+</ul>
+<h3 id="优化思路"><a href="#优化思路" class="headerlink" title="优化思路"></a>优化思路</h3><h4 id="应用程序优化"><a href="#应用程序优化" class="headerlink" title="应用程序优化"></a>应用程序优化</h4><ul>
+<li>编译器优化</li>
+<li>算法优化</li>
+<li>异步处理</li>
+<li>多线程替代多线程</li>
+<li>善用缓存</li>
+</ul>
+<h4 id="系统优化"><a href="#系统优化" class="headerlink" title="系统优化"></a>系统优化</h4><ul>
+<li>CPU绑定</li>
+<li>CPU独占</li>
+<li>优先级调整</li>
+<li>为进程设置资源限制</li>
+<li>NUMA（Non-Uniform Memory Access）优化</li>
+<li>中断负载均衡</li>
+</ul>
+<h3 id="避免过早优化"><a href="#避免过早优化" class="headerlink" title="避免过早优化"></a>避免过早优化</h3><p>性能优化应该避免过早进行，因为：</p>
+<ol>
+<li>性能优化往往会带来复杂性的提升，降低可维护性</li>
+<li>需求不断变动，优化完了需求很有可能就改了</li>
+</ol>
+<p>所以性能优化最好是一个逐步完善的过程，不要追求一步到位。</p>
+<h2 id="个人性能分析过程的总结"><a href="#个人性能分析过程的总结" class="headerlink" title="个人性能分析过程的总结"></a>个人性能分析过程的总结</h2><p>在分析进程CPU使用率占用过高的一个神器是<a target="_blank" rel="noopener" href="https://drecik.top/2018/07/09/16/">perf</a>，通过极小的性能开销就可以分析进程当前哪些函数开销过高，从而缩小进程性能瓶颈的排查范围。如果可以的话线上也部署相应的环境，方便查找出现的性能问题</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+              <a href="/tags/linux%E4%BC%98%E5%8C%96/" rel="tag"># linux优化</a>
+              <a href="/tags/%E7%AC%94%E8%AE%B0/" rel="tag"># 笔记</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/12/01/24/" rel="prev" title="redis ziplist剖析">
+                  <i class="fa fa-chevron-left"></i> redis ziplist剖析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/12/23/26/" rel="next" title="redis quicklist剖析">
+                  redis quicklist剖析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drecik Xu</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

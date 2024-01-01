@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="《赶山赶海开饭店》优化 文件服务器访问华为云Obs问题 将摄像机渲染到Sprite上 循环特效闪一下问题 Unity Autoconnect Profiler不起作用 小程序云存档线上问题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="58. 2023-04-30周总结">
+<meta property="og:url" content="http://example.com/2023/04/27/58-2023-04-30%E5%91%A8%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="《赶山赶海开饭店》优化 文件服务器访问华为云Obs问题 将摄像机渲染到Sprite上 循环特效闪一下问题 Unity Autoconnect Profiler不起作用 小程序云存档线上问题">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/58/1.gif">
+<meta property="og:image" content="http://example.com/images/58/1.jpg">
+<meta property="article:published_time" content="2023-04-27T07:32:30.000Z">
+<meta property="article:modified_time" content="2023-05-15T12:00:54.453Z">
+<meta property="article:author" content="Drecik Xu">
+<meta property="article:tag" content="周总结">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/58/1.gif">
+
+
+<link rel="canonical" href="http://example.com/2023/04/27/58-2023-04-30%E5%91%A8%E6%80%BB%E7%BB%93/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/04/27/58-2023-04-30%E5%91%A8%E6%80%BB%E7%BB%93/","path":"2023/04/27/58-2023-04-30周总结/","title":"58. 2023-04-30周总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>58. 2023-04-30周总结 | Drecik's Blog</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Drecik's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E3%80%8A%E8%B5%B6%E5%B1%B1%E8%B5%B6%E6%B5%B7%E5%BC%80%E9%A5%AD%E5%BA%97%E3%80%8B%E4%BC%98%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">1. 《赶山赶海开饭店》优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-%E5%90%88%E6%89%B9"><span class="nav-number">1.1.</span> <span class="nav-text">(a) 合批</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-%E5%8A%9F%E8%83%BD%E8%B5%84%E6%BA%90%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F%E4%BF%AE%E6%94%B9"><span class="nav-number">1.2.</span> <span class="nav-text">(b) 功能资源使用方式修改</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AE%BF%E9%97%AE%E5%8D%8E%E4%B8%BA%E4%BA%91Obs%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">2. 文件服务器访问华为云Obs问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%B0%86%E6%91%84%E5%83%8F%E6%9C%BA%E6%B8%B2%E6%9F%93%E5%88%B0Sprite%E4%B8%8A"><span class="nav-number">3.</span> <span class="nav-text">3. 将摄像机渲染到Sprite上</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%BE%AA%E7%8E%AF%E7%89%B9%E6%95%88%E9%97%AA%E4%B8%80%E4%B8%8B%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">4. 循环特效闪一下问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Unity-Autoconnect-Profiler%E4%B8%8D%E8%B5%B7%E4%BD%9C%E7%94%A8"><span class="nav-number">5.</span> <span class="nav-text">5. Unity Autoconnect Profiler不起作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E5%B0%8F%E7%A8%8B%E5%BA%8F%E4%BA%91%E5%AD%98%E6%A1%A3%E7%BA%BF%E4%B8%8A%E9%97%AE%E9%A2%98"><span class="nav-number">6.</span> <span class="nav-text">6. 小程序云存档线上问题</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Drecik Xu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/27/58-2023-04-30%E5%91%A8%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="58. 2023-04-30周总结 | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          58. 2023-04-30周总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-27 15:32:30" itemprop="dateCreated datePublished" datetime="2023-04-27T15:32:30+08:00">2023-04-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-15 20:00:54" itemprop="dateModified" datetime="2023-05-15T20:00:54+08:00">2023-05-15</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <ol>
+<li>《赶山赶海开饭店》优化</li>
+<li>文件服务器访问华为云Obs问题</li>
+<li>将摄像机渲染到Sprite上</li>
+<li>循环特效闪一下问题</li>
+<li>Unity Autoconnect Profiler不起作用</li>
+<li>小程序云存档线上问题</li>
+</ol>
+<span id="more"></span>
+
+<h3 id="1-《赶山赶海开饭店》优化"><a href="#1-《赶山赶海开饭店》优化" class="headerlink" title="1. 《赶山赶海开饭店》优化"></a>1. 《赶山赶海开饭店》优化</h3><p>我们的休闲游戏《赶山赶海开饭店》的小游戏上线，但得到的反馈整体玩起来是比较卡。所以一起参与到这个项目的优化中。</p>
+<p>简单分析了之后发现两个很明显的问题：</p>
+<ol>
+<li>批次太高，饭店场景最高会到400多批</li>
+<li>很多功能开发方式不对，把所有功能用到的资源全部堆在了场景里面，然后通过代码控制节点的隐藏、显示来做功能，这会导致两个问题，一个是进入场景的时候内存就会到达峰值，另外也会影响场景加载的速度。</li>
+</ol>
+<h4 id="a-合批"><a href="#a-合批" class="headerlink" title="(a) 合批"></a>(a) 合批</h4><p>Unity提供两种合批功能，静态合批和动态合批</p>
+<ol>
+<li><p>静态合批<br>静态合批是以空间换时间，会增加一定的内存。同时静态合批的模型只有放在场景中才起作用，通过动态加载进来的模型是没用的。另外还需要在Player Settings中开启静态合批才能开启Unity静态合批。</p>
+</li>
+<li><p>动态合批<br>动态合批需要增加一定的CPU负担，同时也会有一定的限制，只能适用于小模型。这个功能也需要再Player Settings中开启才能使用。</p>
+</li>
+</ol>
+<p>另外还有一个独立于Unity之外的合批方式，就是让美术合并模型。以这种方式可以极大的降低批次，例如我们的场景模型通过这种方式从100+批次降低到了1次。唯一的问题就是合并成大模型之后舍弃了小模型各种摆放的灵活性。同时如果相同的小模型存在不同的大模型中就会增加一定的内存。所以如何合并需要根据项目进行取舍。</p>
+<p>我们合批的优化方向是能尽量美术合并的先美术合并，然后再利用Unity静态合批功能对场景中的静态物体进行合批，最后再考虑动态合批（能不开的话尽量不开）</p>
+<h4 id="b-功能资源使用方式修改"><a href="#b-功能资源使用方式修改" class="headerlink" title="(b) 功能资源使用方式修改"></a>(b) 功能资源使用方式修改</h4><p>让对应同学把资源从场景里面删除，根据数据以动态方式加载进来显示，同时利用对象池对一些资源进行复用，减少内存同时增加效率。</p>
+<p>这两个优化做完之后，接下去需要再根据Unity Profiler的反馈进行CPU或者GPU优化了，不过后续的卡点大概率在CPU上，需要具体问题再具体分析。</p>
+<h3 id="2-文件服务器访问华为云Obs问题"><a href="#2-文件服务器访问华为云Obs问题" class="headerlink" title="2. 文件服务器访问华为云Obs问题"></a>2. 文件服务器访问华为云Obs问题</h3><p>华为云提供了Obs访问的<a target="_blank" rel="noopener" href="https://github.com/huaweicloud/huaweicloud-sdk-dotnet-obs">.Net SDK</a>，接入之后发现会有很久没有返回的情况，卡死所有线程，导致文件服务器所有请求都不能处理，同时随着请求上来，机器负载和内存会不断上涨，最终被操作系统OOM了。</p>
+<p>翻了下SDK代码没找到对应的设置超时的地方，同时这个SDK写的也比较烂，不排除其他Bug的可能。同时我们的文件服务器也只用到了读文件，写文件的接口，于是参考<a target="_blank" rel="noopener" href="https://support.huaweicloud.com/api-obs/obs_04_0009.html">华为云的验证方式</a>，通过自己的底层封装的Http发送请求到Obs。</p>
+<p>目前跑了几天下来，看到偶尔也会出现超时的请求，但是超时之后会被底层中断，抛出异常，不会卡住线程。所以整体还是可以稳定运行。</p>
+<p>部分源码</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">async</span> Task&lt;<span class="built_in">bool</span>&gt; <span class="title">PutObjectAsync</span>(<span class="params"><span class="built_in">string</span> bucketName, <span class="built_in">string</span> path, Stream contentStream</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> date = DateTime.UtcNow.ToString(<span class="keyword">new</span> CultureInfo(<span class="string">&quot;en-US&quot;</span>, <span class="literal">false</span>).DateTimeFormat.RFC1123Pattern, CultureInfo.GetCultureInfo(<span class="string">&quot;en-US&quot;</span>));</span><br><span class="line">    HttpRequestMessage request = <span class="keyword">new</span> HttpRequestMessage(HttpMethod.Put, <span class="string">$&quot;https://<span class="subst">&#123;bucketName&#125;</span>.<span class="subst">&#123;_endpoint&#125;</span>/<span class="subst">&#123;path&#125;</span>&quot;</span>);</span><br><span class="line">    request.Headers.TryAddWithoutValidation(<span class="string">&quot;Date&quot;</span>, date);</span><br><span class="line">    request.Headers.TryAddWithoutValidation(<span class="string">&quot;Authorization&quot;</span>, GetAuthorization(<span class="string">&quot;PUT&quot;</span>, date, <span class="string">&quot;application/octet-stream&quot;</span>, <span class="string">$&quot;<span class="subst">&#123;bucketName&#125;</span>/<span class="subst">&#123;path&#125;</span>&quot;</span>));</span><br><span class="line">    request.Content = <span class="keyword">new</span> StreamContent(contentStream);</span><br><span class="line">    request.Content.Headers.ContentType = <span class="keyword">new</span> MediaTypeHeaderValue(<span class="string">&quot;application/octet-stream&quot;</span>);</span><br><span class="line">    IHttpResult result = <span class="keyword">await</span> HttpUtils.Request(request);</span><br><span class="line">    <span class="keyword">return</span> result.IsSuccess;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">async</span> Task&lt;Stream&gt; <span class="title">GetObjectAsync</span>(<span class="params"><span class="built_in">string</span> bucketName, <span class="built_in">string</span> path</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> date = DateTime.UtcNow.ToString(<span class="keyword">new</span> CultureInfo(<span class="string">&quot;en-US&quot;</span>, <span class="literal">false</span>).DateTimeFormat.RFC1123Pattern, CultureInfo.GetCultureInfo(<span class="string">&quot;en-US&quot;</span>));</span><br><span class="line">    HttpRequestMessage request = <span class="keyword">new</span> HttpRequestMessage(HttpMethod.Get, <span class="string">$&quot;https://<span class="subst">&#123;bucketName&#125;</span>.<span class="subst">&#123;_endpoint&#125;</span>/<span class="subst">&#123;path&#125;</span>&quot;</span>);</span><br><span class="line">    request.Headers.TryAddWithoutValidation(<span class="string">&quot;Date&quot;</span>, date);</span><br><span class="line">    request.Headers.TryAddWithoutValidation(<span class="string">&quot;Authorization&quot;</span>, GetAuthorization(<span class="string">&quot;GET&quot;</span>, date, <span class="literal">null</span>, <span class="string">$&quot;<span class="subst">&#123;bucketName&#125;</span>/<span class="subst">&#123;path&#125;</span>&quot;</span>));</span><br><span class="line"></span><br><span class="line">    IHttpResult result = <span class="keyword">await</span> HttpUtils.Request(request);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> result.ReadAsStreamAsync();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">async</span> Task&lt;<span class="built_in">bool</span>&gt; <span class="title">HasObjectAsync</span>(<span class="params"><span class="built_in">string</span> bucketName, <span class="built_in">string</span> path</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> date = DateTime.UtcNow.ToString(<span class="keyword">new</span> CultureInfo(<span class="string">&quot;en-US&quot;</span>, <span class="literal">false</span>).DateTimeFormat.RFC1123Pattern, CultureInfo.GetCultureInfo(<span class="string">&quot;en-US&quot;</span>));</span><br><span class="line">    HttpRequestMessage request = <span class="keyword">new</span> HttpRequestMessage(HttpMethod.Head, <span class="string">$&quot;https://<span class="subst">&#123;bucketName&#125;</span>.<span class="subst">&#123;_endpoint&#125;</span>/<span class="subst">&#123;path&#125;</span>&quot;</span>);</span><br><span class="line">    request.Headers.TryAddWithoutValidation(<span class="string">&quot;Date&quot;</span>, date);</span><br><span class="line">    request.Headers.TryAddWithoutValidation(<span class="string">&quot;Authorization&quot;</span>, GetAuthorization(<span class="string">&quot;HEAD&quot;</span>, date, <span class="literal">null</span>, <span class="string">$&quot;<span class="subst">&#123;bucketName&#125;</span>/<span class="subst">&#123;path&#125;</span>&quot;</span>));</span><br><span class="line"></span><br><span class="line">    IHttpResult result = <span class="keyword">await</span> HttpUtils.Request(request);</span><br><span class="line">    <span class="keyword">return</span> result.StatusCode != <span class="number">404</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="built_in">string</span> <span class="title">GetAuthorization</span>(<span class="params"><span class="built_in">string</span> method, <span class="built_in">string</span> date, <span class="built_in">string</span> contentType, <span class="built_in">string</span> resourcePath</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">$&quot;OBS <span class="subst">&#123;_ak&#125;</span>:<span class="subst">&#123;GetSign(method, date, contentType, resourcePath)&#125;</span>&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="built_in">string</span> <span class="title">GetSign</span>(<span class="params"><span class="built_in">string</span> method, <span class="built_in">string</span> date, <span class="built_in">string</span> contentType, <span class="built_in">string</span> resourcePath</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">string</span> signString;</span><br><span class="line">    <span class="keyword">if</span> (contentType == <span class="literal">null</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        signString = <span class="string">$&quot;<span class="subst">&#123;method&#125;</span>\n\n\n<span class="subst">&#123;date&#125;</span>\n/<span class="subst">&#123;resourcePath&#125;</span>&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        signString = <span class="string">$&quot;<span class="subst">&#123;method&#125;</span>\n\n<span class="subst">&#123;contentType&#125;</span>\n<span class="subst">&#123;date&#125;</span>\n/<span class="subst">&#123;resourcePath&#125;</span>&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Convert.ToBase64String(_hmacsha1.ComputeHash(StringUtils.StringToBytes(signString)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中<code>_hmacsha1</code>通过<code>_hmacsha1 = new HMACSHA1(StringUtils.StringToBytes(_sk));</code>进行创建。</p>
+<p>发起Http请求则直接使用HttpClient.SendAsync进行发送即可，我们底层为了Http底层实现方式对上层透明，对Http进行了二次封装，方便在Unity版中使用。</p>
+<h3 id="3-将摄像机渲染到Sprite上"><a href="#3-将摄像机渲染到Sprite上" class="headerlink" title="3. 将摄像机渲染到Sprite上"></a>3. 将摄像机渲染到Sprite上</h3><p>3D项目中，场景是使用Unity Sprite搭建的。现在有个需求是要摆放一个3D人物在这个场景上走。为了更好控制这个3D人物的位置，想到的一种方式是有个摄像机来渲染这个3D人物到RenderTexture上。但是Sprite不像UGUI提供一个RawImage来直接渲染RenderTexture。需要自己通过RenderTexture去生成一个Texture2D，然后再利用Texture2D生成一个Sprite。网上找了两种方式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Texture2D toTexture2D(RenderTexture rTex)</span><br><span class="line">&#123;</span><br><span class="line">    Texture2D tex = new Texture2D(512, 512, TextureFormat.RGB24, false);</span><br><span class="line">    // ReadPixels looks at the active RenderTexture.</span><br><span class="line">    RenderTexture.active = rTex;</span><br><span class="line">    tex.ReadPixels(new Rect(0, 0, rTex.width, rTex.height), 0, 0);</span><br><span class="line">    tex.Apply();</span><br><span class="line">    return tex;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Texture2D toTexture2D(RenderTexture rTex)</span><br><span class="line">&#123;</span><br><span class="line">    Texture2D tex = new Texture2D(512, 512, TextureFormat.RGB24, false);</span><br><span class="line">    // ReadPixels looks at the active RenderTexture.</span><br><span class="line">    Graphics.CopyTexture(rTex, tex);</span><br><span class="line">    return tex;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实测第二种方式性能会更好点。同时为了避免每次在Update里面创建Texture2D和Sprite，需要在Awake或者Start的时候创建好Texture2D和Sprite，Update只需要调用<code>Graphics.CopyTexture(rTex, tex);</code>进行复制即可。</p>
+<p>另外<code>Graphics.CopyTexture(rTex, tex);</code>的时候我们遇到一个报错<code>Graphics.CopyTexture called with mismatching mip counts (src 1 dst 10)</code>。原因是创建的Texture2D开启了Mipmap，创建的时候mipmap参数传false即可。</p>
+<h3 id="4-循环特效闪一下问题"><a href="#4-循环特效闪一下问题" class="headerlink" title="4. 循环特效闪一下问题"></a>4. 循环特效闪一下问题</h3><p>特效做出来的循环特效，会出现突然闪一下的问题：<br><img src="/../images/58/1.gif"></p>
+<p>特效也不知道问题出现在哪，了解了下特效的实现方式，通过设置starttime，duration，looping这三个参数来实现特效循环<br><img src="/../images/58/1.jpg"></p>
+<p>另外在粒子生命周期内，通过设置Color属性来设置透明度变动效果。</p>
+<p>经过分析发现，亮一下的原因是因为一瞬间存在了两个粒子，颜色叠加导致变亮。没找到为啥会出现这种情况，调了很多参数都不能解决，猜测是Unity自己精度问题导致的，如果是这个问题的话就解决不了了。</p>
+<p>想了另外一个补丁方案，另外挂一个脚本，利用dotween做动画，然后在Update里面通过下面的方式去设置粒子的颜色和大小</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">private void Update()</span><br><span class="line">&#123;</span><br><span class="line">    ChangePSColor();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void ChangePSColor()</span><br><span class="line">&#123;</span><br><span class="line">    _testPartical.GetParticles(pSparticles);</span><br><span class="line">    if (pSparticles.Length &gt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        for (int a = 0; a &lt; pSparticles.Length; a++)</span><br><span class="line">        &#123;</span><br><span class="line">            if (ShowColorDataList.Count != 0)</span><br><span class="line">            &#123;</span><br><span class="line">                pSparticles[a].startColor = _showColor;</span><br><span class="line">            &#125;</span><br><span class="line">            if (ShowScaleDataList.Count != 0)</span><br><span class="line">            &#123;</span><br><span class="line">                pSparticles[a].startSize = _showScale;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        _testPartical.SetParticles(pSparticles, pSparticles.Length);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-Unity-Autoconnect-Profiler不起作用"><a href="#5-Unity-Autoconnect-Profiler不起作用" class="headerlink" title="5. Unity Autoconnect Profiler不起作用"></a>5. Unity Autoconnect Profiler不起作用</h3><p>打出来的webgl包死活连不上Unity Profiler，之前还试过可以，最后把整个Unity产生的文件夹（Library，Temp，Logs）删除，重新打开Unity才解决</p>
+<h3 id="6-小程序云存档线上问题"><a href="#6-小程序云存档线上问题" class="headerlink" title="6. 小程序云存档线上问题"></a>6. 小程序云存档线上问题</h3><p>发布了一个小程序版本，主要是做了一个云存档功能，但是上线之后出现卡loading进不去的情况，运营那边一看出现这个情况直接回退版本了，但是我们代码是不兼容回退版本的，导致线上玩家存档直接丢失了。之前考虑过存档丢失的情况，把本地存档备份了下，但是发现一个历史原因的大坑，某些情况下在启动的时候会去删除所有PlayerPrefs数据，而我们回退的时候正好是这个情况下，导致所有备份都没有了。</p>
+<p>反思：</p>
+<ul>
+<li>线上回退版本要慎重</li>
+<li>跟存档相关的发布要再三考虑清楚</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%91%A8%E6%80%BB%E7%BB%93/" rel="tag"># 周总结</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/23/57-2023-04-23%E5%91%A8%E6%80%BB%E7%BB%93/" rel="prev" title="57.2023-04-23周总结">
+                  <i class="fa fa-chevron-left"></i> 57.2023-04-23周总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/05/06/59-2023-05-07%E5%91%A8%E6%80%BB%E7%BB%93/" rel="next" title="59. 2023-05-07周总结">
+                  59. 2023-05-07周总结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drecik Xu</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

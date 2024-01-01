@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="重新设计摄像机聚焦和震屏功能 重写一套UI框架 Unity新增Layer无法热更新 特效Mesh Read&#x2F;Write Enabled问题 特效无法通过将scale设置成-1的方式翻转 统一的账号服务器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="49. 2023-02-26周总结">
+<meta property="og:url" content="http://example.com/2023/02/26/49-2023-02-26%E5%91%A8%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="重新设计摄像机聚焦和震屏功能 重写一套UI框架 Unity新增Layer无法热更新 特效Mesh Read&#x2F;Write Enabled问题 特效无法通过将scale设置成-1的方式翻转 统一的账号服务器">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-02-26T13:16:49.000Z">
+<meta property="article:modified_time" content="2023-02-26T14:24:22.030Z">
+<meta property="article:author" content="Drecik Xu">
+<meta property="article:tag" content="周总结">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/02/26/49-2023-02-26%E5%91%A8%E6%80%BB%E7%BB%93/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/02/26/49-2023-02-26%E5%91%A8%E6%80%BB%E7%BB%93/","path":"2023/02/26/49-2023-02-26周总结/","title":"49. 2023-02-26周总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>49. 2023-02-26周总结 | Drecik's Blog</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Drecik's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E8%AE%BE%E8%AE%A1%E4%BA%86%E6%91%84%E5%83%8F%E6%9C%BA%E8%81%9A%E7%84%A6%E5%92%8C%E9%9C%87%E5%B1%8F%E5%8A%9F%E8%83%BD"><span class="nav-number">1.</span> <span class="nav-text">重新设计了摄像机聚焦和震屏功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%9A%E7%84%A6"><span class="nav-number">1.1.</span> <span class="nav-text">聚焦</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%87%E5%B1%8F"><span class="nav-number">1.2.</span> <span class="nav-text">震屏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E6%8C%81Timeline%E5%AE%9E%E6%97%B6%E7%9C%8B"><span class="nav-number">1.3.</span> <span class="nav-text">支持Timeline实时看</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E8%AE%BE%E8%AE%A1%E4%B8%80%E5%A5%97UI%E6%A1%86%E6%9E%B6"><span class="nav-number">2.</span> <span class="nav-text">重新设计一套UI框架</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unity%E6%96%B0%E5%A2%9ELayer%E6%97%A0%E6%B3%95%E7%83%AD%E6%9B%B4%E6%96%B0"><span class="nav-number">3.</span> <span class="nav-text">Unity新增Layer无法热更新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E6%95%88Mesh-Read-x2F-Write-Enabled%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">特效Mesh Read&#x2F;Write Enabled问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E6%95%88%E6%97%A0%E6%B3%95%E9%80%9A%E8%BF%87%E5%B0%86scale%E8%AE%BE%E7%BD%AE%E6%88%90-1%E7%9A%84%E6%96%B9%E5%BC%8F%E7%BF%BB%E8%BD%AC"><span class="nav-number">5.</span> <span class="nav-text">特效无法通过将scale设置成-1的方式翻转</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%9F%E4%B8%80%E7%9A%84%E8%B4%A6%E5%8F%B7%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">6.</span> <span class="nav-text">统一的账号服务器</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Drecik Xu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/02/26/49-2023-02-26%E5%91%A8%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="49. 2023-02-26周总结 | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          49. 2023-02-26周总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-02-26 21:16:49 / 修改时间：22:24:22" itemprop="dateCreated datePublished" datetime="2023-02-26T21:16:49+08:00">2023-02-26</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <ol>
+<li>重新设计摄像机聚焦和震屏功能</li>
+<li>重写一套UI框架</li>
+<li>Unity新增Layer无法热更新</li>
+<li>特效Mesh Read&#x2F;Write Enabled问题</li>
+<li>特效无法通过将scale设置成-1的方式翻转</li>
+<li>统一的账号服务器</li>
+</ol>
+<span id="more"></span>
+<h2 id="重新设计了摄像机聚焦和震屏功能"><a href="#重新设计了摄像机聚焦和震屏功能" class="headerlink" title="重新设计了摄像机聚焦和震屏功能"></a>重新设计了摄像机聚焦和震屏功能</h2><p>之前的聚焦和震屏想的比较简单，导致在整个效果及和美术配合上有点问题，所以和美术一起把这一块的需求重新整理了一遍。</p>
+<h3 id="聚焦"><a href="#聚焦" class="headerlink" title="聚焦"></a>聚焦</h3><p>提供给美术的主要参数：</p>
+<ul>
+<li>聚焦类型（单个目标，还是所有目标）</li>
+<li>聚焦移动的时长</li>
+<li>速度曲线（使用DOTween的模板曲线）</li>
+</ul>
+<p>聚焦还是比较简单的，主要确定聚焦的位置，移动的时长，曲线之后直接调用DOTween的DOMove函数即可</p>
+<h3 id="震屏"><a href="#震屏" class="headerlink" title="震屏"></a>震屏</h3><p>提供给美术的主要参数：</p>
+<ul>
+<li>是否需要随机震动的初始方向</li>
+<li>初始方向（如果勾选随机初始方向，这个无效）</li>
+<li>来回震动的角度偏移量（初始方向确定之后，会以这个方向进行来回震动，这个偏移量控制来回震动的可偏差的角度，比如如果配置5，则往另外一个方向震动的时候可以在175~185度之间随机一个角度）</li>
+<li>震动总时长</li>
+<li>震动总次数（保证震动时长结束的时候，正好震动完该次数）</li>
+<li>震动频率曲线（用来控制震动每次的分布，比如震动越来越慢，还是越来越快，使用DOTween模板曲线）</li>
+<li>振幅曲线（直接配置Unity Curve）</li>
+</ul>
+<p>震动比较麻烦，需要考虑频率曲线控制震动次数的分布。简单讲解下我的思路，我们这里假定每个震动来回是一次震动，现在如果t时间内，设置需要震动x次，那根据频率曲线，我们对0~x用曲线进行时间上的插值。DOTween有个函数<code>DOVirtual.EasedValue</code>可以进行插值。因为我们无法确定什么时间点真好是1或者2或者x，所以用了循环去做，每次检测下是否到达1或者2，相应的代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">const float step = 0.03f;</span><br><span class="line"></span><br><span class="line">// 每个来回震动花费的时间</span><br><span class="line">var tempDurationList = new List&lt;float&gt;();</span><br><span class="line">float lastTime = 0;</span><br><span class="line">float totalTime = SkillTimeline.FrameToTime(_shockConfig.Duration);</span><br><span class="line">int needValue = 1;</span><br><span class="line">for (float t = 0; t &lt;= totalTime; t += step)</span><br><span class="line">&#123;</span><br><span class="line">    float v = DOVirtual.EasedValue(0, _shockConfig.ShockCount, t / totalTime, _shockConfig.FPSEaseType);</span><br><span class="line"></span><br><span class="line">    if (v &gt;= needValue)</span><br><span class="line">    &#123;</span><br><span class="line">        tempDurationList.Add(t - lastTime);</span><br><span class="line">        lastTime = t;</span><br><span class="line">        ++needValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (tempDurationList.Count &lt; _shockConfig.ShockCount)</span><br><span class="line">&#123;</span><br><span class="line">    // 还差最后一个</span><br><span class="line">    tempDurationList.Add(totalTime - lastTime);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里就根据频率曲线，计算出每次震动需要花费的时间，接下去只需要计算每次位移的时间以及位移的位置，然后通过DOTween的DOMove进行播放即可。</p>
+<p>完整的震动代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br></pre></td><td class="code"><pre><span class="line">protected override void OnEnter()</span><br><span class="line">&#123;</span><br><span class="line">    List&lt;float&gt; durationList = CalculateDurationList();</span><br><span class="line">    List&lt;Vector3&gt; shockPosList = CalculateShockPosList(durationList);</span><br><span class="line"></span><br><span class="line">    // 插入所有动画</span><br><span class="line">    Sequence sequence = DOTween.Sequence();</span><br><span class="line">    for (int i = 0; i &lt; durationList.Count; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        int index = i;</span><br><span class="line">        sequence.Append(_entity.transform.DOMove(shockPosList[index], durationList[index]).SetEase(_shockConfig.AmplitudeEasyType));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">protected override void OnExit()</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">protected override void OnUpdate()</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// &lt;summary&gt;</span><br><span class="line">/// 计算每次移动要花费的时间</span><br><span class="line">/// &lt;/summary&gt;</span><br><span class="line">/// &lt;returns&gt;&lt;/returns&gt;</span><br><span class="line">List&lt;float&gt; CalculateDurationList()</span><br><span class="line">&#123;</span><br><span class="line">    const float step = 0.03f;</span><br><span class="line"></span><br><span class="line">    // 每个来回震动花费的时间</span><br><span class="line">    var tempDurationList = new List&lt;float&gt;();</span><br><span class="line">    float lastTime = 0;</span><br><span class="line">    float totalTime = SkillTimeline.FrameToTime(_shockConfig.Duration);</span><br><span class="line">    int needValue = 1;</span><br><span class="line">    for (float t = 0; t &lt;= totalTime; t += step)</span><br><span class="line">    &#123;</span><br><span class="line">        float v = DOVirtual.EasedValue(0, _shockConfig.ShockCount, t / totalTime, _shockConfig.FPSEaseType);</span><br><span class="line"></span><br><span class="line">        if (v &gt;= needValue)</span><br><span class="line">        &#123;</span><br><span class="line">            tempDurationList.Add(t - lastTime);</span><br><span class="line">            lastTime = t;</span><br><span class="line">            ++needValue;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (tempDurationList.Count &lt; _shockConfig.ShockCount)</span><br><span class="line">    &#123;</span><br><span class="line">        // 还差最后一个</span><br><span class="line">        tempDurationList.Add(totalTime - lastTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    var ret = new List&lt;float&gt;();</span><br><span class="line"></span><br><span class="line">    // 计算每次移位置花费的时间</span><br><span class="line">    float lastLeftTime = 0;</span><br><span class="line">    for (int i = 0; i &lt; tempDurationList.Count; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        ret.Add(tempDurationList[i] / 4 + lastLeftTime);</span><br><span class="line">        ret.Add(tempDurationList[i] / 2);</span><br><span class="line">        lastLeftTime = tempDurationList[i] / 4;</span><br><span class="line"></span><br><span class="line">        if (i == tempDurationList.Count - 1)</span><br><span class="line">        &#123;</span><br><span class="line">            ret.Add(lastLeftTime);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Assert.AreEqual(ret.Count, 2 * _shockConfig.ShockCount + 1);</span><br><span class="line"></span><br><span class="line">    return ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// &lt;summary&gt;</span><br><span class="line">/// 计算每次震动的位置</span><br><span class="line">/// &lt;/summary&gt;</span><br><span class="line">/// &lt;param name=&quot;durationList&quot;&gt;每次移动位置花费的时间&lt;/param&gt;</span><br><span class="line">/// &lt;returns&gt;&lt;/returns&gt;</span><br><span class="line">List&lt;Vector3&gt; CalculateShockPosList(List&lt;float&gt; durationList)</span><br><span class="line">&#123;</span><br><span class="line">    Vector3 originDir = CalculateFirstShockDir();</span><br><span class="line">    Vector3 dir = originDir;</span><br><span class="line"></span><br><span class="line">    var originPos = _entity.transform.position;</span><br><span class="line"></span><br><span class="line">    float t = 0;</span><br><span class="line">    var ret = new List&lt;Vector3&gt;();</span><br><span class="line">    float totalTime = SkillTimeline.FrameToTime(_shockConfig.Duration);</span><br><span class="line">    for (int i = 0; i &lt; durationList.Count; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        if (i == durationList.Count - 1)</span><br><span class="line">        &#123;</span><br><span class="line">            // 回到原始位置</span><br><span class="line">            ret.Add(originPos);</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        var duration = durationList[i];</span><br><span class="line">        t += duration;</span><br><span class="line">        var offset = _shockConfig.AmplitudeCurve.Evaluate(t / totalTime);</span><br><span class="line">        ret.Add(originPos + dir * offset);</span><br><span class="line">        dir = CalculateReverseDir(originDir, _shockConfig.ShockAngleRandomOffset);</span><br><span class="line">        originDir *= -1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// &lt;summary&gt;</span><br><span class="line">/// 计算第一次震动方向</span><br><span class="line">/// &lt;/summary&gt;</span><br><span class="line">/// &lt;returns&gt;&lt;/returns&gt;</span><br><span class="line">Vector3 CalculateFirstShockDir()</span><br><span class="line">&#123;</span><br><span class="line">    // 第一次震动的方向</span><br><span class="line">    var angle = _shockConfig.FirstShockAngle;</span><br><span class="line">    if (_shockConfig.RandomFirstShockAngle == true)</span><br><span class="line">    &#123;</span><br><span class="line">        angle = RandomUtils.Random(0, 360);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (angle &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        angle = 360 + angle;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    var radian = Mathf.Deg2Rad * angle;</span><br><span class="line">    var dir = new Vector3(Mathf.Cos(radian), Mathf.Sin(radian), 0);</span><br><span class="line"></span><br><span class="line">    int unitId = _targetList[0];</span><br><span class="line">    BattleUnitEntity defenderEntity = BattleUnitEntityManager.Instance.GetBattleUnitEntity(unitId);</span><br><span class="line">    if (defenderEntity.BattleUnit.Side == BattleUnit.ESideType.Attacker)</span><br><span class="line">    &#123;</span><br><span class="line">        dir.x = dir.x * -1;</span><br><span class="line">    &#125;</span><br><span class="line">    return dir;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// &lt;summary&gt;</span><br><span class="line">/// 当前方向的反方向</span><br><span class="line">/// &lt;/summary&gt;</span><br><span class="line">/// &lt;param name=&quot;dir&quot;&gt;当前方向&lt;/param&gt;</span><br><span class="line">/// &lt;param name=&quot;angleRandomOffset&quot;&gt;随机角度范围&lt;/param&gt;</span><br><span class="line">/// &lt;returns&gt;&lt;/returns&gt;</span><br><span class="line">Vector3 CalculateReverseDir(Vector3 dir, int angleRandomOffset)</span><br><span class="line">&#123;</span><br><span class="line">    if (angleRandomOffset == 0)</span><br><span class="line">    &#123;</span><br><span class="line">        return -dir;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    var radian = RandomUtils.Random(-angleRandomOffset, angleRandomOffset) * Mathf.Deg2Rad;</span><br><span class="line">    return -(Quaternion.Euler(0, radian, 0) * dir);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="支持Timeline实时看"><a href="#支持Timeline实时看" class="headerlink" title="支持Timeline实时看"></a>支持Timeline实时看</h3><p>上面讲到的是程序怎么根据配置在游戏中表现这两个效果，美术在设定参数的过程中不能每次改一次配置运行一次游戏，这样会比较麻烦。</p>
+<p>因为我们美术在做技能效果的时候用的就是Timeline来做的，所以这里也考虑把这两个配置嵌入到Timeline里面让美术直接配置，最好能直接逐帧可以看。</p>
+<p>查了相关资料，Timeline自定义clip一般需要实现这几个功能：</p>
+<ol>
+<li>PlayableAsset，Timeline的clip的资源配置，它的属性可以在Timeline直接配置</li>
+<li>PlayableBehaviour，Timeline实际运行的clip，它有好多回调，用来实现clip的控制</li>
+<li>TrackAsset，用来更好的在Timline里面新建我们的自定义clip，比如说直接点Timeline的+号直接增加我们的Clip，或者绑定某个GameObject到我们clip</li>
+<li>TrackMixer，混合两个clip时候需要的操作</li>
+</ol>
+<p>其中TrackMixer我们这里用不到，就没用。</p>
+<p>现在以聚焦为例，讲解下我们怎么把聚焦嵌入到Timeline里面的。</p>
+<p>首先是聚焦的资源，提供了刚刚说的一些聚焦配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line">public class CameraFocusAsset : PlayableAsset</span><br><span class="line">&#123;</span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 聚焦类型</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public enum EFocusType</span><br><span class="line">    &#123;</span><br><span class="line">        /// &lt;summary&gt;</span><br><span class="line">        /// 进入聚焦</span><br><span class="line">        /// &lt;/summary&gt;</span><br><span class="line">        Focus,</span><br><span class="line"></span><br><span class="line">        /// &lt;summary&gt;</span><br><span class="line">        /// 退出聚焦</span><br><span class="line">        /// &lt;/summary&gt;</span><br><span class="line">        ExitFocus</span><br><span class="line">    &#125;</span><br><span class="line">    public EFocusType FocusType;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 聚焦位置</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public int Position = 1;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 曲线类型</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public Ease EasyType = Ease.Linear;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 是否是聚焦左边</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public bool IsFocusLeft = false;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 相机原始位置</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    private Vector3 _originPos = new Vector3(0, 11.3f, -40);</span><br><span class="line"></span><br><span class="line">    public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)</span><br><span class="line">    &#123;</span><br><span class="line">        Debug.Log(&quot;-------CreatePlayable&quot;);</span><br><span class="line"></span><br><span class="line">        var playable = ScriptPlayable&lt;CameraFocusPlayable&gt;.Create(graph);</span><br><span class="line"></span><br><span class="line">        Vector3 startPosition;</span><br><span class="line">        Vector3 targetPosition;</span><br><span class="line"></span><br><span class="line">        if (FocusType == EFocusType.Focus)</span><br><span class="line">        &#123;</span><br><span class="line">            startPosition = _originPos;</span><br><span class="line">            targetPosition = CameraFocusAction.FocusPosConfigDic[Position];</span><br><span class="line"></span><br><span class="line">            if (IsFocusLeft == false)</span><br><span class="line">            &#123;</span><br><span class="line">                targetPosition.x = targetPosition.x * -1;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            startPosition = CameraFocusAction.FocusPosConfigDic[Position];</span><br><span class="line">            targetPosition = _originPos;</span><br><span class="line"></span><br><span class="line">            if (IsFocusLeft == false)</span><br><span class="line">            &#123;</span><br><span class="line">                startPosition.x = startPosition.x * -1;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        playable.GetBehaviour().FocusType = FocusType;</span><br><span class="line">        playable.GetBehaviour().StartPosition = startPosition;</span><br><span class="line">        playable.GetBehaviour().TargetPosition = targetPosition;</span><br><span class="line">        playable.GetBehaviour().EasyType = EasyType;</span><br><span class="line"></span><br><span class="line">        return playable;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码很简单，创建PlayableBehaviour，拿到对应的聚焦位置，然后把参数都传递给PlayableBehaviour。另外新增了一个IsFocusLeft，方便美术看右打左时候的聚焦效果。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">public class CameraFocusPlayable : PlayableBehaviour</span><br><span class="line">&#123;</span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 聚焦类型</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public EFocusType FocusType;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 曲线类型</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public Ease EasyType;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 聚焦开始位置</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public Vector3 StartPosition;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line">    /// 聚焦移动的最终位置</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public Vector3 TargetPosition;</span><br><span class="line"></span><br><span class="line">    private Transform _transform;</span><br><span class="line"></span><br><span class="line">    public override void PrepareFrame(Playable playable, FrameData info)</span><br><span class="line">    &#123;</span><br><span class="line">        Debug.Log(&quot;----------PrepareFrame&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public override void OnBehaviourPlay(Playable playable, FrameData info)</span><br><span class="line">    &#123;</span><br><span class="line">        Debug.Log(&quot;-------------OnBehaviourPlay&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public override void OnBehaviourPause(Playable playable, FrameData info)</span><br><span class="line">    &#123;</span><br><span class="line">        Debug.Log(&quot;OnBehaviourPause: &quot; + playable.GetTime());</span><br><span class="line"></span><br><span class="line">        // 最后一帧Timeline不会回调给ProcessFrame，所以需要在Pause里面再插值一次</span><br><span class="line">        if (_transform)</span><br><span class="line">        &#123;</span><br><span class="line">            Vector3 curPos = Vector3.Lerp(StartPosition, TargetPosition, DOVirtual.EasedValue(0, 1, (float)(playable.GetTime() / playable.GetDuration()), EasyType));</span><br><span class="line">            _transform.position = curPos;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public override void OnPlayableCreate(Playable playable)</span><br><span class="line">    &#123;</span><br><span class="line">        Debug.Log(&quot;------------OnPlayableCreate&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public override void OnPlayableDestroy(Playable playable)</span><br><span class="line">    &#123;</span><br><span class="line">        Debug.Log(&quot;----------------OnPlayableDestroy&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public override void ProcessFrame(Playable playable, FrameData info, object playerData)</span><br><span class="line">    &#123;</span><br><span class="line">        if (_transform == null)</span><br><span class="line">        &#123;</span><br><span class="line">            _transform = playerData as Transform;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Vector3 curPos = Vector3.Lerp(StartPosition, TargetPosition, DOVirtual.EasedValue(0, 1, (float)(playable.GetTime() / playable.GetDuration()), EasyType));</span><br><span class="line">        _transform.position = curPos;</span><br><span class="line"></span><br><span class="line">        Debug.Log(&quot;ProcessFrame: &quot; + playable.GetTime());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>主要实现了ProcessFrame，计算每帧摄像机应该在的位置进行设置。</p>
+<p>这里主要有个问题ProcessFrame在最后一帧的时候是不会回调的，Unity给出<a target="_blank" rel="noopener" href="https://forum.unity.com/threads/playablebehaviour-doesnt-receive-a-processframe-call-for-last-frame-of-the-clip.503833/">解释</a>，最后一帧有可能是下一个clip的开始，所以每个clip都应该是倒数第二帧结束的。</p>
+<p>我理解的DOTween在开始帧的时候应该没有立刻变动位置，这里跟Timeline这边有点不太一样，最后一帧还是需要变动位置，所以我在OnBehaviourPause的时候把位置最后的位置设置过去。（放在这里可能会有一些其他问题，但不影响正常的观看）</p>
+<h2 id="重新设计一套UI框架"><a href="#重新设计一套UI框架" class="headerlink" title="重新设计一套UI框架"></a>重新设计一套UI框架</h2><p>目前在用的是MotionFramework里面的一套简单框架，遇到几个问题：</p>
+<ol>
+<li>这个说是框架其实就是一个界面显示和隐藏，我理解的框架应该包含基础界面显示隐藏外，还应该考虑一些常用的UI组件（滚动窗口，切换窗口，拖拽等）</li>
+<li>框架不支持异步刷新功能，不如要加载某个界面，这个界面里需要显示滚动窗口，滚动窗口会异步加载子item，这时候如果我们需要等这个界面都加载完在显示的话，这个框架是做不到的，只能先给你显示出来界面，滚动区域异步加载完之后再显示</li>
+</ol>
+<p>基于上面几个问题，所以我想重新设计一套框架，目前这套框架写完一版了，这个游戏可能用不上了，等下个项目再用，然后持续完善</p>
+<h2 id="Unity新增Layer无法热更新"><a href="#Unity新增Layer无法热更新" class="headerlink" title="Unity新增Layer无法热更新"></a>Unity新增Layer无法热更新</h2><p>测试发现Unity新增的Layer无法热更新，记录下，以后线上版本加Layer之前要慎重考虑下</p>
+<h2 id="特效Mesh-Read-x2F-Write-Enabled问题"><a href="#特效Mesh-Read-x2F-Write-Enabled问题" class="headerlink" title="特效Mesh Read&#x2F;Write Enabled问题"></a>特效Mesh Read&#x2F;Write Enabled问题</h2><p>特效如果在render里面引用了某个mesh，那这个mesh就一定要开启Mesh Read&#x2F;Write Enabled，否则会在运行的时候报警告，同时这个特效也有可能显示不出来。</p>
+<h2 id="特效无法通过将scale设置成-1的方式翻转"><a href="#特效无法通过将scale设置成-1的方式翻转" class="headerlink" title="特效无法通过将scale设置成-1的方式翻转"></a>特效无法通过将scale设置成-1的方式翻转</h2><p>因为我们游戏是回合制游戏，一般我们只做左打右的效果，如果有右打左的情况，我们会对他进行反转，包括模型，特效，反转使用的方式就是将scale的x值设置成-1。但是我们发现有些特效不支持这个反转，最后定位到是因为将特效的Scaling Mode设置成了Local，改成Hierarchy就好了。</p>
+<h2 id="统一的账号服务器"><a href="#统一的账号服务器" class="headerlink" title="统一的账号服务器"></a>统一的账号服务器</h2><p>我们有个游戏在接账号，所以想设计一套完整的账号服务器，以后所有游戏都用这一套。</p>
+<p>但遇到了几个困难：</p>
+<ol>
+<li>同一个游戏可能会上不同渠道</li>
+<li>同一个游戏可能会有不同的发行商</li>
+</ol>
+<p>有些渠道和发行商可能会账号公用，有些可能独立。而且有些发行商独立的账号如果合同到期，有可能又会被合并回某个发行商。东西越想越复杂，因为合并回某个发行商我也不清楚具体会怎么表现，索性先抛弃合并的情况，只考虑账号公用和独立的情况。</p>
+<p>我们先把我们的游戏进行分类：</p>
+<ol>
+<li>产品Id</li>
+<li>发行商Id</li>
+<li>平台Id</li>
+<li>渠道Id</li>
+</ol>
+<p>当四个Id确定之后我们就能确定一个游戏了，然后根据着四个Id我们可以配置它的游戏Id，如果游戏Id一样，那就是同一个游戏，所有数据应该共享，否则的话就是两个单独数据的游戏。</p>
+<p>根据这思路我将服务器分为两个，一个是游戏管理服务器，管理哪些游戏数据应该互通。另外一个就是账号服务器，每个账号都一个对应的游戏Id，以账号Id和游戏Id作为主键来存这个账号数据，这样就能做到账号公用和独立的情况了。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%91%A8%E6%80%BB%E7%BB%93/" rel="tag"># 周总结</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/02/19/48-2023-02-19%E5%91%A8%E6%80%BB%E7%BB%93/" rel="prev" title="48. 2023-02-19周总结">
+                  <i class="fa fa-chevron-left"></i> 48. 2023-02-19周总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/03/05/50-2023-03-05%E5%91%A8%E6%80%BB%E7%BB%93/" rel="next" title="50. 2023-03-05周总结">
+                  50. 2023-03-05周总结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drecik Xu</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

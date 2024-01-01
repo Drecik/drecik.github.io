@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="说明本篇文章介绍redis的zipmap结构。zipmap是一个以节约内存为前提的键值对存储结构，这个结构只在内存上有优势，在查找&#x2F;插入&#x2F;删除&#x2F;更新上跟hash表或者红黑树实现的map没有任何优势。所以只适用于元素数量比较少的情况。但实际上redis自己内部并没有使用该结构，而是使用ziplist在元素比较少的场合来替代dict。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis zipmap剖析">
+<meta property="og:url" content="http://example.com/2018/11/25/23/index.html">
+<meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="说明本篇文章介绍redis的zipmap结构。zipmap是一个以节约内存为前提的键值对存储结构，这个结构只在内存上有优势，在查找&#x2F;插入&#x2F;删除&#x2F;更新上跟hash表或者红黑树实现的map没有任何优势。所以只适用于元素数量比较少的情况。但实际上redis自己内部并没有使用该结构，而是使用ziplist在元素比较少的场合来替代dict。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-11-25T03:49:53.000Z">
+<meta property="article:modified_time" content="2022-06-25T13:14:58.023Z">
+<meta property="article:author" content="Drecik Xu">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2018/11/25/23/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2018/11/25/23/","path":"2018/11/25/23/","title":"redis zipmap剖析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>redis zipmap剖析 | Drecik's Blog</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Drecik's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E5%87%BD%E6%95%B0%E5%88%86%E6%9E%90"><span class="nav-number">2.1.</span> <span class="nav-text">主要函数分析</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Drecik Xu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/11/25/23/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="redis zipmap剖析 | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          redis zipmap剖析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-11-25 11:49:53" itemprop="dateCreated datePublished" datetime="2018-11-25T11:49:53+08:00">2018-11-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本篇文章介绍redis的zipmap结构。zipmap是一个以节约内存为前提的键值对存储结构，这个结构只在内存上有优势，在查找&#x2F;插入&#x2F;删除&#x2F;更新上跟hash表或者红黑树实现的map没有任何优势。所以只适用于元素数量比较少的情况。但实际上redis自己内部并没有使用该结构，而是使用ziplist在元素比较少的场合来替代dict。</p>
+<span id="more"></span>
+
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>zipmap实际上是一个char数组，使用约定好的格式来存放这些key-value。（后面可以看到ziplist也是类似这种实现方式）<br>下面是一个zipmap的内存格式，该zipmap存放”foo” &#x3D;&gt; “bar”, “hello” &#x3D;&gt; “world”两个键值对：<br><code>&lt;zmlen&gt;&lt;len&gt;&quot;foo&quot;&lt;len&gt;&lt;free&gt;&quot;bar&quot;&lt;len&gt;&quot;hello&quot;&lt;len&gt;&lt;free&gt;&quot;world&quot;&lt;ZIPMAP_END&gt;</code></p>
+<ul>
+<li>zmlen：1 byte：存放zipmap拥有的key-value对数量，最大为253，如果zmlen&gt;&#x3D;254，则表示该值无效，需要遍历整个zipmap才能拿到元素数量</li>
+<li>len：1&#x2F;5 byte：存放后面key&#x2F;value的长度，第一个byte值&lt;254则该byte就是接下去的长度，如果&#x3D;254则接下去4 byte组成的unsinged int才是长度，如果&#x3D;255(ZIPMAP_END)，则表示到达zipmap尾部</li>
+<li>free：1 byte：存放value之后剩余的空间长度，有这个字段的好处就是，value长度改变可以利用剩余的空间来减少内存重复申请的次数，该字段为1 byte，所以剩余空间只能&lt;&#x3D;255，如果剩余空间大于这个范围，就会强制重新申请整个zipmap的内存</li>
+</ul>
+<p>对于上面例子，实际的二进制数值为：<br><code>&quot;\x02\x03foo\x03\x00bar\x05hello\x05\x00world\xff&quot;</code><br>如果将foo &#x3D;&gt; bar改为 foo &#x3D;&gt; hi，则二进制数值为<br><code>&quot;\x02\x03foo\x02\x01hir\x05hello\x05\x00world\xff&quot;</code><br>可以看到foo对于的value len更新为2，free更新为1，只是利用更改长度的方式避免了重新申请整个zipmap的内存</p>
+<h3 id="主要函数分析"><a href="#主要函数分析" class="headerlink" title="主要函数分析"></a>主要函数分析</h3><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+<th>时间复杂度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>zipmapNew</td>
+<td>创建一个空的zipmap内存，只有两个byte：\x00\xff</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>zipmapSet</td>
+<td>设置key和value到zipmap中，如果key不存在就会创建一个，否则更新key对应的value</td>
+<td>O(N), N为元素个数</td>
+</tr>
+<tr>
+<td>zipmapDel</td>
+<td>从zipmap中删除key</td>
+<td>O(N), N为元素个数</td>
+</tr>
+<tr>
+<td>zipmapRewind</td>
+<td>在迭代之前调用一起，类似于其他结构返回一个迭代器指针</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>zipmapNext</td>
+<td>返回下一个key，value的entry，key，klen，value，vlen用来返回当前迭代到的key，value值；如果已经到尾部，则返回NULL</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>zipmapGet</td>
+<td>搜索zipmap中key对应的的value，如果找到返回1，找不到返回0</td>
+<td>O(N), N为元素个数</td>
+</tr>
+<tr>
+<td>zipmapExists</td>
+<td>搜索zipmap中是否存在该key，如果找到返回1，找不到返回0</td>
+<td>O(N), N为元素个数</td>
+</tr>
+<tr>
+<td>zipmapLen</td>
+<td>返回zipmap键值对个数</td>
+<td>如果元素个数小于254，则O(1)，否则O(N), N为元素个数</td>
+</tr>
+<tr>
+<td>zipmapBlobLen</td>
+<td>返回zipmap占用的二进制内存大小</td>
+<td>O(N), N为元素个数</td>
+</tr>
+</tbody></table>
+<p>每个函数的声明及作用，具体细节可以查看我注释的redis源码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">unsigned</span> <span class="type">char</span> *<span class="title function_">zipmapNew</span><span class="params">(<span class="type">void</span>)</span>;             <span class="comment">// 创建一个空的zipmap内存，只有两个byte：\x00\xff</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置key和value到zipmap中，如果key不存在就会创建一个，否则更新key对应的value；参数update用于返回是更新操作还是插入操作</span></span><br><span class="line"><span class="type">unsigned</span> <span class="type">char</span> *<span class="title function_">zipmapSet</span><span class="params">(<span class="type">unsigned</span> <span class="type">char</span> *zm, <span class="type">unsigned</span> <span class="type">char</span> *key, <span class="type">unsigned</span> <span class="type">int</span> klen, <span class="type">unsigned</span> <span class="type">char</span> *val, <span class="type">unsigned</span> <span class="type">int</span> vlen, <span class="type">int</span> *update)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从zipmap中删除key；deleted用来返回是否删除元素</span></span><br><span class="line"><span class="type">unsigned</span> <span class="type">char</span> *<span class="title function_">zipmapDel</span><span class="params">(<span class="type">unsigned</span> <span class="type">char</span> *zm, <span class="type">unsigned</span> <span class="type">char</span> *key, <span class="type">unsigned</span> <span class="type">int</span> klen, <span class="type">int</span> *deleted)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在迭代之前调用一起，类似于其他结构返回一个迭代器指针</span></span><br><span class="line"><span class="type">unsigned</span> <span class="type">char</span> *<span class="title function_">zipmapRewind</span><span class="params">(<span class="type">unsigned</span> <span class="type">char</span> *zm)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回下一个key，value的entry，key，klen，value，vlen用来返回当前迭代到的key，value值；如果已经到尾部，则返回NULL</span></span><br><span class="line"><span class="comment">// 返回的key和value只是简单指向到zipmap内部的内存</span></span><br><span class="line"><span class="type">unsigned</span> <span class="type">char</span> *<span class="title function_">zipmapNext</span><span class="params">(<span class="type">unsigned</span> <span class="type">char</span> *zm, <span class="type">unsigned</span> <span class="type">char</span> **key, <span class="type">unsigned</span> <span class="type">int</span> *klen, <span class="type">unsigned</span> <span class="type">char</span> **value, <span class="type">unsigned</span> <span class="type">int</span> *vlen)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 搜索zipmap中key对应的的value，如果找到返回1，找不到返回0</span></span><br><span class="line"><span class="comment">// 返回的value只是简单指向到zipmap内部的内存</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">zipmapGet</span><span class="params">(<span class="type">unsigned</span> <span class="type">char</span> *zm, <span class="type">unsigned</span> <span class="type">char</span> *key, <span class="type">unsigned</span> <span class="type">int</span> klen, <span class="type">unsigned</span> <span class="type">char</span> **value, <span class="type">unsigned</span> <span class="type">int</span> *vlen)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 搜索zipmap中是否存在该key，如果找到返回1，找不到返回0</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">zipmapExists</span><span class="params">(<span class="type">unsigned</span> <span class="type">char</span> *zm, <span class="type">unsigned</span> <span class="type">char</span> *key, <span class="type">unsigned</span> <span class="type">int</span> klen)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回zipmap键值对个数</span></span><br><span class="line"><span class="type">unsigned</span> <span class="type">int</span> <span class="title function_">zipmapLen</span><span class="params">(<span class="type">unsigned</span> <span class="type">char</span> *zm)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回zipmap占用的二进制内存大小</span></span><br><span class="line"><span class="type">size_t</span> <span class="title function_">zipmapBlobLen</span><span class="params">(<span class="type">unsigned</span> <span class="type">char</span> *zm)</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">zipmapRepr</span><span class="params">(<span class="type">unsigned</span> <span class="type">char</span> *p)</span>;      <span class="comment">// for test</span></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/redis/" rel="tag"># redis</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/11/23/22/" rel="prev" title="redis dict(hash表)剖析">
+                  <i class="fa fa-chevron-left"></i> redis dict(hash表)剖析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/12/01/24/" rel="next" title="redis ziplist剖析">
+                  redis ziplist剖析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drecik Xu</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

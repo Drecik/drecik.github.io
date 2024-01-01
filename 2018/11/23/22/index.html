@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="说明本篇文章介绍redis的hash表。redis是一个以key-value形式提供服务的内存数据库，为了快速的进行key的查找和插入，只能采用O(1)为时间复杂度的hash表结构来存放数据。所以hash表应该是redis中最重要的一个结构。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis dict(hash表)剖析">
+<meta property="og:url" content="http://example.com/2018/11/23/22/index.html">
+<meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="说明本篇文章介绍redis的hash表。redis是一个以key-value形式提供服务的内存数据库，为了快速的进行key的查找和插入，只能采用O(1)为时间复杂度的hash表结构来存放数据。所以hash表应该是redis中最重要的一个结构。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-11-23T11:15:07.000Z">
+<meta property="article:modified_time" content="2022-06-25T13:14:58.023Z">
+<meta property="article:author" content="Drecik Xu">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2018/11/23/22/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2018/11/23/22/","path":"2018/11/23/22/","title":"redis dict(hash表)剖析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>redis dict(hash表)剖析 | Drecik's Blog</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Drecik's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#dictEntry"><span class="nav-number">2.1.</span> <span class="nav-text">dictEntry</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dictType"><span class="nav-number">2.2.</span> <span class="nav-text">dictType</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dictht"><span class="nav-number">2.3.</span> <span class="nav-text">dictht</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dict"><span class="nav-number">2.4.</span> <span class="nav-text">dict</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dictIterator"><span class="nav-number">2.5.</span> <span class="nav-text">dictIterator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E5%87%BD%E6%95%B0%E5%88%86%E6%9E%90"><span class="nav-number">2.6.</span> <span class="nav-text">主要函数分析</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Drecik Xu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/11/23/22/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="redis dict(hash表)剖析 | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          redis dict(hash表)剖析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-11-23 19:15:07" itemprop="dateCreated datePublished" datetime="2018-11-23T19:15:07+08:00">2018-11-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本篇文章介绍redis的hash表。redis是一个以key-value形式提供服务的内存数据库，为了快速的进行key的查找和插入，只能采用O(1)为时间复杂度的hash表结构来存放数据。所以hash表应该是redis中最重要的一个结构。</p>
+<span id="more"></span>
+
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>redis的hash表结构实现方式跟一般的hash表没有区别，hash冲突采用链表法来实现。因为redis是单进程单线程，所以为了避免rehash带来卡住线程时间过长的影响，redis采用了分步rehash。在这个hash表被使用过程中（Add，Remove，Get…），会触发rehash过程。为了实现分步操作，增加了大部分操作的实现复杂度，但对外的提供的接口还是跟普通hash表一样简单。</p>
+<h3 id="dictEntry"><a href="#dictEntry" class="headerlink" title="dictEntry"></a>dictEntry</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictEntry</span> &#123;</span></span><br><span class="line">    <span class="type">void</span> *key;              <span class="comment">// 节点key</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">        <span class="type">void</span> *val;</span><br><span class="line">        <span class="type">uint64_t</span> u64;</span><br><span class="line">        <span class="type">int64_t</span> s64;</span><br><span class="line">        <span class="type">double</span> d;</span><br><span class="line">    &#125; v;                    <span class="comment">// 节点value，使用了union来节省内存同时方便访问</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">dictEntry</span> *<span class="title">next</span>;</span> <span class="comment">// hash冲突的时候使用链表来串联起所有冲突的节点</span></span><br><span class="line">&#125; dictEntry;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>hash表的一个节点，key使用void类型可以指向任意类型，value采用uion结构可以方便获取一些基本数据类型</li>
+<li>next指针，采用链表法处理冲突节点</li>
+</ul>
+<h3 id="dictType"><a href="#dictType" class="headerlink" title="dictType"></a>dictType</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 用来存放某些自定义函数的结构体，实现hash表多态功能</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictType</span> &#123;</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="title function_">int</span> <span class="params">(*hashFunction)</span><span class="params">(<span class="type">const</span> <span class="type">void</span> *key)</span>;                          <span class="comment">// hash计算函数</span></span><br><span class="line">    <span class="type">void</span> *(*keyDup)(<span class="type">void</span> *privdata, <span class="type">const</span> <span class="type">void</span> *key);                       <span class="comment">// key复制函数</span></span><br><span class="line">    <span class="type">void</span> *(*valDup)(<span class="type">void</span> *privdata, <span class="type">const</span> <span class="type">void</span> *obj);                       <span class="comment">// value复制函数</span></span><br><span class="line">    <span class="type">int</span> (*keyCompare)(<span class="type">void</span> *privdata, <span class="type">const</span> <span class="type">void</span> *key1, <span class="type">const</span> <span class="type">void</span> *key2);  <span class="comment">// key比较函数</span></span><br><span class="line">    <span class="type">void</span> (*keyDestructor)(<span class="type">void</span> *privdata, <span class="type">void</span> *key);                       <span class="comment">// key销毁函数</span></span><br><span class="line">    <span class="type">void</span> (*valDestructor)(<span class="type">void</span> *privdata, <span class="type">void</span> *obj);                       <span class="comment">// value销毁函数</span></span><br><span class="line">&#125; dictType;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>每个hash表在创建的时候需要提供该结构体指针，用来实现hash表一些回调函数功能，hash表会在某些场合调用这些回调</li>
+<li>这个结构体也能实现hash表类似c++类多态功能，不同的hash表可以拥有不同的某些操作函数，实际上c++类也是采用类似方法实现多态</li>
+</ul>
+<h3 id="dictht"><a href="#dictht" class="headerlink" title="dictht"></a>dictht</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictht</span> &#123;</span></span><br><span class="line">    dictEntry **table;          <span class="comment">// entry数组</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span> size;         <span class="comment">// 数组大小</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span> sizemask;     <span class="comment">// 数组掩码，为size-1，用于取模计算hash表桶的下标</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span> used;         <span class="comment">// 当前存放的entry数量</span></span><br><span class="line">&#125; dictht;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>hash表结构，如果是普通的hash表，使用这个结构即可，为了实现分步rehash功能，redis在外面又套了一层</li>
+<li>size永远保持为2幂次方，sizemask&#x3D;size-1，这样计算桶下标的时候可以直接使用h &amp; sizemask来快速计算</li>
+</ul>
+<h3 id="dict"><a href="#dict" class="headerlink" title="dict"></a>dict</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dict</span> &#123;</span></span><br><span class="line">    dictType *type;</span><br><span class="line">    <span class="type">void</span> *privdata;     <span class="comment">// 用来存放用户变量指针</span></span><br><span class="line">    dictht ht[<span class="number">2</span>];</span><br><span class="line">    <span class="type">long</span> rehashidx; <span class="comment">/* rehashing not in progress if rehashidx == -1 */</span></span><br><span class="line">    <span class="type">int</span> iterators; <span class="comment">/* number of iterators currently running */</span></span><br><span class="line">&#125; dict;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>真正的redis hash表结构，套了两个dictht对象，在一般使用过程中，ht[1]一直保持为空，但一旦进入到rehash过程，ht[1]就会创建成新的size的hash表，然后分步将ht[0]原有的数据rehash到ht[1]中，直到ht[0]没有元素为止，最后将ht[1]的hash表赋值给ht[0]，ht[1]清空</li>
+<li>rehash过程中，所有新加的元素都会加入到ht[1]中，所有删除，查找，遍历都需要同时操作ht[0]，ht[1]，加大了这一块的复杂度</li>
+<li>rehashidx，没有rehash时值一直为-1，如果进入rehahs过程，则表示当前分步进行到ht[0]的哪个桶，下一次分步的过程能够对接上一次分步的过程</li>
+<li>iterators，因为rehash过程不是一次性完成的，所以如果使用迭代器遍历过程中可能会触发rehash，会导致某些元素刚在ht[0]中遍历过，rehash到ht[1]中又遍历一次。所以redish提供一种safe iterator的安全迭代器，在有安全迭代器指向该hash表时，会阻止分步rehash，无论当前是否在rehash过程。改变量值为多少就表示有多少个safe iterator正在迭代。</li>
+</ul>
+<h3 id="dictIterator"><a href="#dictIterator" class="headerlink" title="dictIterator"></a>dictIterator</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictIterator</span> &#123;</span></span><br><span class="line">    dict *d;</span><br><span class="line">    <span class="type">long</span> index;</span><br><span class="line">    <span class="type">int</span> table, safe;</span><br><span class="line">    dictEntry *entry, *nextEntry;</span><br><span class="line">    <span class="comment">/* unsafe iterator fingerprint for misuse detection. */</span></span><br><span class="line">    <span class="type">long</span> <span class="type">long</span> fingerprint;</span><br><span class="line">&#125; dictIterator;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>hash表迭代器，d，index，table，entry，nextEntry用来记录遍历过程的位置</li>
+<li>safe用来表示该迭代器是否为安全的迭代器</li>
+<li>fingerprint，用在非安全迭代器的校验，如果使用非迭代器去遍历某个hash表过程中，就不应该操作该hash表，该变量会保存遍历之前该hash表的一个指纹，遍历结束之后在对比下两个指纹是否相等，debug模式下如果不相等会abort</li>
+</ul>
+<h3 id="主要函数分析"><a href="#主要函数分析" class="headerlink" title="主要函数分析"></a>主要函数分析</h3><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+<th>时间复杂度</th>
+<th>是否触发rehash步骤</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>dictCreate</td>
+<td>创建一个空的hash表</td>
+<td>O(1)</td>
+<td>N</td>
+</tr>
+<tr>
+<td>dictExpand</td>
+<td>将hash表扩容到能容纳size的最小2次幂大小（只是初始化rehash的一些变量，rehash过程分步在每次操作该hash表过程中）</td>
+<td>O(1)</td>
+<td>N</td>
+</tr>
+<tr>
+<td>dictAdd</td>
+<td>增加键值对到hash表中，如果key已经存在，返回错误</td>
+<td>O(1)</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>dictReplace</td>
+<td>更新hash表的key对应的value值，如果key不存在则插入一个新的，操作成功返回1，失败返回0</td>
+<td>O(1)</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>dictDelete</td>
+<td>删除hash表key所对应的元素，并调用对应的回调去释放key和value</td>
+<td>O(1)</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>dictDeleteNoFree</td>
+<td>删除hash表key所对应的元素，但不调用对应释放key和value的回调</td>
+<td>O(1)</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>dictRelease</td>
+<td>释放并清除整个hash表的所有内存</td>
+<td>O(N)，N为hash表元素个数</td>
+<td>N</td>
+</tr>
+<tr>
+<td>dictFind</td>
+<td>hash表中查找key对应的entry，如果找不到返回NULL</td>
+<td>O(1)</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>dictFetchValue</td>
+<td>hash表中查找key对应的value，如果找不到返回NULL</td>
+<td>O(1)</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>dictResize</td>
+<td>将hash表的大小减少到能容纳里面元素的最小值，最小不能小过DICT_HT_INITIAL_SIZE，如果当前禁止resize操作或者当前正在rehash，返回出错（只是初始化rehash的一些变量，rehash过程分步在每次操作该hash表过程中）</td>
+<td>O(1)</td>
+<td>N</td>
+</tr>
+<tr>
+<td>dictGetIterator</td>
+<td>获取遍历该hash表的迭代器，遍历过程中应该确保该hash表不能被改变</td>
+<td>O(1)</td>
+<td>N</td>
+</tr>
+<tr>
+<td>dictGetSafeIterator</td>
+<td>获取遍历该hash表的安全迭代器，遍历过程中能确保不会触发rehash操作，但遍历过程中新加的元素可能会不被遍历</td>
+<td>O(1)</td>
+<td>N</td>
+</tr>
+<tr>
+<td>dictNext</td>
+<td>获取迭代器下一个该遍历的元素</td>
+<td>O(1)</td>
+<td>N</td>
+</tr>
+<tr>
+<td>dictReleaseIterator</td>
+<td>释放迭代器内存</td>
+<td>O(1)</td>
+<td>N</td>
+</tr>
+<tr>
+<td>dictEmpty</td>
+<td>清空hash表，清空之前会调用callback，具体是一次还是两次取决于是否在rehash</td>
+<td>O(N)，N为hash表元素个数</td>
+<td>N</td>
+</tr>
+</tbody></table>
+<p>每个函数及宏的声明及作用，具体细节可以查看我注释的redis源码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 一些简单的宏定义，包括释放key，value，设置key，value，比较key</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictFreeVal(d, entry) \</span></span><br><span class="line"><span class="meta">    <span class="keyword">if</span> ((d)-&gt;type-&gt;valDestructor) \</span></span><br><span class="line"><span class="meta">        (d)-&gt;type-&gt;valDestructor((d)-&gt;privdata, (entry)-&gt;v.val)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictSetVal(d, entry, _val_) do &#123; \</span></span><br><span class="line"><span class="meta">    <span class="keyword">if</span> ((d)-&gt;type-&gt;valDup) \</span></span><br><span class="line"><span class="meta">        entry-&gt;v.val = (d)-&gt;type-&gt;valDup((d)-&gt;privdata, _val_); \</span></span><br><span class="line"><span class="meta">    <span class="keyword">else</span> \</span></span><br><span class="line"><span class="meta">        entry-&gt;v.val = (_val_); \</span></span><br><span class="line"><span class="meta">&#125; while(0)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictSetSignedIntegerVal(entry, _val_) \</span></span><br><span class="line"><span class="meta">    do &#123; entry-&gt;v.s64 = _val_; &#125; while(0)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictSetUnsignedIntegerVal(entry, _val_) \</span></span><br><span class="line"><span class="meta">    do &#123; entry-&gt;v.u64 = _val_; &#125; while(0)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictSetDoubleVal(entry, _val_) \</span></span><br><span class="line"><span class="meta">    do &#123; entry-&gt;v.d = _val_; &#125; while(0)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictFreeKey(d, entry) \</span></span><br><span class="line"><span class="meta">    <span class="keyword">if</span> ((d)-&gt;type-&gt;keyDestructor) \</span></span><br><span class="line"><span class="meta">        (d)-&gt;type-&gt;keyDestructor((d)-&gt;privdata, (entry)-&gt;key)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictSetKey(d, entry, _key_) do &#123; \</span></span><br><span class="line"><span class="meta">    <span class="keyword">if</span> ((d)-&gt;type-&gt;keyDup) \</span></span><br><span class="line"><span class="meta">        entry-&gt;key = (d)-&gt;type-&gt;keyDup((d)-&gt;privdata, _key_); \</span></span><br><span class="line"><span class="meta">    <span class="keyword">else</span> \</span></span><br><span class="line"><span class="meta">        entry-&gt;key = (_key_); \</span></span><br><span class="line"><span class="meta">&#125; while(0)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictCompareKeys(d, key1, key2) \</span></span><br><span class="line"><span class="meta">    (((d)-&gt;type-&gt;keyCompare) ? \</span></span><br><span class="line"><span class="meta">        (d)-&gt;type-&gt;keyCompare((d)-&gt;privdata, key1, key2) : \</span></span><br><span class="line"><span class="meta">        (key1) == (key2))</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictHashKey(d, key) (d)-&gt;type-&gt;hashFunction(key)    <span class="comment">// 计算key的hash值</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictGetKey(he) ((he)-&gt;key)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictGetVal(he) ((he)-&gt;v.val)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictGetSignedIntegerVal(he) ((he)-&gt;v.s64)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictGetUnsignedIntegerVal(he) ((he)-&gt;v.u64)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictGetDoubleVal(he) ((he)-&gt;v.d)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictSlots(d) ((d)-&gt;ht[0].size+(d)-&gt;ht[1].size)      <span class="comment">// hash表桶数量</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictSize(d) ((d)-&gt;ht[0].used+(d)-&gt;ht[1].used)       <span class="comment">// hash表元素数量</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> dictIsRehashing(d) ((d)-&gt;rehashidx != -1)           <span class="comment">// 是否正在分步resh操作</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* API */</span></span><br><span class="line">dict *<span class="title function_">dictCreate</span><span class="params">(dictType *type, <span class="type">void</span> *privDataPtr)</span>;                            <span class="comment">// 创建一个空的hash表</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">dictExpand</span><span class="params">(dict *d, <span class="type">unsigned</span> <span class="type">long</span> size)</span>;                                    <span class="comment">// 将hash表扩容到能容纳size的最小2次幂大小（只是初始化rehash的一些变量，rehash过程分步在每次操作该hash表过程中）</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">dictAdd</span><span class="params">(dict *d, <span class="type">void</span> *key, <span class="type">void</span> *val)</span>;                                     <span class="comment">// 增加键值对到hash表中，如果key已经存在，返回错误</span></span><br><span class="line">dictEntry *<span class="title function_">dictAddRaw</span><span class="params">(dict *d, <span class="type">void</span> *key)</span>;                                      <span class="comment">// hash表增加元素的原始接口，只增加了一个对应key的entry到hash表中，但不对值进行设置，如果key已经存在返回NULL</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">dictReplace</span><span class="params">(dict *d, <span class="type">void</span> *key, <span class="type">void</span> *val)</span>;                                 <span class="comment">// 更新hash表的key对应的value值，如果key不存在则插入一个新的，操作成功返回1，失败返回0</span></span><br><span class="line">dictEntry *<span class="title function_">dictReplaceRaw</span><span class="params">(dict *d, <span class="type">void</span> *key)</span>;                                  <span class="comment">// dictAddRaw的升级版，如果key存在，返回当前key对应的value，如果不存在，返回新插入的entry</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">dictDelete</span><span class="params">(dict *d, <span class="type">const</span> <span class="type">void</span> *key)</span>;                                       <span class="comment">// 删除hash表key所对应的元素，并调用对应的回调去释放key和value</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">dictDeleteNoFree</span><span class="params">(dict *d, <span class="type">const</span> <span class="type">void</span> *key)</span>;                                 <span class="comment">// 删除hash表key所对应的元素，但不调用对应释放key和value的回调</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">dictRelease</span><span class="params">(dict *d)</span>;                                                      <span class="comment">// 释放并清除整个hash表的所有内存</span></span><br><span class="line">dictEntry * <span class="title function_">dictFind</span><span class="params">(dict *d, <span class="type">const</span> <span class="type">void</span> *key)</span>;                                 <span class="comment">// hash表中查找key对应的entry，如果找不到返回NULL</span></span><br><span class="line"><span class="type">void</span> *<span class="title function_">dictFetchValue</span><span class="params">(dict *d, <span class="type">const</span> <span class="type">void</span> *key)</span>;                                 <span class="comment">// hash表中查找key对应的value，如果找不到返回NULL</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">dictResize</span><span class="params">(dict *d)</span>;                                                        <span class="comment">// 将hash表的大小减少到能容纳里面元素的最小值，最小不能小过DICT_HT_INITIAL_SIZE，如果当前禁止resize操作或者当前正在rehash，返回出错</span></span><br><span class="line">dictIterator *<span class="title function_">dictGetIterator</span><span class="params">(dict *d)</span>;                                         <span class="comment">// 获取遍历该hash表的迭代器，遍历过程中应该确保该hash表不能被改变</span></span><br><span class="line">dictIterator *<span class="title function_">dictGetSafeIterator</span><span class="params">(dict *d)</span>;                                     <span class="comment">// 获取遍历该hash表的安全迭代器，遍历过程中能确保不会触发rehash操作，但遍历过程中新加的元素可能会不被遍历</span></span><br><span class="line">dictEntry *<span class="title function_">dictNext</span><span class="params">(dictIterator *iter)</span>;                                        <span class="comment">// 获取迭代器下一个该遍历的元素</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">dictReleaseIterator</span><span class="params">(dictIterator *iter)</span>;                                   <span class="comment">// 释放迭代器内存</span></span><br><span class="line">dictEntry *<span class="title function_">dictGetRandomKey</span><span class="params">(dict *d)</span>;                                           <span class="comment">// 从hash表中随机获取一个entry</span></span><br><span class="line"><span class="type">unsigned</span> <span class="type">int</span> <span class="title function_">dictGetSomeKeys</span><span class="params">(dict *d, dictEntry **des, <span class="type">unsigned</span> <span class="type">int</span> count)</span>;     <span class="comment">// 从hash表中随机选取count个元素，存放在des指向的数组中，返回实际获取的元素个数，可能会小于count</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">dictGetStats</span><span class="params">(<span class="type">char</span> *buf, <span class="type">size_t</span> bufsize, dict *d)</span>;                          <span class="comment">// for debug</span></span><br><span class="line"><span class="type">unsigned</span> <span class="type">int</span> <span class="title function_">dictGenHashFunction</span><span class="params">(<span class="type">const</span> <span class="type">void</span> *key, <span class="type">int</span> len)</span>;                     <span class="comment">// hash函数</span></span><br><span class="line"><span class="type">unsigned</span> <span class="type">int</span> <span class="title function_">dictGenCaseHashFunction</span><span class="params">(<span class="type">const</span> <span class="type">unsigned</span> <span class="type">char</span> *buf, <span class="type">int</span> len)</span>;        <span class="comment">// 不区分大小写的hash函数</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">dictEmpty</span><span class="params">(dict *d, <span class="type">void</span>(callback)(<span class="type">void</span>*))</span>;                                 <span class="comment">// 清空hash表，清空之前会调用callback，具体是一次还是两次取决于是否在rehash</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">dictEnableResize</span><span class="params">(<span class="type">void</span>)</span>;                                                    <span class="comment">// 开启hash表resize操作</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">dictDisableResize</span><span class="params">(<span class="type">void</span>)</span>;                                                   <span class="comment">// 关闭hash表resize操作，注意即使关闭的情况下，当比率大于5:1的情况下还是会触发resize</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">dictRehash</span><span class="params">(dict *d, <span class="type">int</span> n)</span>;                                                 <span class="comment">// 执行n步rehash操作，返回1表示还有元素需要再一次进行rehash，否则返回0</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">dictRehashMilliseconds</span><span class="params">(dict *d, <span class="type">int</span> ms)</span>;                                    <span class="comment">// rehash一定时间</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">dictSetHashFunctionSeed</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> initval)</span>;                             <span class="comment">// 设置hash函数种子</span></span><br><span class="line"><span class="type">unsigned</span> <span class="type">int</span> <span class="title function_">dictGetHashFunctionSeed</span><span class="params">(<span class="type">void</span>)</span>;                                     <span class="comment">// 获取hash函数种子</span></span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> <span class="title function_">dictScan</span><span class="params">(dict *d, <span class="type">unsigned</span> <span class="type">long</span> v, dictScanFunction *fn, <span class="type">void</span> *privdata)</span>;     <span class="comment">// 触发一次遍历hash表操作，外层需要套用循环来遍历整个hash表</span></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/redis/" rel="tag"># redis</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/11/10/21/" rel="prev" title="redis双向链表剖析">
+                  <i class="fa fa-chevron-left"></i> redis双向链表剖析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/11/25/23/" rel="next" title="redis zipmap剖析">
+                  redis zipmap剖析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drecik Xu</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

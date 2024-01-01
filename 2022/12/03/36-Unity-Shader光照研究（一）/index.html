@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="最近3D项目需要调模型在游戏里面的效果，之前提供的一个只能调漫反射的强度的简单Shader不太够，需要支持更多的功能，比如高光,环境光,阴影等。 这一块的Shader之前也都是到处乱翻的资料，没有系统学习过，趁此机会翻了下《Unity Shader入门精要》关于光照的知识并做个总结。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity Shader光照研究（一）">
+<meta property="og:url" content="http://example.com/2022/12/03/36-Unity-Shader%E5%85%89%E7%85%A7%E7%A0%94%E7%A9%B6%EF%BC%88%E4%B8%80%EF%BC%89/index.html">
+<meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="最近3D项目需要调模型在游戏里面的效果，之前提供的一个只能调漫反射的强度的简单Shader不太够，需要支持更多的功能，比如高光,环境光,阴影等。 这一块的Shader之前也都是到处乱翻的资料，没有系统学习过，趁此机会翻了下《Unity Shader入门精要》关于光照的知识并做个总结。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://static.zybuluo.com/candycat/51iph9ayl3l22w3xuzeumwxf/specular.png">
+<meta property="og:image" content="http://static.zybuluo.com/candycat/nntler7jilkso6zufrbw447c/Blinn.png">
+<meta property="og:image" content="http://static.zybuluo.com/candycat/tzgu5oq816ojbkjo4y05rvij/irradiance.png">
+<meta property="article:published_time" content="2022-12-03T02:57:35.000Z">
+<meta property="article:modified_time" content="2022-12-17T15:28:26.543Z">
+<meta property="article:author" content="Drecik Xu">
+<meta property="article:tag" content="unity">
+<meta property="article:tag" content="shader">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://static.zybuluo.com/candycat/51iph9ayl3l22w3xuzeumwxf/specular.png">
+
+
+<link rel="canonical" href="http://example.com/2022/12/03/36-Unity-Shader%E5%85%89%E7%85%A7%E7%A0%94%E7%A9%B6%EF%BC%88%E4%B8%80%EF%BC%89/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/12/03/36-Unity-Shader%E5%85%89%E7%85%A7%E7%A0%94%E7%A9%B6%EF%BC%88%E4%B8%80%EF%BC%89/","path":"2022/12/03/36-Unity-Shader光照研究（一）/","title":"Unity Shader光照研究（一）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Unity Shader光照研究（一） | Drecik's Blog</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Drecik's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">知识点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%AB%E5%8F%8D%E5%B0%84"><span class="nav-number">1.1.</span> <span class="nav-text">漫反射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E5%85%89%E5%8F%8D%E5%B0%84"><span class="nav-number">1.2.</span> <span class="nav-text">高光反射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%85%89"><span class="nav-number">1.3.</span> <span class="nav-text">环境光</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%90%E9%A1%B6%E7%82%B9%E5%85%89%E7%85%A7%E5%92%8C%E9%80%90%E5%83%8F%E7%B4%A0%E5%85%89%E7%85%A7"><span class="nav-number">1.4.</span> <span class="nav-text">逐顶点光照和逐像素光照</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="nav-number">2.</span> <span class="nav-text">完整的例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%96%91%E9%97%AE"><span class="nav-number">3.</span> <span class="nav-text">疑问</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%BC%AB%E5%8F%8D%E5%B0%84%E5%85%89%E7%85%A7%E7%BB%93%E6%9E%9C%E8%AE%A1%E7%AE%97%E6%97%B6%EF%BC%8C%E8%A6%81%E4%BD%BF%E7%94%A8%E5%BD%92%E4%B8%80%E5%8C%96%E7%9A%84%E6%B3%95%E7%BA%BF%E4%BB%A5%E5%8F%8A%E5%8D%95%E4%BD%8D%E5%85%89%E6%BA%90%E6%96%B9%E5%90%91"><span class="nav-number">3.1.</span> <span class="nav-text">为什么漫反射光照结果计算时，要使用归一化的法线以及单位光源方向?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tags-quot-LightMode-quot-quot-ForwardBase-quot-%E5%92%8C-pragma-multi-compile-fwdbase%E4%BD%9C%E7%94%A8"><span class="nav-number">3.2.</span> <span class="nav-text">Tags {&quot;LightMode&quot; &#x3D; &quot;ForwardBase&quot;}和#pragma multi_compile_fwdbase作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81max%E7%BA%A6%E6%9D%9F%E7%82%B9%E6%88%90%E7%9A%84%E7%BB%93%E6%9E%9C"><span class="nav-number">3.3.</span> <span class="nav-text">为什么要max约束点成的结果</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Drecik Xu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/03/36-Unity-Shader%E5%85%89%E7%85%A7%E7%A0%94%E7%A9%B6%EF%BC%88%E4%B8%80%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Unity Shader光照研究（一） | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Unity Shader光照研究（一）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-12-03 10:57:35" itemprop="dateCreated datePublished" datetime="2022-12-03T10:57:35+08:00">2022-12-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-12-17 23:28:26" itemprop="dateModified" datetime="2022-12-17T23:28:26+08:00">2022-12-17</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>最近3D项目需要调模型在游戏里面的效果，之前提供的一个只能调漫反射的强度的简单Shader不太够，需要支持更多的功能，比如<code>高光</code>,<code>环境光</code>,<code>阴影</code>等。</p>
+<p>这一块的Shader之前也都是到处乱翻的资料，没有系统学习过，趁此机会翻了下《Unity Shader入门精要》关于光照的知识并做个总结。</p>
+<span id="more"></span>
+
+<h2 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h2><p>这里讲到的一些光照模型都是经验模型，不完全符合真实世界中的光学现象</p>
+<h3 id="漫反射"><a href="#漫反射" class="headerlink" title="漫反射"></a>漫反射</h3><p>用来表示有多少光线会被折射、吸收和散射出表面，漫反射符合<strong>兰伯特定律</strong>：反射光线的强度与表面法线和光源方向之间夹角的余弦值成正比，计算公式</p>
+<p>c<sub>diffuse</sub>&#x3D;(c<sub>light</sub> · m<sub>diffuse</sub>) max(0, n · l)</p>
+<ul>
+<li>n: 表面法线</li>
+<li>l: 指向光源的单位矢量，可以用Unity Shader中的函数<code>UnityWorldSpaceLightDir</code>, <code>WorldSpaceLightDir</code>获取，这些函数返回的向量没有归一化，需要用<code>normalize</code>进行归一化处理</li>
+<li>m<sub>diffuse</sub>: 材质漫反射的颜色</li>
+<li>c<sub>light</sub>: 光源颜色</li>
+</ul>
+<p>对应Unity Shader的代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 灯光方向</span><br><span class="line">fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(i.worldPosition));</span><br><span class="line"></span><br><span class="line">// 法线归一化</span><br><span class="line">fixed3 worldNormal = normalize(i.worldNormal);</span><br><span class="line"></span><br><span class="line">// 漫反射颜色</span><br><span class="line">fixed3 diffuseColor = _LightColor0.rgb * _Diffuse.rgb * saturate(dot(worldNormal, worldLightDir));</span><br></pre></td></tr></table></figure>
+
+<p>为了防止法线和光源方向点乘为负值，需要用取最大值进行截取</p>
+<p>兰伯特定律的被光面因为光照无法到达，所以表现为全黑的效果，没有任何明暗变化。为了解决这个问题，有一个改善的技术<strong>半兰伯特模型</strong>，计算公式</p>
+<p>c<sub>diffuse</sub>&#x3D;(c<sub>light</sub> · m<sub>diffuse</sub>) (a(n · l) + b)</p>
+<p>取消了max防止为负值，但对结果进行了缩放然后再便宜，绝大多数情况下a和b都为0.5</p>
+<p>对应的Unity Shader代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 灯光方向</span><br><span class="line">fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(i.worldPosition));</span><br><span class="line"></span><br><span class="line">// 法线归一化</span><br><span class="line">fixed3 worldNormal = normalize(i.worldNormal);</span><br><span class="line"></span><br><span class="line">// 漫反射颜色</span><br><span class="line">fixed3 diffuseColor = _LightColor0.rgb * _Diffuse.rgb * (0.5 * dot(worldNormal, worldLightDir)) + 0.5);</span><br></pre></td></tr></table></figure>
+
+<h3 id="高光反射"><a href="#高光反射" class="headerlink" title="高光反射"></a>高光反射</h3><p>用来表示物体表面是如何反射光的，高光反射也有两个常用经验模型</p>
+<ol>
+<li>Phong模型<br>需要知道几个信息，表面法线、视角方向、光源方向、反射方向，如图：<br><img src="http://static.zybuluo.com/candycat/51iph9ayl3l22w3xuzeumwxf/specular.png"></li>
+</ol>
+<p>其中反射方向r可以通过其他信息计算得到:</p>
+<p>r &#x3D; 2(n · l)n - l （可以使用Unity Shader中的函数<code>reflect</code>获得反射向量，因为参数的向量需要从反射点射出，所欲传入的灯光向量需要取负值，另外该函数返回的向量没有归一化）</p>
+<p>得到r之后，我们可以带入Phone模型公式：</p>
+<p>c<sub>specular</sub>&#x3D;(c<sub>light</sub> · m<sub>specular</sub>) max(0, v · r)<sup>m<sub>gloss</sub></sup></p>
+<ul>
+<li>r: 反射方向</li>
+<li>v：点到摄像机方向的单位矢量，可以用Unity Shader中的函数<code>UnityWorldSpaceViewDir</code>、<code>WorldSpaceViewDir</code>获取，这些函数返回没有进行归一化</li>
+<li>m<sub>specular</sub>: 高光反射的颜色</li>
+<li>c<sub>light</sub>: 光源颜色</li>
+<li>m<sub>gloss</sub>: 材质的光泽度，用来控制高光区域的亮点有多宽，值越大，两点越小</li>
+</ul>
+<p>对应的Unity Shader代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// 灯光方向</span><br><span class="line">fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(i.worldPosition));</span><br><span class="line"></span><br><span class="line">// 法线归一化</span><br><span class="line">fixed3 worldNormal = normalize(i.worldNormal);</span><br><span class="line"></span><br><span class="line">// 摄像机方向</span><br><span class="line">fixed3 worldViewDir = normalize(UnityWorldSpaceViewDir(i.worldPosition));</span><br><span class="line"></span><br><span class="line">// 反射方向</span><br><span class="line">fixed3 reflectDir = normalize(reflect(-worldLightDir, worldNormal));</span><br><span class="line"></span><br><span class="line">// 高光颜色</span><br><span class="line">fixed3 specularColor = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(reflectDir, worldViewDir)), _Gloss);</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>Blinn模型<br>跟Phong模型相比，它避免计算反射方向r，但引入的另外一个矢量h<br><img src="http://static.zybuluo.com/candycat/nntler7jilkso6zufrbw447c/Blinn.png"></li>
+</ol>
+<p>h &#x3D; (v + l) &#x2F; |v + l| 对应Unity代码<code>normalize(worldViewDir + worldLightDir)</code></p>
+<p>模型公式：<br>c<sub>specular</sub>&#x3D;(c<sub>light</sub> · m<sub>specular</sub>) max(0, n · h)<sup>m<sub>gloss</sub></sup></p>
+<p>对应的Unity代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// 灯光方向</span><br><span class="line">fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(i.worldPosition));</span><br><span class="line"></span><br><span class="line">// 法线归一化</span><br><span class="line">fixed3 worldNormal = normalize(i.worldNormal);</span><br><span class="line"></span><br><span class="line">// 摄像机方向</span><br><span class="line">fixed3 worldViewDir = normalize(UnityWorldSpaceViewDir(i.worldPosition));</span><br><span class="line"></span><br><span class="line">// 向量h</span><br><span class="line">fixed3 halfDir = normalize(worldLightDir + worldNormal);</span><br><span class="line"></span><br><span class="line">// 高光颜色</span><br><span class="line">fixed3 specularColor = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(halfDir, worldViewDir)), _Gloss);</span><br></pre></td></tr></table></figure>
+
+<p>在某些情况下（比如摄像机和光源距离模型足够远），Blinn模型会快于Phone模型</p>
+<p>这两种模型都是经验模型，不能说谁对谁错。只是Blinn模型更符合实验结果</p>
+<h3 id="环境光"><a href="#环境光" class="headerlink" title="环境光"></a>环境光</h3><p>模拟来自于其他物体的间接光照，环境光公式比较简单就是一个全局变量：</p>
+<p>c<sub>ambient</sub> &#x3D; g<sub>ambient</sub></p>
+<p>对应的Unity代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.rgb;</span><br></pre></td></tr></table></figure>
+
+<h3 id="逐顶点光照和逐像素光照"><a href="#逐顶点光照和逐像素光照" class="headerlink" title="逐顶点光照和逐像素光照"></a>逐顶点光照和逐像素光照</h3><p>取决于光照计算在顶点着色其还是片元着色其中</p>
+<p>一般情况下光照计算都会在片元着色器中，因为这样效果会更好点。但是一般情况下像素点会远远超过顶点，所以计算量会比较大，当灯光比较多的时候，一些灯光会降级到顶点着色器处理。</p>
+<h2 id="完整的例子"><a href="#完整的例子" class="headerlink" title="完整的例子"></a>完整的例子</h2><p>增加了几个参数：</p>
+<ul>
+<li>环境光、漫反射、高光强度设置</li>
+<li>不受光照影响的比例（使用原贴图显示的比例）</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line">Shader &quot;Light&quot;</span><br><span class="line">&#123;</span><br><span class="line">    Properties</span><br><span class="line">    &#123;</span><br><span class="line">        _MainTex(&quot;主贴图&quot;, 2D) = &quot;white&quot; &#123;&#125;</span><br><span class="line">        _MainColor(&quot;主颜色&quot;, Color) = (1, 1, 1, 1)</span><br><span class="line">        _MainFactor(&quot;不受光照影响的比例&quot;, Range(0, 1)) = 1</span><br><span class="line"></span><br><span class="line">        _AmbientFactor(&quot;环境光强度&quot;, float) = 1</span><br><span class="line">        _DiffuseFactor(&quot;漫反射强度&quot;, float) = 1</span><br><span class="line">        _SpecularFactor(&quot;高光强度&quot;, float) = 1</span><br><span class="line">        _SpecularColor(&quot;高光颜色&quot;, Color) = (1, 1, 1, 1)</span><br><span class="line">        _Gloss(&quot;光泽度&quot;, Range(8, 255)) = 20</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    SubShader</span><br><span class="line">    &#123;</span><br><span class="line">        Tags &#123; &quot;RenderType&quot; = &quot;Qpaque&quot; &#125;</span><br><span class="line"></span><br><span class="line">        CGINCLUDE </span><br><span class="line"></span><br><span class="line">        #include &quot;UnityCG.cginc&quot;</span><br><span class="line">        #include &quot;Lighting.cginc&quot;</span><br><span class="line">        #include &quot;AutoLight.cginc&quot;</span><br><span class="line"></span><br><span class="line">        sampler2D _MainTex;</span><br><span class="line">        fixed4 _MainTex_ST;</span><br><span class="line">        fixed4 _MainColor;</span><br><span class="line">        fixed _MainFactor;</span><br><span class="line"></span><br><span class="line">        float _AmbientFactor;</span><br><span class="line">        fixed _DiffuseFactor;</span><br><span class="line">        fixed _SpecularFactor;</span><br><span class="line">        fixed4 _SpecularColor;</span><br><span class="line">        float _Gloss;</span><br><span class="line">        ENDCG</span><br><span class="line"></span><br><span class="line">        Pass</span><br><span class="line">        &#123;</span><br><span class="line">            Tags &#123;&quot;LightMode&quot; = &quot;ForwardBase&quot;&#125;</span><br><span class="line"></span><br><span class="line">            CGPROGRAM</span><br><span class="line">            #pragma multi_compile_fwdbase</span><br><span class="line"></span><br><span class="line">            struct appdata</span><br><span class="line">            &#123;</span><br><span class="line">                float4 vertex : POSITION;</span><br><span class="line">                float2 uv : TEXCOORD0;</span><br><span class="line">                float3 normal : NORMAL;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            struct v2f</span><br><span class="line">            &#123;</span><br><span class="line">                float2 uv : TEXCOORD0;</span><br><span class="line">                float4 vertex : SV_POSITION;</span><br><span class="line">                float3 worldNormal : NORMAL;</span><br><span class="line">                float3 worldVertex : TEXCOORD1;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            #pragma vertex vert</span><br><span class="line">            #pragma fragment frag</span><br><span class="line"></span><br><span class="line">            v2f vert(appdata v)</span><br><span class="line">            &#123;</span><br><span class="line">                v2f o;</span><br><span class="line">                o.vertex = UnityObjectToClipPos(v.vertex);</span><br><span class="line">                o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">                o.worldNormal = UnityObjectToWorldNormal(v.normal);</span><br><span class="line">                o.worldVertex = mul(unity_ObjectToWorld, v.vertex);</span><br><span class="line">                return o;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            fixed4 frag(v2f i) : SV_TARGET0</span><br><span class="line">            &#123;</span><br><span class="line">                // 物体本身颜色</span><br><span class="line">                fixed3 mainColor = tex2D(_MainTex, i.uv) * _MainColor;</span><br><span class="line"></span><br><span class="line">                // 受环境光之后影响之后的颜色</span><br><span class="line">                fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.rgb * _AmbientFactor * mainColor;</span><br><span class="line"></span><br><span class="line">                fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(i.worldVertex));</span><br><span class="line">                fixed3 worldNormal = normalize(i.worldNormal);</span><br><span class="line"></span><br><span class="line">                // 漫反射光颜色</span><br><span class="line">                fixed3 diffuseColor = max(0, dot(worldNormal, worldLightDir)) * mainColor.xyz * _LightColor0.rgb * _DiffuseFactor;</span><br><span class="line"></span><br><span class="line">                // 高光颜色</span><br><span class="line">                fixed3 worldViewDir = normalize(UnityWorldSpaceViewDir(i.worldVertex));</span><br><span class="line">                fixed3 hDir = normalize(worldViewDir + worldLightDir);</span><br><span class="line">                fixed3 specularColor = _SpecularColor.rgb * _LightColor0.rgb * pow(max(0, dot(hDir, worldNormal)), _Gloss) * _SpecularFactor;</span><br><span class="line"></span><br><span class="line">                UNITY_LIGHT_ATTENUATION(atten, i, i.worldVertex);</span><br><span class="line"></span><br><span class="line">                // 受灯光影响之后的颜色</span><br><span class="line">                fixed3 lightColor = ambient + (diffuseColor + specularColor) * atten;</span><br><span class="line"></span><br><span class="line">                // 最终颜色</span><br><span class="line">                fixed4 color = fixed4(mainColor * _MainFactor + lightColor * (1 - _MainFactor), 1);</span><br><span class="line">                return color;</span><br><span class="line">            &#125;</span><br><span class="line">            ENDCG</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    FallBack &quot;Diffuse&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h2><h3 id="为什么漫反射光照结果计算时，要使用归一化的法线以及单位光源方向"><a href="#为什么漫反射光照结果计算时，要使用归一化的法线以及单位光源方向" class="headerlink" title="为什么漫反射光照结果计算时，要使用归一化的法线以及单位光源方向?"></a>为什么漫反射光照结果计算时，要使用归一化的法线以及单位光源方向?</h3><p>涉及到一个概念就是<strong>辐照度</strong>，<strong>辐照度</strong>用来量化光，可以理解为辐照度越大，光越亮</p>
+<p>辐照度在平行光中指的是单位面积上单位时间穿过的能量，如图：<br><img src="http://static.zybuluo.com/candycat/tzgu5oq816ojbkjo4y05rvij/irradiance.png"></p>
+<p>在左图中，光是垂直照射到物体表面，因此光线之间的垂直距离保持不变；而在右图中，光是斜着照射到物体表面，在物体表面光线之间的距离是d&#x2F;cosθ，因此单位面积上接收到的光线数目要少于左图</p>
+<p>可以看到d&#x2F;cosθ越大，光射到平面的间距就越大，辐照度就越小，也就是辐照度跟cosθ成正比。</p>
+<p>而n · l &#x3D; |n| * |l| * cosθ，为了计算cosθ，所以需要归一化法线和光源方向向量</p>
+<h3 id="Tags-quot-LightMode-quot-quot-ForwardBase-quot-和-pragma-multi-compile-fwdbase作用"><a href="#Tags-quot-LightMode-quot-quot-ForwardBase-quot-和-pragma-multi-compile-fwdbase作用" class="headerlink" title="Tags {&quot;LightMode&quot; = &quot;ForwardBase&quot;}和#pragma multi_compile_fwdbase作用"></a><code>Tags &#123;&quot;LightMode&quot; = &quot;ForwardBase&quot;&#125;</code>和<code>#pragma multi_compile_fwdbase</code>作用</h3><p><code>Tags &#123;&quot;LightMode&quot; = &quot;ForwardBase&quot;&#125;</code>表示告诉Unity这个Pass是使用前向渲染中的ForwardBase路径，另外一种叫ForwardAdd路径。</p>
+<p><code>#pragma multi_compile_fwdbase</code>是一个编译指令，可以为相应类型的Pass生成所有需要的Shader变种，这些变种会处理不同条件下的渲染逻辑，例如是否使用光照贴图、当前处理哪种光源类型、是否开启阴影等，同时Unity也会在背后将一些内置变量传递到Shader中，例如环境光变量<code>UNITY_LIGHTMODEL_AMBIENT</code></p>
+<p>这一块后续第二讲会继续介绍相关内容</p>
+<h3 id="为什么要max约束点成的结果"><a href="#为什么要max约束点成的结果" class="headerlink" title="为什么要max约束点成的结果"></a>为什么要max约束点成的结果</h3><p>防止算出来的系数是一个负值，从而导致算出来的光照颜色是一个负值，这样与原始颜色相加之后，颜色就会变暗了</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/unity/" rel="tag"># unity</a>
+              <a href="/tags/shader/" rel="tag"># shader</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/11/26/35-2022-11-27%E5%91%A8%E6%80%BB%E7%BB%93/" rel="prev" title="2022-11-27周总结">
+                  <i class="fa fa-chevron-left"></i> 2022-11-27周总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/12/04/37-2022-12-04%E5%91%A8%E6%80%BB%E7%BB%93/" rel="next" title="2022-12-04周总结">
+                  2022-12-04周总结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drecik Xu</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

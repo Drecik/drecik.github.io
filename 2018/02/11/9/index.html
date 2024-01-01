@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="介绍最近需要做一个高并发Http请求的功能，在此基础上，可以进一步做服务端高并发的压力测试。之前做了个Http的同步请求功能，使用的是libcurl，所以这次还是使用libcur+libevent的方式来实现高并发Http请求的功能。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="libcurl官方libevent驱动例子的研究">
+<meta property="og:url" content="http://example.com/2018/02/11/9/index.html">
+<meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="介绍最近需要做一个高并发Http请求的功能，在此基础上，可以进一步做服务端高并发的压力测试。之前做了个Http的同步请求功能，使用的是libcurl，所以这次还是使用libcur+libevent的方式来实现高并发Http请求的功能。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/9/1.png">
+<meta property="article:published_time" content="2018-02-11T07:11:27.000Z">
+<meta property="article:modified_time" content="2022-06-25T13:14:58.038Z">
+<meta property="article:author" content="Drecik Xu">
+<meta property="article:tag" content="c++">
+<meta property="article:tag" content="libevent">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/9/1.png">
+
+
+<link rel="canonical" href="http://example.com/2018/02/11/9/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2018/02/11/9/","path":"2018/02/11/9/","title":"libcurl官方libevent驱动例子的研究"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>libcurl官方libevent驱动例子的研究 | Drecik's Blog</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Drecik's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90%E4%BB%A3%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">例子代码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="nav-number">2.1.</span> <span class="nav-text">代码执行流程图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%A6%E8%A7%A3"><span class="nav-number">2.2.</span> <span class="nav-text">详解</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Drecik Xu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/02/11/9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="libcurl官方libevent驱动例子的研究 | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          libcurl官方libevent驱动例子的研究
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-02-11 15:11:27" itemprop="dateCreated datePublished" datetime="2018-02-11T15:11:27+08:00">2018-02-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>最近需要做一个高并发Http请求的功能，在此基础上，可以进一步做服务端高并发的压力测试。之前做了个Http的同步请求功能，使用的是libcurl，所以这次还是使用libcur+libevent的方式来实现高并发Http请求的功能。</p>
+<span id="more"></span> 
+
+<h3 id="例子代码"><a href="#例子代码" class="headerlink" title="例子代码"></a>例子代码</h3><p>正好libcurl官方例子里面有个libcurl+libevent的例子代码，直接拿过来看下流程，看不懂的地方结合下官方文档的资料，理解起来还是比较容易的</p>
+<h4 id="代码执行流程图"><a href="#代码执行流程图" class="headerlink" title="代码执行流程图"></a>代码执行流程图</h4><p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/9/1.png"></p>
+<h4 id="详解"><a href="#详解" class="headerlink" title="详解"></a>详解</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;time.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/poll.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;curl/curl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;event2/event.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MSG_OUT stdout <span class="comment">/* Send info to stdout, change to stderr if you want */</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 定义了三个结构体：</span></span><br><span class="line"><span class="comment">    1. GlobalInfo：全局结构体，记录一些全局信息</span></span><br><span class="line"><span class="comment">    2. ConnInfo：一个请求绑定一个该结构体</span></span><br><span class="line"><span class="comment">    3. SockInfo：这个结构体绑定在CURL结构体上，最有用的就是SockInfo.ev这个libevent指针，其他没什么用，在我封装的C++项目中，弃用了这个结构体，直接在CURL结构体上绑定了一个struct event*指针</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">/* Global information, common to all connections */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_GlobalInfo</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">event_base</span> *evbase;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">event</span> *fifo_event;       <span class="comment">// 监听管道的event对象，该例子是通过管道的方式输入请求</span></span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">event</span> *timer_event;      <span class="comment">// 时间event，这个很重要，来驱动所有请求流程</span></span><br><span class="line">	CURLM *multi;                   <span class="comment">// multi curl对象</span></span><br><span class="line">	<span class="type">int</span> still_running;              <span class="comment">// 存储当前还有几个请求在运行</span></span><br><span class="line">	FILE *input;                    <span class="comment">// 监听的管道文件</span></span><br><span class="line">&#125; GlobalInfo;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Information associated with a specific easy handle */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_ConnInfo</span></span><br><span class="line">&#123;</span><br><span class="line">	CURL *easy;</span><br><span class="line">	<span class="type">char</span> *url;                      <span class="comment">// 请求地址，使用了strdup生成，需要释放内存;</span></span><br><span class="line">	GlobalInfo *global;</span><br><span class="line">	<span class="type">char</span> error[CURL_ERROR_SIZE];    <span class="comment">// 存放错误信息;</span></span><br><span class="line">&#125; ConnInfo;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Information associated with a specific socket */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_SockInfo</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">curl_socket_t</span> sockfd;</span><br><span class="line">	CURL *easy;</span><br><span class="line">	<span class="type">int</span> action;</span><br><span class="line">	<span class="type">long</span> timeout;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">event</span> *ev;</span><br><span class="line">	<span class="type">int</span> evset;</span><br><span class="line">	GlobalInfo *global;</span><br><span class="line">&#125; SockInfo;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Update the event timer after curl_multi library calls */</span></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">multi_timer_cb</span><span class="params">(CURLM *multi, <span class="type">long</span> timeout_ms, GlobalInfo *g)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">timeval</span> timeout;</span><br><span class="line">	(<span class="type">void</span>)multi; <span class="comment">/* unused */</span></span><br><span class="line"></span><br><span class="line">	timeout.tv_sec = timeout_ms / <span class="number">1000</span>;</span><br><span class="line">	timeout.tv_usec = (timeout_ms % <span class="number">1000</span>) * <span class="number">1000</span>;</span><br><span class="line">	<span class="built_in">fprintf</span>(MSG_OUT, <span class="string">&quot;multi_timer_cb: Setting timeout to %ld ms\n&quot;</span>, timeout_ms);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* TODO</span></span><br><span class="line"><span class="comment">	*</span></span><br><span class="line"><span class="comment">	* if timeout_ms is 0, call curl_multi_socket_action() at once!</span></span><br><span class="line"><span class="comment">	*</span></span><br><span class="line"><span class="comment">	* if timeout_ms is -1, just delete the timer</span></span><br><span class="line"><span class="comment">	*</span></span><br><span class="line"><span class="comment">	* for all other values of timeout_ms, this should set or *update*</span></span><br><span class="line"><span class="comment">	* the timer to the new value</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	<span class="comment">// 接收到libcurl的设置定时器回调，利用libevent设置定时器，这里需要注意两种情况，例子代码中设置成了TODO</span></span><br><span class="line">	<span class="built_in">evtimer_add</span>(g-&gt;timer_event, &amp;timeout);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Die if we get a bad CURLMcode somewhere */</span></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">mcode_or_die</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *where, CURLMcode code)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (CURLM_OK != code) &#123;</span><br><span class="line">		<span class="type">const</span> <span class="type">char</span> *s;</span><br><span class="line">		<span class="keyword">switch</span> (code) &#123;</span><br><span class="line">		<span class="keyword">case</span>     CURLM_BAD_HANDLE:         s = <span class="string">&quot;CURLM_BAD_HANDLE&quot;</span>;         <span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span>     CURLM_BAD_EASY_HANDLE:    s = <span class="string">&quot;CURLM_BAD_EASY_HANDLE&quot;</span>;    <span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span>     CURLM_OUT_OF_MEMORY:      s = <span class="string">&quot;CURLM_OUT_OF_MEMORY&quot;</span>;      <span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span>     CURLM_INTERNAL_ERROR:     s = <span class="string">&quot;CURLM_INTERNAL_ERROR&quot;</span>;     <span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span>     CURLM_UNKNOWN_OPTION:     s = <span class="string">&quot;CURLM_UNKNOWN_OPTION&quot;</span>;     <span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span>     CURLM_LAST:               s = <span class="string">&quot;CURLM_LAST&quot;</span>;               <span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">default</span>: s = <span class="string">&quot;CURLM_unknown&quot;</span>;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span>     CURLM_BAD_SOCKET:         s = <span class="string">&quot;CURLM_BAD_SOCKET&quot;</span>;</span><br><span class="line">			<span class="built_in">fprintf</span>(MSG_OUT, <span class="string">&quot;ERROR: %s returns %s\n&quot;</span>, where, s);</span><br><span class="line">			<span class="comment">/* ignore this error */</span></span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">fprintf</span>(MSG_OUT, <span class="string">&quot;ERROR: %s returns %s\n&quot;</span>, where, s);</span><br><span class="line">		<span class="built_in">exit</span>(code);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Check for completed transfers, and remove their easy handles */</span></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">check_multi_info</span><span class="params">(GlobalInfo *g)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">char</span> *eff_url;</span><br><span class="line">	CURLMsg *msg;</span><br><span class="line">	<span class="type">int</span> msgs_left;</span><br><span class="line">	ConnInfo *conn;</span><br><span class="line">	CURL *easy;</span><br><span class="line">	CURLcode res;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">fprintf</span>(MSG_OUT, <span class="string">&quot;REMAINING: %d\n&quot;</span>, g-&gt;still_running);</span><br><span class="line">	<span class="keyword">while</span> ((msg = <span class="built_in">curl_multi_info_read</span>(g-&gt;multi, &amp;msgs_left))) &#123;</span><br><span class="line">		<span class="keyword">if</span> (msg-&gt;msg == CURLMSG_DONE) &#123;</span><br><span class="line">		    <span class="comment">// 该easy curl已经执行完成，进行清理操作;</span></span><br><span class="line">			easy = msg-&gt;easy_handle;</span><br><span class="line">			res = msg-&gt;data.result;</span><br><span class="line">			<span class="built_in">curl_easy_getinfo</span>(easy, CURLINFO_PRIVATE, &amp;conn);</span><br><span class="line">			<span class="built_in">curl_easy_getinfo</span>(easy, CURLINFO_EFFECTIVE_URL, &amp;eff_url);</span><br><span class="line">			<span class="built_in">fprintf</span>(MSG_OUT, <span class="string">&quot;DONE: %s =&gt; (%d) %s\n&quot;</span>, eff_url, res, conn-&gt;error);</span><br><span class="line">			<span class="built_in">curl_multi_remove_handle</span>(g-&gt;multi, easy);</span><br><span class="line">			<span class="built_in">free</span>(conn-&gt;url);</span><br><span class="line">			<span class="built_in">curl_easy_cleanup</span>(easy);</span><br><span class="line">			<span class="built_in">free</span>(conn);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Called by libevent when we get action on a multi socket */</span></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">event_cb</span><span class="params">(<span class="type">int</span> fd, <span class="type">short</span> kind, <span class="type">void</span> *userp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	GlobalInfo *g = (GlobalInfo*)userp;</span><br><span class="line">	CURLMcode rc;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// libevent事件转libcurl事件</span></span><br><span class="line">	<span class="type">int</span> action =</span><br><span class="line">		(kind &amp; EV_READ ? CURL_CSELECT_IN : <span class="number">0</span>) |</span><br><span class="line">		(kind &amp; EV_WRITE ? CURL_CSELECT_OUT : <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 驱动fd的状态机继续执行;</span></span><br><span class="line">	rc = <span class="built_in">curl_multi_socket_action</span>(g-&gt;multi, fd, action, &amp;g-&gt;still_running);</span><br><span class="line">	<span class="built_in">mcode_or_die</span>(<span class="string">&quot;event_cb: curl_multi_socket_action&quot;</span>, rc);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 查看libcurl的执行情况，不能根据still_running数量少一个来判断当前的fd已经执行完成，一定要调用curl_multi_info_read来判断;</span></span><br><span class="line">	<span class="built_in">check_multi_info</span>(g);</span><br><span class="line">	<span class="keyword">if</span> (g-&gt;still_running &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="built_in">fprintf</span>(MSG_OUT, <span class="string">&quot;last transfer done, kill timeout\n&quot;</span>);</span><br><span class="line">		<span class="keyword">if</span> (<span class="built_in">evtimer_pending</span>(g-&gt;timer_event, <span class="literal">NULL</span>)) &#123;</span><br><span class="line">			<span class="built_in">evtimer_del</span>(g-&gt;timer_event);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Called by libevent when our timeout expires */</span></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">timer_cb</span><span class="params">(<span class="type">int</span> fd, <span class="type">short</span> kind, <span class="type">void</span> *userp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	GlobalInfo *g = (GlobalInfo *)userp;</span><br><span class="line">	CURLMcode rc;</span><br><span class="line">	(<span class="type">void</span>)fd;</span><br><span class="line">	(<span class="type">void</span>)kind;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 定时器超时后，重新驱动libcurl，在curl获取到hostname对应的ip地址后，驱动该函数会回调到sock_cb中;</span></span><br><span class="line">	rc = <span class="built_in">curl_multi_socket_action</span>(g-&gt;multi,</span><br><span class="line">		CURL_SOCKET_TIMEOUT, <span class="number">0</span>, &amp;g-&gt;still_running);</span><br><span class="line">	<span class="built_in">mcode_or_die</span>(<span class="string">&quot;timer_cb: curl_multi_socket_action&quot;</span>, rc);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 查看libcurl的执行情况;</span></span><br><span class="line">	<span class="built_in">check_multi_info</span>(g);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Clean up the SockInfo structure */</span></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">remsock</span><span class="params">(SockInfo *f)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (f) &#123;</span><br><span class="line">		<span class="keyword">if</span> (f-&gt;evset)</span><br><span class="line">			<span class="built_in">event_free</span>(f-&gt;ev);</span><br><span class="line">		<span class="built_in">free</span>(f);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Assign information to a SockInfo structure */</span></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">setsock</span><span class="params">(SockInfo *f, <span class="type">curl_socket_t</span> s, CURL *e, <span class="type">int</span> act,</span></span></span><br><span class="line"><span class="params"><span class="function">	GlobalInfo *g)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// libcurl事件转libevent事件</span></span><br><span class="line">	<span class="type">int</span> kind =</span><br><span class="line">		(act&amp;CURL_POLL_IN ? EV_READ : <span class="number">0</span>) | (act&amp;CURL_POLL_OUT ? EV_WRITE : <span class="number">0</span>) | EV_PERSIST;</span><br><span class="line"></span><br><span class="line">	f-&gt;sockfd = s;</span><br><span class="line">	f-&gt;action = act;</span><br><span class="line">	f-&gt;easy = e;</span><br><span class="line">	<span class="keyword">if</span> (f-&gt;evset)</span><br><span class="line">		<span class="built_in">event_free</span>(f-&gt;ev);</span><br><span class="line">	<span class="comment">// 创建关联的event对象，并加入到libevent循环中去监听;</span></span><br><span class="line">	f-&gt;ev = <span class="built_in">event_new</span>(g-&gt;evbase, f-&gt;sockfd, kind, event_cb, g);</span><br><span class="line">	f-&gt;evset = <span class="number">1</span>;</span><br><span class="line">	<span class="built_in">event_add</span>(f-&gt;ev, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Initialize a new SockInfo structure */</span></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">addsock</span><span class="params">(<span class="type">curl_socket_t</span> s, CURL *easy, <span class="type">int</span> action, GlobalInfo *g)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	SockInfo *fdp = <span class="built_in">calloc</span>(<span class="built_in">sizeof</span>(SockInfo), <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	fdp-&gt;global = g;</span><br><span class="line">	<span class="built_in">setsock</span>(fdp, s, easy, action, g);</span><br><span class="line">	<span class="built_in">curl_multi_assign</span>(g-&gt;multi, s, fdp);        <span class="comment">// 设置socket fd关联的指针</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* CURLMOPT_SOCKETFUNCTION */</span></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">sock_cb</span><span class="params">(CURL *e, <span class="type">curl_socket_t</span> s, <span class="type">int</span> what, <span class="type">void</span> *cbp, <span class="type">void</span> *sockp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	GlobalInfo *g = (GlobalInfo*)cbp;</span><br><span class="line">	SockInfo *fdp = (SockInfo*)sockp;</span><br><span class="line">	<span class="type">const</span> <span class="type">char</span> *whatstr[] = &#123; <span class="string">&quot;none&quot;</span>, <span class="string">&quot;IN&quot;</span>, <span class="string">&quot;OUT&quot;</span>, <span class="string">&quot;INOUT&quot;</span>, <span class="string">&quot;REMOVE&quot;</span> &#125;;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">fprintf</span>(MSG_OUT,</span><br><span class="line">		<span class="string">&quot;socket callback: s=%d e=%p what=%s &quot;</span>, s, e, whatstr[what]);</span><br><span class="line">	<span class="keyword">if</span> (what == CURL_POLL_REMOVE) &#123;</span><br><span class="line">		<span class="built_in">fprintf</span>(MSG_OUT, <span class="string">&quot;\n&quot;</span>);</span><br><span class="line">		<span class="built_in">remsock</span>(fdp);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> (!fdp) &#123;</span><br><span class="line">			<span class="built_in">fprintf</span>(MSG_OUT, <span class="string">&quot;Adding data: %s\n&quot;</span>, whatstr[what]);</span><br><span class="line">			<span class="built_in">addsock</span>(s, e, what, g);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="built_in">fprintf</span>(MSG_OUT,</span><br><span class="line">				<span class="string">&quot;Changing action from %s to %s\n&quot;</span>,</span><br><span class="line">				whatstr[fdp-&gt;action], whatstr[what]);</span><br><span class="line">			<span class="built_in">setsock</span>(fdp, s, e, what, g);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* CURLOPT_WRITEFUNCTION */</span></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">size_t</span> <span class="title">write_cb</span><span class="params">(<span class="type">void</span> *ptr, <span class="type">size_t</span> size, <span class="type">size_t</span> nmemb, <span class="type">void</span> *data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">size_t</span> realsize = size * nmemb;</span><br><span class="line">	ConnInfo *conn = (ConnInfo*)data;</span><br><span class="line">	(<span class="type">void</span>)ptr;</span><br><span class="line">	(<span class="type">void</span>)conn;</span><br><span class="line">	<span class="keyword">return</span> realsize;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* CURLOPT_PROGRESSFUNCTION */</span></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">prog_cb</span><span class="params">(<span class="type">void</span> *p, <span class="type">double</span> dltotal, <span class="type">double</span> dlnow, <span class="type">double</span> ult,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">double</span> uln)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	ConnInfo *conn = (ConnInfo *)p;</span><br><span class="line">	(<span class="type">void</span>)ult;</span><br><span class="line">	(<span class="type">void</span>)uln;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">fprintf</span>(MSG_OUT, <span class="string">&quot;Progress: %s (%g/%g)\n&quot;</span>, conn-&gt;url, dlnow, dltotal);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Create a new easy handle, and add it to the global curl_multi */</span></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">new_conn</span><span class="params">(<span class="type">char</span> *url, GlobalInfo *g)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	ConnInfo *conn;</span><br><span class="line">	CURLMcode rc;</span><br><span class="line"></span><br><span class="line">	conn = <span class="built_in">calloc</span>(<span class="number">1</span>, <span class="built_in">sizeof</span>(ConnInfo));</span><br><span class="line">	<span class="built_in">memset</span>(conn, <span class="number">0</span>, <span class="built_in">sizeof</span>(ConnInfo));</span><br><span class="line">	conn-&gt;error[<span class="number">0</span>] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line"></span><br><span class="line">	conn-&gt;easy = <span class="built_in">curl_easy_init</span>();</span><br><span class="line">	<span class="keyword">if</span> (!conn-&gt;easy) &#123;</span><br><span class="line">		<span class="built_in">fprintf</span>(MSG_OUT, <span class="string">&quot;curl_easy_init() failed, exiting!\n&quot;</span>);</span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">2</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	conn-&gt;global = g;</span><br><span class="line">	conn-&gt;url = <span class="built_in">strdup</span>(url);</span><br><span class="line">	<span class="built_in">curl_easy_setopt</span>(conn-&gt;easy, CURLOPT_URL, conn-&gt;url);</span><br><span class="line">	<span class="built_in">curl_easy_setopt</span>(conn-&gt;easy, CURLOPT_WRITEFUNCTION, write_cb);</span><br><span class="line">	<span class="built_in">curl_easy_setopt</span>(conn-&gt;easy, CURLOPT_WRITEDATA, conn);</span><br><span class="line">	<span class="built_in">curl_easy_setopt</span>(conn-&gt;easy, CURLOPT_VERBOSE, <span class="number">1L</span>);</span><br><span class="line">	<span class="built_in">curl_easy_setopt</span>(conn-&gt;easy, CURLOPT_ERRORBUFFER, conn-&gt;error);</span><br><span class="line">	<span class="built_in">curl_easy_setopt</span>(conn-&gt;easy, CURLOPT_PRIVATE, conn);</span><br><span class="line">	<span class="built_in">curl_easy_setopt</span>(conn-&gt;easy, CURLOPT_NOPROGRESS, <span class="number">0L</span>);</span><br><span class="line">	<span class="built_in">curl_easy_setopt</span>(conn-&gt;easy, CURLOPT_PROGRESSFUNCTION, prog_cb);</span><br><span class="line">	<span class="built_in">curl_easy_setopt</span>(conn-&gt;easy, CURLOPT_PROGRESSDATA, conn);</span><br><span class="line">	<span class="built_in">fprintf</span>(MSG_OUT,</span><br><span class="line">		<span class="string">&quot;Adding easy %p to multi %p (%s)\n&quot;</span>, conn-&gt;easy, g-&gt;multi, url);</span><br><span class="line">		</span><br><span class="line">	<span class="comment">// 把easy curl加入到muti handle中，加入之后会立即回调一次multi_timer_cb</span></span><br><span class="line">	rc = <span class="built_in">curl_multi_add_handle</span>(g-&gt;multi, conn-&gt;easy);</span><br><span class="line">	<span class="built_in">mcode_or_die</span>(<span class="string">&quot;new_conn: curl_multi_add_handle&quot;</span>, rc);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* note that the add_handle() will set a time-out to trigger very soon so</span></span><br><span class="line"><span class="comment">	that the necessary socket_action() call will be called by this app */</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* This gets called whenever data is received from the fifo */</span></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">fifo_cb</span><span class="params">(<span class="type">int</span> fd, <span class="type">short</span> event, <span class="type">void</span> *arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 这里接收到了发起请求的信息，进行请求流程;</span></span><br><span class="line">	<span class="type">char</span> s[<span class="number">1024</span>];</span><br><span class="line">	<span class="type">long</span> <span class="type">int</span> rv = <span class="number">0</span>;</span><br><span class="line">	<span class="type">int</span> n = <span class="number">0</span>;</span><br><span class="line">	GlobalInfo *g = (GlobalInfo *)arg;</span><br><span class="line">	(<span class="type">void</span>)fd; <span class="comment">/* unused */</span></span><br><span class="line">	(<span class="type">void</span>)event; <span class="comment">/* unused */</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">do</span> &#123;</span><br><span class="line">		s[<span class="number">0</span>] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">		rv = <span class="built_in">fscanf</span>(g-&gt;input, <span class="string">&quot;%1023s%n&quot;</span>, s, &amp;n);</span><br><span class="line">		s[n] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">		<span class="keyword">if</span> (n &amp;&amp; s[<span class="number">0</span>]) &#123;</span><br><span class="line">			<span class="built_in">new_conn</span>(s, arg);  <span class="comment">/* if we read a URL, go get it! */</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">	&#125; <span class="keyword">while</span> (rv != EOF);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Create a named pipe and tell libevent to monitor it */</span></span><br><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="type">char</span> *fifo = <span class="string">&quot;hiper.fifo&quot;</span>;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">init_fifo</span><span class="params">(GlobalInfo *g)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">stat</span> st;</span><br><span class="line">	<span class="type">curl_socket_t</span> sockfd;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">fprintf</span>(MSG_OUT, <span class="string">&quot;Creating named pipe \&quot;%s\&quot;\n&quot;</span>, fifo);</span><br><span class="line">	<span class="keyword">if</span> (<span class="built_in">lstat</span>(fifo, &amp;st) == <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span> ((st.st_mode &amp; S_IFMT) == S_IFREG) &#123;</span><br><span class="line">			errno = EEXIST;</span><br><span class="line">			<span class="built_in">perror</span>(<span class="string">&quot;lstat&quot;</span>);</span><br><span class="line">			<span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">unlink</span>(fifo);</span><br><span class="line">	<span class="keyword">if</span> (<span class="built_in">mkfifo</span>(fifo, <span class="number">0600</span>) == <span class="number">-1</span>) &#123;</span><br><span class="line">		<span class="built_in">perror</span>(<span class="string">&quot;mkfifo&quot;</span>);</span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	sockfd = <span class="built_in">open</span>(fifo, O_RDWR | O_NONBLOCK, <span class="number">0</span>);</span><br><span class="line">	<span class="keyword">if</span> (sockfd == <span class="number">-1</span>) &#123;</span><br><span class="line">		<span class="built_in">perror</span>(<span class="string">&quot;open&quot;</span>);</span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	g-&gt;input = <span class="built_in">fdopen</span>(sockfd, <span class="string">&quot;r&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">fprintf</span>(MSG_OUT, <span class="string">&quot;Now, pipe some URL&#x27;s into &gt; %s\n&quot;</span>, fifo);</span><br><span class="line">	g-&gt;fifo_event = <span class="built_in">event_new</span>(g-&gt;evbase, sockfd, EV_READ | EV_PERSIST, fifo_cb, g);</span><br><span class="line">	<span class="built_in">event_add</span>(g-&gt;fifo_event, <span class="literal">NULL</span>);</span><br><span class="line">	<span class="keyword">return</span> (<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">clean_fifo</span><span class="params">(GlobalInfo *g)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">event_free</span>(g-&gt;fifo_event);</span><br><span class="line">	<span class="built_in">fclose</span>(g-&gt;input);</span><br><span class="line">	<span class="built_in">unlink</span>(fifo);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	GlobalInfo g;</span><br><span class="line">	(<span class="type">void</span>)argc;</span><br><span class="line">	(<span class="type">void</span>)argv;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">memset</span>(&amp;g, <span class="number">0</span>, <span class="built_in">sizeof</span>(GlobalInfo));</span><br><span class="line">	g.evbase = <span class="built_in">event_base_new</span>();</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 初始化管道输入监听事件;</span></span><br><span class="line">	<span class="built_in">init_fifo</span>(&amp;g);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 创建multi curl与事件event</span></span><br><span class="line">	g.multi = <span class="built_in">curl_multi_init</span>();</span><br><span class="line">	g.timer_event = <span class="built_in">evtimer_new</span>(g.evbase, timer_cb, &amp;g);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 设置multi curl的回调事件</span></span><br><span class="line"><span class="comment">        1. CURLMOPT_SOCKETFUNCTION: 该回调会被libcur在socket需要进行下一步操作的时候进行回调，例如：socket需要进行读操作，socekt需要进行写操作，socket需要删除</span></span><br><span class="line"><span class="comment">        2. CURLMOPT_TIMERFUNCTION: libcurl内部使用了多线程和状态机，需要上层设置一个超时定时器，一定时间后去驱动curl的状态机的执行</span></span><br><span class="line"><span class="comment">	/* setup the generic multi interface options we want */</span></span><br><span class="line">	<span class="built_in">curl_multi_setopt</span>(g.multi, CURLMOPT_SOCKETFUNCTION, sock_cb);</span><br><span class="line">	<span class="built_in">curl_multi_setopt</span>(g.multi, CURLMOPT_SOCKETDATA, &amp;g);</span><br><span class="line">	<span class="built_in">curl_multi_setopt</span>(g.multi, CURLMOPT_TIMERFUNCTION, multi_timer_cb);</span><br><span class="line">	<span class="built_in">curl_multi_setopt</span>(g.multi, CURLMOPT_TIMERDATA, &amp;g);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* we don&#x27;t call any curl_multi_socket*() function yet as we have no handles</span></span><br><span class="line"><span class="comment">	added! */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// libevent事件循环;</span></span><br><span class="line">	<span class="built_in">event_base_dispatch</span>(g.evbase);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* this, of course, won&#x27;t get called since only way to stop this program is</span></span><br><span class="line"><span class="comment">	via ctrl-C, but it is here to show how cleanup /would/ be done. */</span></span><br><span class="line">	<span class="built_in">clean_fifo</span>(&amp;g);</span><br><span class="line">	<span class="built_in">event_free</span>(g.timer_event);</span><br><span class="line">	<span class="built_in">event_base_free</span>(g.evbase);</span><br><span class="line">	<span class="built_in">curl_multi_cleanup</span>(g.multi);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/c/" rel="tag"># c++</a>
+              <a href="/tags/libevent/" rel="tag"># libevent</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/02/06/8/" rel="prev" title="131. Building Outline">
+                  <i class="fa fa-chevron-left"></i> 131. Building Outline
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/02/11/10/" rel="next" title="C++对象在作为函数返回值的拷贝研究">
+                  C++对象在作为函数返回值的拷贝研究 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drecik Xu</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

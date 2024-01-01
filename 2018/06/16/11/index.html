@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="说明lua中提供了3中字符串拼接函数，测试在日常使用情况下，各种拼接字符串的性能对比。 测试环境操作系统：Debian GNU&#x2F;Linux 8CPU：Intel(R) Xeon(R) CPU E5-2640 v2 @ 2.00GHz内存：64Glua环境：LuaJIT-2.1.0-beta3 (测试的时候关闭jit)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="lua三种字符串拼接性能分析">
+<meta property="og:url" content="http://example.com/2018/06/16/11/index.html">
+<meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="说明lua中提供了3中字符串拼接函数，测试在日常使用情况下，各种拼接字符串的性能对比。 测试环境操作系统：Debian GNU&#x2F;Linux 8CPU：Intel(R) Xeon(R) CPU E5-2640 v2 @ 2.00GHz内存：64Glua环境：LuaJIT-2.1.0-beta3 (测试的时候关闭jit)">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-06-16T03:14:22.000Z">
+<meta property="article:modified_time" content="2022-06-25T13:14:58.007Z">
+<meta property="article:author" content="Drecik Xu">
+<meta property="article:tag" content="lua">
+<meta property="article:tag" content="string">
+<meta property="article:tag" content="luajit">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2018/06/16/11/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2018/06/16/11/","path":"2018/06/16/11/","title":"lua三种字符串拼接性能分析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>lua三种字符串拼接性能分析 | Drecik's Blog</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Drecik's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83"><span class="nav-number">2.</span> <span class="nav-text">测试环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">3.</span> <span class="nav-text">测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E6%97%A5%E5%B8%B8%E4%BD%BF%E7%94%A8%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90"><span class="nav-number">3.1.</span> <span class="nav-text">普通日常使用性能分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5%E2%80%94%E2%80%94%E5%B7%B2%E5%AD%98%E5%9C%A8table%E6%8B%BC%E6%8E%A5"><span class="nav-number">3.2.</span> <span class="nav-text">特殊情况——已存在table拼接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5%E2%80%94%E2%80%94%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AAtable%E5%B9%B6%E6%8B%BC%E6%8E%A5"><span class="nav-number">3.3.</span> <span class="nav-text">特殊情况——创建一个table并拼接</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Drecik Xu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/06/16/11/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="lua三种字符串拼接性能分析 | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          lua三种字符串拼接性能分析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-06-16 11:14:22" itemprop="dateCreated datePublished" datetime="2018-06-16T11:14:22+08:00">2018-06-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>lua中提供了3中字符串拼接函数，测试在日常使用情况下，各种拼接字符串的性能对比。</p>
+<h2 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h2><p>操作系统：Debian GNU&#x2F;Linux 8<br>CPU：Intel(R) Xeon(R) CPU E5-2640 v2 @ 2.00GHz<br>内存：64G<br>lua环境：LuaJIT-2.1.0-beta3 (测试的时候关闭jit)</p>
+<span id="more"></span> 
+
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><h3 id="普通日常使用性能分析"><a href="#普通日常使用性能分析" class="headerlink" title="普通日常使用性能分析"></a>普通日常使用性能分析</h3><p>日常拼接字符串的时候一般都是多个已存在的变量，夹杂一些字符串常量进行拼接，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">package.cpath = pg.script_dir .. &quot;/bot/lib/?.so;&quot; .. id .. package.cpath</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>测试代码：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 关闭jit</span></span><br><span class="line"><span class="keyword">if</span> jit <span class="keyword">then</span></span><br><span class="line">    jit.off()</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 随机生成字符串备用</span></span><br><span class="line"><span class="keyword">local</span> randomStringSzie = <span class="number">200000</span></span><br><span class="line"><span class="keyword">local</span> strTable = &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">makeStrTable</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">for</span> i=<span class="number">1</span>, randomStringSzie <span class="keyword">do</span></span><br><span class="line">        strTable[#strTable + <span class="number">1</span>] = <span class="built_in">tostring</span>(<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie*<span class="number">10</span>))</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 辅助函数，用来打印时间</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">showtime</span><span class="params">(f)</span></span></span><br><span class="line">    <span class="keyword">local</span> start = <span class="built_in">os</span>.<span class="built_in">clock</span>()</span><br><span class="line">    f()</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">os</span>.<span class="built_in">clock</span>() - start)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> testCount = <span class="number">50000</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- string.format</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test1_1_0</span><span class="params">()</span></span></span><br><span class="line">    <span class="built_in">io</span>.<span class="built_in">write</span>(<span class="string">&quot;test1_1_0: use string.format: &quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> i=<span class="number">1</span>, testCount <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">local</span> str = <span class="built_in">string</span>.<span class="built_in">format</span>(<span class="string">&quot;%s-string1-%s-string2-%s&quot;</span>, strTable[<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie)], </span><br><span class="line">                    strTable[<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie)],</span><br><span class="line">                    strTable[<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie)])</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- ..</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test1_2_0</span><span class="params">()</span></span></span><br><span class="line">    <span class="built_in">io</span>.<span class="built_in">write</span>(<span class="string">&quot;test1_2_0: use ..:            &quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> i=<span class="number">1</span>, testCount <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">local</span> str = strTable[<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie)] .. <span class="string">&quot;-string1-&quot;</span> ..</span><br><span class="line">                    strTable[<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie)] .. <span class="string">&quot;-string2-&quot;</span> ..</span><br><span class="line">                    strTable[<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie)]</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- table.concat</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test1_3_0</span><span class="params">()</span></span></span><br><span class="line">    <span class="built_in">io</span>.<span class="built_in">write</span>(<span class="string">&quot;test1_3_0: use table.concat:  &quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> i=<span class="number">1</span>, testCount <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">local</span> str = <span class="built_in">table</span>.<span class="built_in">concat</span>(&#123;strTable[<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie)], <span class="string">&quot;-string1-&quot;</span>,</span><br><span class="line">                                strTable[<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie)], <span class="string">&quot;-string2-&quot;</span>,</span><br><span class="line">                                strTable[<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie)]&#125;)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">makeStrTable()</span><br><span class="line"></span><br><span class="line"><span class="built_in">collectgarbage</span>(<span class="string">&quot;collect&quot;</span>)       <span class="comment">-- 防止gc影响，先清除一遍</span></span><br><span class="line">showtime(test1_1_0)</span><br><span class="line"></span><br><span class="line"><span class="built_in">collectgarbage</span>(<span class="string">&quot;collect&quot;</span>)        <span class="comment">-- 防止gc影响，先清除一遍</span></span><br><span class="line">showtime(test1_2_0)</span><br><span class="line"></span><br><span class="line"><span class="built_in">collectgarbage</span>(<span class="string">&quot;collect&quot;</span>)        <span class="comment">-- 防止gc影响，先清除一遍</span></span><br><span class="line">showtime(test1_3_0)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为了避免字符串拼接函数执行先后顺序的影响，三个函数轮流被注释，单独执行5次的测试结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">test1_1_0: use string.format: 0.029643</span><br><span class="line">test1_1_0: use string.format: 0.029626</span><br><span class="line">test1_1_0: use string.format: 0.029654</span><br><span class="line">test1_1_0: use string.format: 0.029586</span><br><span class="line">test1_1_0: use string.format: 0.029663</span><br><span class="line"></span><br><span class="line">test1_2_0: use ..:            0.025584</span><br><span class="line">test1_2_0: use ..:            0.025809</span><br><span class="line">test1_2_0: use ..:            0.025492</span><br><span class="line">test1_2_0: use ..:            0.025415</span><br><span class="line">test1_2_0: use ..:            0.025523</span><br><span class="line"></span><br><span class="line">test1_3_0: use table.concat:  0.035074</span><br><span class="line">test1_3_0: use table.concat:  0.035227</span><br><span class="line">test1_3_0: use table.concat:  0.035077</span><br><span class="line">test1_3_0: use table.concat:  0.034965</span><br><span class="line">test1_3_0: use table.concat:  0.035284</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>考虑到这边测试的拼接的都是本身就是字符串的变量，日常中会有很多将number拼接的情况，修改测试函数，使用纯number拼接测试一次：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- string.format</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test1_1_0</span><span class="params">()</span></span></span><br><span class="line">    <span class="built_in">io</span>.<span class="built_in">write</span>(<span class="string">&quot;test1_1_0: use string.format: &quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> i=<span class="number">1</span>, testCount <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">local</span> str = <span class="built_in">string</span>.<span class="built_in">format</span>(<span class="string">&quot;%d-string1-%d-string2-%d&quot;</span>,</span><br><span class="line">                        <span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie),</span><br><span class="line">                        <span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie),</span><br><span class="line">                        <span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie))</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- ..</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test1_2_0</span><span class="params">()</span></span></span><br><span class="line">    <span class="built_in">io</span>.<span class="built_in">write</span>(<span class="string">&quot;test1_2_0: use ..:            &quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> i=<span class="number">1</span>, testCount <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">local</span> str = <span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie) .. <span class="string">&quot;-string1-&quot;</span> ..</span><br><span class="line">                    <span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie) .. <span class="string">&quot;-string2-&quot;</span> ..</span><br><span class="line">                    <span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- table.concat</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test1_3_0</span><span class="params">()</span></span></span><br><span class="line">    <span class="built_in">io</span>.<span class="built_in">write</span>(<span class="string">&quot;test1_3_0: use table.concat:  &quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> i=<span class="number">1</span>, testCount <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">local</span> str = <span class="built_in">table</span>.<span class="built_in">concat</span>(&#123;<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie), <span class="string">&quot;-string1-&quot;</span>,</span><br><span class="line">                                  <span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie), <span class="string">&quot;-string2-&quot;</span>,</span><br><span class="line">                                  <span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>, randomStringSzie)&#125;)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>同样的方式测试5次</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">test1_1_0: use string.format: 0.028289</span><br><span class="line">test1_1_0: use string.format: 0.02815</span><br><span class="line">test1_1_0: use string.format: 0.028763</span><br><span class="line">test1_1_0: use string.format: 0.028143</span><br><span class="line">test1_1_0: use string.format: 0.028161</span><br><span class="line"></span><br><span class="line">test1_2_0: use ..:            0.031198</span><br><span class="line">test1_2_0: use ..:            0.030967</span><br><span class="line">test1_2_0: use ..:            0.031142</span><br><span class="line">test1_2_0: use ..:            0.031129</span><br><span class="line">test1_2_0: use ..:            0.03098</span><br><span class="line"></span><br><span class="line">test1_3_0: use table.concat:  0.038446</span><br><span class="line">test1_3_0: use table.concat:  0.037694</span><br><span class="line">test1_3_0: use table.concat:  0.037729</span><br><span class="line">test1_3_0: use table.concat:  0.03787</span><br><span class="line">test1_3_0: use table.concat:  0.037877</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试结论</p>
+<ul>
+<li>日常使用情况下都不应该使用table.concat函数来进行拼接字符串，因为每次拼接都会有创建table的性能消耗，并且也会带来gc压力</li>
+<li>如果使用number比较多的情况下的拼接的字符串，使用string.format性能比..好，反之，如果number较少使用..性能更好；测试发现，日常情况下（总拼接参数个数小于8个），如果number数量:string数量&lt;&#x3D;1的情况下，使用..性能会好点，其他情况下使用string.format</li>
+</ul>
+</li>
+</ul>
+<h3 id="特殊情况——已存在table拼接"><a href="#特殊情况——已存在table拼接" class="headerlink" title="特殊情况——已存在table拼接"></a>特殊情况——已存在table拼接</h3><p>将一个已存在的table中的字符串拼接也可以用这三种字符串进行拼接，那table的大小会不会对三种方式性能有影响？</p>
+<ul>
+<li>测试代码<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> jit <span class="keyword">then</span></span><br><span class="line">    jit.off()</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">math</span>.<span class="built_in">randomseed</span>(<span class="built_in">os</span>.<span class="built_in">time</span>())</span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> strTable = &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">makeStrTable</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">for</span> i=<span class="number">1</span>,<span class="number">200000</span> <span class="keyword">do</span></span><br><span class="line">        strTable[#strTable + <span class="number">1</span>] = <span class="built_in">tostring</span>(<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>,<span class="number">10000000</span>))</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> maxCount = <span class="number">50000</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test2_1</span><span class="params">(arr, len)</span></span></span><br><span class="line">    <span class="built_in">io</span>.<span class="built_in">write</span>(<span class="string">&quot;test2_1: &quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">local</span> start = <span class="built_in">os</span>.<span class="built_in">clock</span>()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> cnt=<span class="number">1</span>, maxCount <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">local</span> str = <span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> i=<span class="number">1</span>, <span class="built_in">len</span> <span class="keyword">do</span></span><br><span class="line">            str = <span class="built_in">string</span>.<span class="built_in">format</span>(<span class="string">&quot;%s%s&quot;</span>, str, arr[i])</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>( <span class="built_in">os</span>.<span class="built_in">clock</span>() - start)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test2_2</span><span class="params">(arr, len)</span></span></span><br><span class="line">    <span class="built_in">io</span>.<span class="built_in">write</span>(<span class="string">&quot;test2_2: &quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">local</span> start = <span class="built_in">os</span>.<span class="built_in">clock</span>()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> cnt=<span class="number">1</span>, maxCount <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">local</span> str = <span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> i=<span class="number">1</span>, <span class="built_in">len</span> <span class="keyword">do</span></span><br><span class="line">            str = str..arr[i]</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>( <span class="built_in">os</span>.<span class="built_in">clock</span>() - start)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test2_3</span><span class="params">(arr, len)</span></span></span><br><span class="line">    <span class="built_in">io</span>.<span class="built_in">write</span>(<span class="string">&quot;test2_3: &quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">local</span> start = <span class="built_in">os</span>.<span class="built_in">clock</span>()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> cnt=<span class="number">1</span>, maxCount <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">local</span> str = <span class="built_in">table</span>.<span class="built_in">concat</span>(arr)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>( <span class="built_in">os</span>.<span class="built_in">clock</span>() - start)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">makeStrTable()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i = <span class="number">2</span>, <span class="number">10</span> <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">local</span> concatTable = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> j=<span class="number">1</span>, i <span class="keyword">do</span></span><br><span class="line">        concatTable[#concatTable + <span class="number">1</span>] = strTable[<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>,<span class="number">200000</span>)]</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="built_in">collectgarbage</span>(<span class="string">&quot;collect&quot;</span>)</span><br><span class="line">    test2_1(concatTable, i)</span><br><span class="line">    <span class="built_in">collectgarbage</span>(<span class="string">&quot;collect&quot;</span>)</span><br><span class="line">    test2_2(concatTable, i)</span><br><span class="line">    <span class="built_in">collectgarbage</span>(<span class="string">&quot;collect&quot;</span>)</span><br><span class="line">    test2_3(concatTable, i)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></li>
+<li>同样为了相互直接的影响，分别注释并测试的测试结果<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">test2_1: 0.012331</span><br><span class="line">test2_1: 0.018489</span><br><span class="line">test2_1: 0.02484</span><br><span class="line">test2_1: 0.030889</span><br><span class="line">test2_1: 0.03711</span><br><span class="line">test2_1: 0.044915</span><br><span class="line">test2_1: 0.050445</span><br><span class="line">test2_1: 0.057397</span><br><span class="line">test2_1: 0.064486</span><br><span class="line"></span><br><span class="line">test2_2: 0.007221</span><br><span class="line">test2_2: 0.011114</span><br><span class="line">test2_2: 0.013879</span><br><span class="line">test2_2: 0.017953</span><br><span class="line">test2_2: 0.021438</span><br><span class="line">test2_2: 0.024831</span><br><span class="line">test2_2: 0.028542</span><br><span class="line">test2_2: 0.033702</span><br><span class="line">test2_2: 0.037664</span><br><span class="line"></span><br><span class="line">test2_3: 0.00487</span><br><span class="line">test2_3: 0.005351</span><br><span class="line">test2_3: 0.005765</span><br><span class="line">test2_3: 0.006716</span><br><span class="line">test2_3: 0.007291</span><br><span class="line">test2_3: 0.00796</span><br><span class="line">test2_3: 0.0082739999999999</span><br><span class="line">test2_3: 0.009553</span><br><span class="line">test2_3: 0.010339</span><br></pre></td></tr></table></figure></li>
+<li>测试结论<ul>
+<li>在已经存在的table去调用字符串拼接，不论table里面元素多少，都是table.concat快，因为没有了table创建的开销</li>
+</ul>
+</li>
+</ul>
+<h3 id="特殊情况——创建一个table并拼接"><a href="#特殊情况——创建一个table并拼接" class="headerlink" title="特殊情况——创建一个table并拼接"></a>特殊情况——创建一个table并拼接</h3><p>一般情况下，都是从某个table选取一些进行拼接，这时候就不能直接用table.concat对已存在的table进行拼接，需要重新构造一个新的table，或者直接使用string.format, .. 进行拼接，那这种情况下，使用哪种性能最好？新构造的table的大小对各种情况有没有性能影响？</p>
+<ul>
+<li>测试代码<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> jit <span class="keyword">then</span></span><br><span class="line">    jit.off()</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">math</span>.<span class="built_in">randomseed</span>(<span class="built_in">os</span>.<span class="built_in">time</span>())</span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> strTable = &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">makeStrTable</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">for</span> i=<span class="number">1</span>,<span class="number">200000</span> <span class="keyword">do</span></span><br><span class="line">        strTable[#strTable + <span class="number">1</span>] = <span class="built_in">tostring</span>(<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>,<span class="number">10000000</span>))</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> maxCount = <span class="number">50000</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test2_1</span><span class="params">(arr, len)</span></span></span><br><span class="line">    <span class="built_in">io</span>.<span class="built_in">write</span>(<span class="string">&quot;test2_1: len: &quot;</span> .. <span class="built_in">len</span> .. <span class="string">&quot;: &quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">local</span> start = <span class="built_in">os</span>.<span class="built_in">clock</span>()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> cnt=<span class="number">1</span>, maxCount <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">local</span> str = <span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> i=<span class="number">1</span>, <span class="built_in">len</span> <span class="keyword">do</span></span><br><span class="line">            str = <span class="built_in">string</span>.<span class="built_in">format</span>(<span class="string">&quot;%s%s&quot;</span>, str, arr[i])</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">os</span>.<span class="built_in">clock</span>() - start)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test2_2</span><span class="params">(arr, len)</span></span></span><br><span class="line">    <span class="built_in">io</span>.<span class="built_in">write</span>(<span class="string">&quot;test2_2: len: &quot;</span> .. <span class="built_in">len</span> .. <span class="string">&quot;: &quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">local</span> start = <span class="built_in">os</span>.<span class="built_in">clock</span>()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> cnt=<span class="number">1</span>, maxCount <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">local</span> str = <span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> i=<span class="number">1</span>, <span class="built_in">len</span> <span class="keyword">do</span></span><br><span class="line">            str = str..arr[i]</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">os</span>.<span class="built_in">clock</span>() - start)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test2_3</span><span class="params">(arr, len)</span></span></span><br><span class="line">    <span class="built_in">io</span>.<span class="built_in">write</span>(<span class="string">&quot;test2_3: len: &quot;</span> .. <span class="built_in">len</span> .. <span class="string">&quot;: &quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">local</span> start = <span class="built_in">os</span>.<span class="built_in">clock</span>()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> cnt=<span class="number">1</span>, maxCount <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">local</span> tab = &#123;&#125;</span><br><span class="line">        <span class="keyword">for</span> i=<span class="number">1</span>, <span class="built_in">len</span> <span class="keyword">do</span></span><br><span class="line">            tab[#tab+<span class="number">1</span>] = arr[i]</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">local</span> str = <span class="built_in">table</span>.<span class="built_in">concat</span>(tab)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">os</span>.<span class="built_in">clock</span>() - start)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">makeStrTable()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i = <span class="number">2</span>, <span class="number">50</span> <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">local</span> concatTable = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> j=<span class="number">1</span>, i <span class="keyword">do</span></span><br><span class="line">        concatTable[#concatTable + <span class="number">1</span>] = strTable[<span class="built_in">math</span>.<span class="built_in">random</span>(<span class="number">1</span>,<span class="number">200000</span>)]</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="built_in">collectgarbage</span>(<span class="string">&quot;collect&quot;</span>)</span><br><span class="line">    test2_1(concatTable, i)</span><br><span class="line">    <span class="built_in">collectgarbage</span>(<span class="string">&quot;collect&quot;</span>)</span><br><span class="line">    test2_2(concatTable, i)</span><br><span class="line">    <span class="built_in">collectgarbage</span>(<span class="string">&quot;collect&quot;</span>)</span><br><span class="line">    test2_3(concatTable, i)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></li>
+<li>因为要测试的比较多，这里直接忽略函数之间的影响，直接获取跑的结果：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br></pre></td><td class="code"><pre><span class="line">test2_1: len: 2: 0.012323</span><br><span class="line">test2_2: len: 2: 0.007064</span><br><span class="line">test2_3: len: 2: 0.017743</span><br><span class="line">test2_1: len: 3: 0.018373</span><br><span class="line">test2_2: len: 3: 0.010368</span><br><span class="line">test2_3: len: 3: 0.027305</span><br><span class="line">test2_1: len: 4: 0.024554</span><br><span class="line">test2_2: len: 4: 0.013748</span><br><span class="line">test2_3: len: 4: 0.026225</span><br><span class="line">test2_1: len: 5: 0.027159</span><br><span class="line">test2_2: len: 5: 0.015262</span><br><span class="line">test2_3: len: 5: 0.035428</span><br><span class="line">test2_1: len: 6: 0.032727</span><br><span class="line">test2_2: len: 6: 0.018682</span><br><span class="line">test2_3: len: 6: 0.036837</span><br><span class="line">test2_1: len: 7: 0.038253</span><br><span class="line">test2_2: len: 7: 0.021658</span><br><span class="line">test2_3: len: 7: 0.038941</span><br><span class="line">test2_1: len: 8: 0.043715</span><br><span class="line">test2_2: len: 8: 0.024652</span><br><span class="line">test2_3: len: 8: 0.041066</span><br><span class="line">test2_1: len: 9: 0.050002</span><br><span class="line">test2_2: len: 9: 0.028612</span><br><span class="line">test2_3: len: 9: 0.054813</span><br><span class="line">test2_1: len: 10: 0.05554</span><br><span class="line">test2_2: len: 10: 0.031326</span><br><span class="line">test2_3: len: 10: 0.055422</span><br><span class="line">test2_1: len: 11: 0.062763</span><br><span class="line">test2_2: len: 11: 0.036097</span><br><span class="line">test2_3: len: 11: 0.057184</span><br><span class="line">test2_1: len: 12: 0.069464</span><br><span class="line">test2_2: len: 12: 0.040439</span><br><span class="line">test2_3: len: 12: 0.060116</span><br><span class="line">test2_1: len: 13: 0.075878</span><br><span class="line">test2_2: len: 13: 0.044668</span><br><span class="line">test2_3: len: 13: 0.062267</span><br><span class="line">test2_1: len: 14: 0.082757</span><br><span class="line">test2_2: len: 14: 0.049663</span><br><span class="line">test2_3: len: 14: 0.065098</span><br><span class="line">test2_1: len: 15: 0.089878</span><br><span class="line">test2_2: len: 15: 0.052364</span><br><span class="line">test2_3: len: 15: 0.067282</span><br><span class="line">test2_1: len: 16: 0.096886</span><br><span class="line">test2_2: len: 16: 0.055969</span><br><span class="line">test2_3: len: 16: 0.071199</span><br><span class="line">test2_1: len: 17: 0.105697</span><br><span class="line">test2_2: len: 17: 0.058038</span><br><span class="line">test2_3: len: 17: 0.092911</span><br><span class="line">test2_1: len: 18: 0.107923</span><br><span class="line">test2_2: len: 18: 0.063079</span><br><span class="line">test2_3: len: 18: 0.093996</span><br><span class="line">test2_1: len: 19: 0.11523</span><br><span class="line">test2_2: len: 19: 0.067008</span><br><span class="line">test2_3: len: 19: 0.097838</span><br><span class="line">test2_1: len: 20: 0.121543</span><br><span class="line">test2_2: len: 20: 0.070144</span><br><span class="line">test2_3: len: 20: 0.095648</span><br><span class="line">test2_1: len: 21: 0.125822</span><br><span class="line">test2_2: len: 21: 0.074236</span><br><span class="line">test2_3: len: 21: 0.097661</span><br><span class="line">test2_1: len: 22: 0.133389</span><br><span class="line">test2_2: len: 22: 0.079203</span><br><span class="line">test2_3: len: 22: 0.10079</span><br><span class="line">test2_1: len: 23: 0.141318</span><br><span class="line">test2_2: len: 23: 0.084614999999999</span><br><span class="line">test2_3: len: 23: 0.104983</span><br><span class="line">test2_1: len: 24: 0.148233</span><br><span class="line">test2_2: len: 24: 0.091413</span><br><span class="line">test2_3: len: 24: 0.107491</span><br><span class="line">test2_1: len: 25: 0.155905</span><br><span class="line">test2_2: len: 25: 0.093782</span><br><span class="line">test2_3: len: 25: 0.110824</span><br><span class="line">test2_1: len: 26: 0.16504</span><br><span class="line">test2_2: len: 26: 0.105242</span><br><span class="line">test2_3: len: 26: 0.116656</span><br><span class="line">test2_1: len: 27: 0.180588</span><br><span class="line">test2_2: len: 27: 0.107747</span><br><span class="line">test2_3: len: 27: 0.115238</span><br><span class="line">test2_1: len: 28: 0.179846</span><br><span class="line">test2_2: len: 28: 0.111915</span><br><span class="line">test2_3: len: 28: 0.117459</span><br><span class="line">test2_1: len: 29: 0.190444</span><br><span class="line">test2_2: len: 29: 0.122584</span><br><span class="line">test2_3: len: 29: 0.120503</span><br><span class="line">test2_1: len: 30: 0.200754</span><br><span class="line">test2_2: len: 30: 0.125184</span><br><span class="line">test2_3: len: 30: 0.122902</span><br><span class="line">test2_1: len: 31: 0.206196</span><br><span class="line">test2_2: len: 31: 0.132831</span><br><span class="line">test2_3: len: 31: 0.12567</span><br><span class="line">test2_1: len: 32: 0.212643</span><br><span class="line">test2_2: len: 32: 0.13621</span><br><span class="line">test2_3: len: 32: 0.128972</span><br><span class="line">test2_1: len: 33: 0.224638</span><br><span class="line">test2_2: len: 33: 0.142706</span><br><span class="line">test2_3: len: 33: 0.155577</span><br><span class="line">test2_1: len: 34: 0.230299</span><br><span class="line">test2_2: len: 34: 0.151168</span><br><span class="line">test2_3: len: 34: 0.159434</span><br><span class="line">test2_1: len: 35: 0.24495</span><br><span class="line">test2_2: len: 35: 0.156305</span><br><span class="line">test2_3: len: 35: 0.164588</span><br><span class="line">test2_1: len: 36: 0.259361</span><br><span class="line">test2_2: len: 36: 0.174812</span><br><span class="line">test2_3: len: 36: 0.172479</span><br><span class="line">test2_1: len: 37: 0.268614</span><br><span class="line">test2_2: len: 37: 0.174493</span><br><span class="line">test2_3: len: 37: 0.175878</span><br><span class="line">test2_1: len: 38: 0.280801</span><br><span class="line">test2_2: len: 38: 0.181204</span><br><span class="line">test2_3: len: 38: 0.180053</span><br><span class="line">test2_1: len: 39: 0.286958</span><br><span class="line">test2_2: len: 39: 0.189557</span><br><span class="line">test2_3: len: 39: 0.182902</span><br><span class="line">test2_1: len: 40: 0.296747</span><br><span class="line">test2_2: len: 40: 0.190833</span><br><span class="line">test2_3: len: 40: 0.177761</span><br><span class="line">test2_1: len: 41: 0.298487</span><br><span class="line">test2_2: len: 41: 0.198188</span><br><span class="line">test2_3: len: 41: 0.181526</span><br><span class="line">test2_1: len: 42: 0.307086</span><br><span class="line">test2_2: len: 42: 0.201846</span><br><span class="line">test2_3: len: 42: 0.186407</span><br><span class="line">test2_1: len: 43: 0.318794</span><br><span class="line">test2_2: len: 43: 0.208237</span><br><span class="line">test2_3: len: 43: 0.186203</span><br><span class="line">test2_1: len: 44: 0.323743</span><br><span class="line">test2_2: len: 44: 0.221747</span><br><span class="line">test2_3: len: 44: 0.199269</span><br><span class="line">test2_1: len: 45: 0.346715</span><br><span class="line">test2_2: len: 45: 0.233323</span><br><span class="line">test2_3: len: 45: 0.199532</span><br><span class="line">test2_1: len: 46: 0.360915</span><br><span class="line">test2_2: len: 46: 0.236748</span><br><span class="line">test2_3: len: 46: 0.196382</span><br><span class="line">test2_1: len: 47: 0.360939</span><br><span class="line">test2_2: len: 47: 0.236785</span><br><span class="line">test2_3: len: 47: 0.197901</span><br><span class="line">test2_1: len: 48: 0.364207</span><br><span class="line">test2_2: len: 48: 0.243074</span><br><span class="line">test2_3: len: 48: 0.201713</span><br><span class="line">test2_1: len: 49: 0.373341</span><br><span class="line">test2_2: len: 49: 0.25071</span><br><span class="line">test2_3: len: 49: 0.203139</span><br><span class="line">test2_1: len: 50: 0.383352</span><br><span class="line">test2_2: len: 50: 0.262008</span><br><span class="line">test2_3: len: 50: 0.207223</span><br></pre></td></tr></table></figure></li>
+<li>测试结论<ul>
+<li>可以看到..的性能一直会高于string.format（这里假设table里面的元素都是字符串的情况下，如果为全数字的情况经过测试string.format性能高于..）</li>
+<li>当table长度在29的时候（全数字情况下测试为36），table.concat性能最好，这个数字不一定准确，但是可以大致了解下这个分界值，而且使用string.format与..会带来后续gc的性能影响（这个也比较难测），所以可以大致把这个值估计在25（纯数字的情况下，可以稍微再高点），如果超过这个值，就是用table.concat会更优，写起来也会更加方便</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/lua/" rel="tag"># lua</a>
+              <a href="/tags/string/" rel="tag"># string</a>
+              <a href="/tags/luajit/" rel="tag"># luajit</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/02/11/10/" rel="prev" title="C++对象在作为函数返回值的拷贝研究">
+                  <i class="fa fa-chevron-left"></i> C++对象在作为函数返回值的拷贝研究
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/06/17/12/" rel="next" title="lua gc分析">
+                  lua gc分析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drecik Xu</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

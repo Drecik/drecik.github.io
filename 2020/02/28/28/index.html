@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="AddressSanitizerAddressSanitizer是一个内存工具，可以帮助我们快速发现进程中存在的内存问题，这对写C++人来说是一个神器。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AddressSanitizer使用总结及原理分析">
+<meta property="og:url" content="http://example.com/2020/02/28/28/index.html">
+<meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="AddressSanitizerAddressSanitizer是一个内存工具，可以帮助我们快速发现进程中存在的内存问题，这对写C++人来说是一个神器。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-02-28T08:41:01.000Z">
+<meta property="article:modified_time" content="2022-06-25T13:14:58.023Z">
+<meta property="article:author" content="Drecik Xu">
+<meta property="article:tag" content="c++">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="AddressSanitizer">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2020/02/28/28/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2020/02/28/28/","path":"2020/02/28/28/","title":"AddressSanitizer使用总结及原理分析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>AddressSanitizer使用总结及原理分析 | Drecik's Blog</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Drecik's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#AddressSanitizer"><span class="nav-number">1.</span> <span class="nav-text">AddressSanitizer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E7%82%B9"><span class="nav-number">1.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E6%A3%80%E6%B5%8B%E5%86%85%E5%AE%B9"><span class="nav-number">1.2.</span> <span class="nav-text">可检测内容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">使用方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">1.4.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%BF%E6%8D%A2%E5%86%85%E5%AD%98%E5%87%BD%E6%95%B0"><span class="nav-number">1.4.1.</span> <span class="nav-text">替换内存函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%98%A0%E5%B0%84"><span class="nav-number">1.4.2.</span> <span class="nav-text">内存映射</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%92%E6%A1%A9%E4%BB%A3%E7%A0%81"><span class="nav-number">1.4.3.</span> <span class="nav-text">插桩代码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">1.5.</span> <span class="nav-text">其他</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Drecik Xu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/02/28/28/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="AddressSanitizer使用总结及原理分析 | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          AddressSanitizer使用总结及原理分析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-02-28 16:41:01" itemprop="dateCreated datePublished" datetime="2020-02-28T16:41:01+08:00">2020-02-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="AddressSanitizer"><a href="#AddressSanitizer" class="headerlink" title="AddressSanitizer"></a>AddressSanitizer</h2><p>AddressSanitizer是一个内存工具，可以帮助我们快速发现进程中存在的内存问题，这对写C++人来说是一个神器。</p>
+<span id="more"></span>
+
+<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul>
+<li>高效，官方给出的说法是性能只降低一倍。实测我们游戏没感觉出来性能降低。</li>
+<li>受到官方编译编译器（gcc，clang）支持</li>
+<li>支持多个平台：<ul>
+<li>完全支持的平台：linux，OS X，IOS模拟器环境，FreeBSD，Android</li>
+<li>部分支持的平台：windows（需要使用clang来编译），只支持 &#x2F;MT &#x2F;MD，并且不支持检测内存泄漏和use-after-return情况</li>
+</ul>
+</li>
+</ul>
+<h3 id="可检测内容"><a href="#可检测内容" class="headerlink" title="可检测内容"></a>可检测内容</h3><ol>
+<li>use after free：使用已经free的内存</li>
+<li>各种（堆，栈，静态内存）内存溢出检测</li>
+<li>use after return&#x2F;use after scope：使用不在作用于的内存</li>
+<li>静态对象初始化顺序导致的问题</li>
+<li>内存泄漏</li>
+<li>申请和释放不匹配</li>
+</ol>
+<h3 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h3><ul>
+<li>加入编译选项<code>-fsanitize=address</code>，如果在问题出现时打印的堆栈比较清晰，可以加入<code>-fno-omit-frame-pointer</code></li>
+<li>use after return需要在启动命令前加入<code>ASAN_OPTIONS=detect_stack_use_after_return=1</code></li>
+<li>静态对象初始化顺序需要在启动命令前加入<code>ASAN_OPTIONS=check_initialization_order=true</code></li>
+<li>内存泄漏需要在启动命令前加入<code>ASAN_OPTIONS=detect_leaks=1</code></li>
+<li>如果检测到问题推出的时候产生core，需要在启动命令前加入<code>ASAN_OPTIONS=disable_coredump=0:unmap_shadow_on_exit=1:abort_on_error=1</code></li>
+</ul>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><h4 id="替换内存函数"><a href="#替换内存函数" class="headerlink" title="替换内存函数"></a>替换内存函数</h4><ul>
+<li>malloc：在申请的内存周围插入内存（检测内存越界访问，如果越界的比较多就可能没办法检测出来）</li>
+<li>free：将释放的内存放入一个隔离的列表中（检测释放内存被使用）</li>
+</ul>
+<h4 id="内存映射"><a href="#内存映射" class="headerlink" title="内存映射"></a>内存映射</h4><p>将程序的虚拟内存分为两段：</p>
+<ol>
+<li>程序内存：程序正常运行需要的内存</li>
+<li>shadown内存：用来记录程序内存是否有效，每8 bytes程序内存会映射到1 byte shadown内存。shadown内存的值有以下几种：<ul>
+<li>0：所有byte都有效</li>
+<li>负数:所有byte都无效，全无效一般都是插入的内存，并且每种插入的内存对应的负数值不同</li>
+<li>k：表示前k个byte是有效，后8-k个无效，前提：malloc返回的地址内存对齐</li>
+</ul>
+</li>
+</ol>
+<p>程序内存到shadown内存映射关系：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">byte* <span class="title">MemToShadow</span><span class="params">(address)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (Mem &gt;&gt; <span class="number">3</span>) + <span class="number">0x7fff8000</span>; <span class="comment">// 64位，32位 return (Mem &gt;&gt; 3) + 0x20000000;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="插桩代码"><a href="#插桩代码" class="headerlink" title="插桩代码"></a>插桩代码</h4><p>AddressSanitizer会在所有访问内存的地方进行内存检测。类似于</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// before</span></span><br><span class="line">*address = ...;  <span class="comment">// or: ... = *address;</span></span><br><span class="line"></span><br><span class="line">after：</span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">IsPoisoned</span>(address)) &#123;</span><br><span class="line">  <span class="built_in">ReportError</span>(address, kAccessSize, kIsWrite);</span><br><span class="line">&#125;</span><br><span class="line">*address = ...;  <span class="comment">// or: ... = *address;</span></span><br></pre></td></tr></table></figure>
+<p>这也是所有内存工具的常规找问题的方式。难点是如果高效的检测这一块内存是否有效。上面介绍的内存映射可知AddressSanitizer的处理方式：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">byte *shadow_address = <span class="built_in">MemToShadow</span>(address);</span><br><span class="line">byte shadow_value = *shadow_address;</span><br><span class="line"><span class="keyword">if</span> (shadow_value) &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">SlowPathCheck</span>(shadow_value, address, kAccessSize)) &#123;</span><br><span class="line">    <span class="built_in">ReportError</span>(address, kAccessSize, kIsWrite);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">*address = ...;  <span class="comment">// or: ... = *address;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Check the cases where we access first k bytes of the qword</span></span><br><span class="line"><span class="comment">// and these k bytes are unpoisoned.</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">SlowPathCheck</span><span class="params">(shadow_value, address, kAccessSize)</span> </span>&#123;</span><br><span class="line">  last_accessed_byte = (address &amp; <span class="number">7</span>) + kAccessSize - <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">return</span> (last_accessed_byte &gt;= shadow_value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">byte* <span class="title">MemToShadow</span><span class="params">(address)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (Mem &gt;&gt; <span class="number">3</span>) + <span class="number">0x7fff8000</span>; <span class="comment">// 64位，32位 return (Mem &gt;&gt; 3) + 0x20000000;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实际的例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">void foo() &#123;</span><br><span class="line">  char a[8];</span><br><span class="line">  ...</span><br><span class="line">  return;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void foo() &#123;</span><br><span class="line">  char redzone1[32];  // 32-byte aligned</span><br><span class="line">  char a[8];          // 32-byte aligned</span><br><span class="line">  char redzone2[24];</span><br><span class="line">  char redzone3[32];  // 32-byte aligned</span><br><span class="line">  int  *shadow_base = MemToShadow(redzone1);</span><br><span class="line">  shadow_base[0] = 0xffffffff;  // poison redzone1</span><br><span class="line">  shadow_base[1] = 0xffffff00;  // poison redzone2, unpoison &#x27;a&#x27;</span><br><span class="line">  shadow_base[2] = 0xffffffff;  // poison redzone3</span><br><span class="line">  ...</span><br><span class="line">  shadow_base[0] = shadow_base[1] = shadow_base[2] = 0; // unpoison all</span><br><span class="line">  return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><ol>
+<li>默认情况下AddressSanitizer遇到问题会中断进程，但是AddressSanitizer提供了方式来避免这种情况（官方说这种方式目前在实验阶段，不是很可靠，并且第一次错误之后的错误可能是误报，所以不建议使用）：<ul>
+<li>编译选项加入：<code>-fsanitize-recover=address</code>，gcc 5.0之后版本才支持</li>
+<li>运行的时候加入：<code>ASAN_OPTIONS=halt_on_error=0</code></li>
+</ul>
+</li>
+<li>use after scope试了gcc 4.8和6.3两个版本，官方例子都没有出结果</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/c/" rel="tag"># c++</a>
+              <a href="/tags/linux/" rel="tag"># linux</a>
+              <a href="/tags/AddressSanitizer/" rel="tag"># AddressSanitizer</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/02/13/27/" rel="prev" title="unity ios启动即崩溃问题">
+                  <i class="fa fa-chevron-left"></i> unity ios启动即崩溃问题
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/02/29/29/" rel="next" title="MySql实战学习笔记——基础篇">
+                  MySql实战学习笔记——基础篇 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drecik Xu</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

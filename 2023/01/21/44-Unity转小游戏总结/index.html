@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="总结下最近公司先后两款游戏（《巨星：足球崛起》，《夺笋高手》）转成小游戏的一些经验。第一款游戏是我转的，第二款是在我转的经验基础上，其他同事转的。因为第二款游戏会复杂点，所以也遇到了很多问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="44. Unity转小游戏总结">
+<meta property="og:url" content="http://example.com/2023/01/21/44-Unity%E8%BD%AC%E5%B0%8F%E6%B8%B8%E6%88%8F%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="总结下最近公司先后两款游戏（《巨星：足球崛起》，《夺笋高手》）转成小游戏的一些经验。第一款游戏是我转的，第二款是在我转的经验基础上，其他同事转的。因为第二款游戏会复杂点，所以也遇到了很多问题。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/44/1.jpg">
+<meta property="og:image" content="http://example.com/images/44/2.png">
+<meta property="og:image" content="http://example.com/images/44/3.png">
+<meta property="article:published_time" content="2023-01-21T13:04:00.000Z">
+<meta property="article:modified_time" content="2023-02-26T13:18:12.955Z">
+<meta property="article:author" content="Drecik Xu">
+<meta property="article:tag" content="unity">
+<meta property="article:tag" content="小游戏">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/44/1.jpg">
+
+
+<link rel="canonical" href="http://example.com/2023/01/21/44-Unity%E8%BD%AC%E5%B0%8F%E6%B8%B8%E6%88%8F%E6%80%BB%E7%BB%93/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/01/21/44-Unity%E8%BD%AC%E5%B0%8F%E6%B8%B8%E6%88%8F%E6%80%BB%E7%BB%93/","path":"2023/01/21/44-Unity转小游戏总结/","title":"44. Unity转小游戏总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>44. Unity转小游戏总结 | Drecik's Blog</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Drecik's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B8%B8%E6%88%8F%E5%B1%82%E4%BF%AE%E6%94%B9"><span class="nav-number">1.</span> <span class="nav-text">游戏层修改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E4%B8%8D%E6%94%BE%E5%9C%A8Resources%E4%B8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">资源不放在Resources下</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E6%89%93%E5%8C%85%E5%92%8C%E5%8A%A0%E8%BD%BD"><span class="nav-number">1.2.</span> <span class="nav-text">资源打包和加载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E6%94%AF%E6%8C%81%E7%9A%84%E4%B8%80%E4%BA%9B%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.3.</span> <span class="nav-text">不支持的一些接口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E5%8A%9B%E4%BC%98%E5%8C%96"><span class="nav-number">2.1.</span> <span class="nav-text">算力优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96"><span class="nav-number">2.2.</span> <span class="nav-text">内存优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%8D%87%E7%BA%A7Unity%E5%B9%B6%E4%BD%BF%E7%94%A8ASTC%E5%8E%8B%E7%BC%A9%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.2.1.</span> <span class="nav-text">1. 升级Unity并使用ASTC压缩格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%85%85%E5%88%86%E4%BD%BF%E7%94%A8%E6%8F%92%E4%BB%B6%E6%8F%90%E4%BE%9B%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="nav-number">2.2.2.</span> <span class="nav-text">2. 充分使用插件提供的工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E4%BB%A3%E7%A0%81%E5%A4%A7%E5%B0%8F%E4%BC%98%E5%8C%96"><span class="nav-number">2.2.3.</span> <span class="nav-text">3. 代码大小优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E5%85%B6%E4%BB%96%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96"><span class="nav-number">2.2.4.</span> <span class="nav-text">4. 其他内存优化</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%B2%E6%9F%93%E9%97%AE%E9%A2%98"><span class="nav-number">3.1.</span> <span class="nav-text">渲染问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A6%96%E5%8C%85%E9%BB%91%E5%B1%8F-x2F-%E8%8A%B1%E5%B1%8F%E9%97%AE%E9%A2%98"><span class="nav-number">3.2.</span> <span class="nav-text">首包黑屏&#x2F;花屏问题</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Drecik Xu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/21/44-Unity%E8%BD%AC%E5%B0%8F%E6%B8%B8%E6%88%8F%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="44. Unity转小游戏总结 | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          44. Unity转小游戏总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-01-21 21:04:00" itemprop="dateCreated datePublished" datetime="2023-01-21T21:04:00+08:00">2023-01-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-02-26 21:18:12" itemprop="dateModified" datetime="2023-02-26T21:18:12+08:00">2023-02-26</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>总结下最近公司先后两款游戏（《巨星：足球崛起》，《夺笋高手》）转成小游戏的一些经验。第一款游戏是我转的，第二款是在我转的经验基础上，其他同事转的。因为第二款游戏会复杂点，所以也遇到了很多问题。</p>
+<span id="more"></span>
+
+<h2 id="游戏层修改"><a href="#游戏层修改" class="headerlink" title="游戏层修改"></a>游戏层修改</h2><h3 id="资源不放在Resources下"><a href="#资源不放在Resources下" class="headerlink" title="资源不放在Resources下"></a>资源不放在Resources下</h3><p>Resources下的资源都会被打在首包里面，如果资源都放在Resources会导致首包很大，首次进入游戏下载会很久，所以不建议把资源放在Resources下。</p>
+<h3 id="资源打包和加载"><a href="#资源打包和加载" class="headerlink" title="资源打包和加载"></a>资源打包和加载</h3><p>因为资源涉及到下载过程，并且因为小游戏是单线程的，一些同步加载的接口可能会导致整个游戏卡住了，所以资源加载方式只能是异步方式加载。</p>
+<p>我们小游戏使用了第三方的资源管理库<a target="_blank" rel="noopener" href="https://github.com/tuyoogame/YooAsset">YooAssets</a>来管理所有资源打包和加载。也可以使用其他第三方库或者Addressable来做。</p>
+<p>资源打包的力度不要过大，一个是过大不利于资源卸载，另外一个是资源下载的过程中会占用内存，如果下载过大的内存会容易导致崩溃。</p>
+<p>另外资源加载改成异步的时候要注意一些Bug也会随之产生，我们这边比较容易出问题的地方是优化的滚动条中的内部Item在异步加载资源的时候会出现资源错误的情况。</p>
+<h3 id="不支持的一些接口"><a href="#不支持的一些接口" class="headerlink" title="不支持的一些接口"></a>不支持的一些接口</h3><p>官方明确给出一些<a target="_blank" rel="noopener" href="https://github.com/wechat-miniprogram/minigame-unity-webgl-transform/blob/main/Design/Evaluation.md">不支持的接口</a>，可以详细看看，如果有不支持的内容可以找找替换方案。</p>
+<p>我们这边需要修改比较多的地方是网络和文件接口。网络就改成用Unity下的接口就行，文件需改成WX下的接口。如果使用了Syste.Net下发起Http请求的话，游戏会直接卡死，并且不会有报错。</p>
+<h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><p>性能优化方面有很多，我们做的不一定都适合其他项目，所以建议还是把官方文档上关于优化的文档都看一遍，当我们实在没思路的时候文档也会重复多次阅读相关文档看看有没有遗漏的优化项。</p>
+<h3 id="算力优化"><a href="#算力优化" class="headerlink" title="算力优化"></a>算力优化</h3><p>因为平台问题所以小游戏下面的性能会差点，官方给出的测试结果是native下的1&#x2F;3性能。所以如果比较靠算力的游戏可能需要进行这一方面优化，主要优化思路：</p>
+<ul>
+<li>iOS开启高性能模式</li>
+<li>减少内存分配（使用缓存）</li>
+<li>减少算法时间复杂度</li>
+</ul>
+<h3 id="内存优化"><a href="#内存优化" class="headerlink" title="内存优化"></a>内存优化</h3><p>这一块是我们的卡点，花了很多时间去研究这一块。</p>
+<h4 id="1-升级Unity并使用ASTC压缩格式"><a href="#1-升级Unity并使用ASTC压缩格式" class="headerlink" title="1. 升级Unity并使用ASTC压缩格式"></a>1. 升级Unity并使用ASTC压缩格式</h4><p>把Unity升级到2021版本，支持ASTC（可以节约很多内存）图片压缩格式的同时，也解决了我们之前Unity 2020的时候内存会不断上升的问题。</p>
+<h4 id="2-充分使用插件提供的工具"><a href="#2-充分使用插件提供的工具" class="headerlink" title="2. 充分使用插件提供的工具"></a>2. 充分使用插件提供的工具</h4><p>插件提供<a target="_blank" rel="noopener" href="https://github.com/wechat-miniprogram/minigame-unity-webgl-transform/blob/main/Design/CompressedTexture.md">资源压缩工具</a>，可以检测项目里面的图片的使用情况，按照文档操作优化即可。</p>
+<h4 id="3-代码大小优化"><a href="#3-代码大小优化" class="headerlink" title="3. 代码大小优化"></a>3. 代码大小优化</h4><p>代码大小可以大大减少小程序编译优化所占用的内存，一开始我们不太了解，这一块踩了很多坑。</p>
+<ul>
+<li><p>删除不必要的第三方插件<br>  项目中用到的插件如果使用范围很小并且代码量也很大的话，就及时找替代方案，我们代码里面删除了一个Best Http，是我们的代码包少了2M</p>
+</li>
+<li><p>代码裁剪<br>  Player Settings -&gt; Other Settings下，打开Strip Engine Code并且裁剪级别选择最高</p>
+<p>  <img src="/images/44/1.jpg"></p>
+<p>  设置了这些选项之后会有找不到class的报错，这时候我们需要通过link.xml去把这些找不到class主动包含进去。</p>
+<p>  找不到class的报错一般有两种，第一种是引擎的class找不到，这种不会直接给出类名，一般是给一个class id，例如：</p>
+<p>  <img src="/images/44/2.png"></p>
+<p>  这种可以参考官方给出的<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/ClassIDReference.html">文档</a>，把class id对应的类加到link.xml里面。</p>
+<p>  第二种是逻辑层的class找不到，这种会直接给出类名，同样加到link.xml里面即可。</p>
+</li>
+<li><p>关闭异常捕获<br>  这个比较看重代码质量，因为关了异常捕获功能，一旦有异常游戏直接崩溃。我们游戏DoTween安全模式给我们捕获了很多错，处理起来太麻烦，所以我们游戏没法关闭异常捕获功能。</p>
+<p>  关闭方式在 Player Settings -&gt; Publishing Settings下</p>
+<p>  <img src="/images/44/3.png"></p>
+</li>
+<li><p>使用代码分包<br>  使用插件提供的<a target="_blank" rel="noopener" href="https://github.com/wechat-miniprogram/minigame-unity-webgl-transform/blob/main/Design/WasmSplit.md">代码分包工具</a>进行操作即可，这里吐槽下，使用的服务器应该比较差，有时候等了一个小时才分包好。</p>
+</li>
+<li><p>重新建一个工程<br>  我们自己测试新建一个空的工程，把Assets下所有文件拷贝到新工程，解决掉一些依赖问题之后打出来的包也少了几M。应该是某些没用的第三方依赖库一直被包含着，换新项目之后这些被删了。</p>
+</li>
+</ul>
+<p>我们游戏最终代码大小从一开始的38M，降到了26.8M。编译之后的内存占用从800M降到了500M左右（iOS）。</p>
+<h4 id="4-其他内存优化"><a href="#4-其他内存优化" class="headerlink" title="4. 其他内存优化"></a>4. 其他内存优化</h4><ul>
+<li>模型禁止读写</li>
+</ul>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="渲染问题"><a href="#渲染问题" class="headerlink" title="渲染问题"></a>渲染问题</h3><p>渲染问题比较多，一些Shader在Android或者iOS上会显示不正确，这个暂时不知道原因。</p>
+<h3 id="首包黑屏-x2F-花屏问题"><a href="#首包黑屏-x2F-花屏问题" class="headerlink" title="首包黑屏&#x2F;花屏问题"></a>首包黑屏&#x2F;花屏问题</h3><p>测试发现我们从编译完的loading页面进入到我们游戏loading界面时候会有黑屏&#x2F;花屏的情况。</p>
+<p>原因是我们首个场景没有摄像机缘故，给一个默认背景图之后两个loading切换就变得很丝滑了。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/unity/" rel="tag"># unity</a>
+              <a href="/tags/%E5%B0%8F%E6%B8%B8%E6%88%8F/" rel="tag"># 小游戏</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/01/15/43-2022-01-15%E5%91%A8%E6%80%BB%E7%BB%93/" rel="prev" title="43.2022-01-15周总结">
+                  <i class="fa fa-chevron-left"></i> 43.2022-01-15周总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/01/22/45-2023-01-22%E5%91%A8%E6%80%BB%E7%BB%93/" rel="next" title="45. 2023-01-22周总结">
+                  45. 2023-01-22周总结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drecik Xu</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

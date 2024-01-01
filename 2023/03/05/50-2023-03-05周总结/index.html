@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Unity权限问题 Shader变体问题 服务器问题汇总 UI框架新增功能 Socket封装">
+<meta property="og:type" content="article">
+<meta property="og:title" content="50. 2023-03-05周总结">
+<meta property="og:url" content="http://example.com/2023/03/05/50-2023-03-05%E5%91%A8%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="Unity权限问题 Shader变体问题 服务器问题汇总 UI框架新增功能 Socket封装">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-05T10:22:39.000Z">
+<meta property="article:modified_time" content="2023-03-05T13:21:18.135Z">
+<meta property="article:author" content="Drecik Xu">
+<meta property="article:tag" content="周总结">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/03/05/50-2023-03-05%E5%91%A8%E6%80%BB%E7%BB%93/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/03/05/50-2023-03-05%E5%91%A8%E6%80%BB%E7%BB%93/","path":"2023/03/05/50-2023-03-05周总结/","title":"50. 2023-03-05周总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>50. 2023-03-05周总结 | Drecik's Blog</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Drecik's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Unity%E6%9D%83%E9%99%90%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">Unity权限问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Shader%E5%8F%98%E4%BD%93%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">Shader变体问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB"><span class="nav-number">3.</span> <span class="nav-text">服务器问题汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%85%E5%80%BC%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BC%82%E5%B8%B8"><span class="nav-number">3.1.</span> <span class="nav-text">充值服务器异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nginx-500%E9%97%AE%E9%A2%98"><span class="nav-number">3.2.</span> <span class="nav-text">nginx 500问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98"><span class="nav-number">3.3.</span> <span class="nav-text">请求超时问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8D%E6%80%9D"><span class="nav-number">3.4.</span> <span class="nav-text">反思</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UI%E6%A1%86%E6%9E%B6%E6%96%B0%E5%A2%9E%E5%8A%9F%E8%83%BD"><span class="nav-number">4.</span> <span class="nav-text">UI框架新增功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%B0%81%E8%A3%85"><span class="nav-number">5.</span> <span class="nav-text">网络封装</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Drecik Xu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/03/05/50-2023-03-05%E5%91%A8%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="50. 2023-03-05周总结 | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          50. 2023-03-05周总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-03-05 18:22:39 / 修改时间：21:21:18" itemprop="dateCreated datePublished" datetime="2023-03-05T18:22:39+08:00">2023-03-05</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <ol>
+<li>Unity权限问题</li>
+<li>Shader变体问题</li>
+<li>服务器问题汇总</li>
+<li>UI框架新增功能</li>
+<li>Socket封装</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="Unity权限问题"><a href="#Unity权限问题" class="headerlink" title="Unity权限问题"></a>Unity权限问题</h2><p>看到记录中有这一条，但是忘记是什么内容了（反思下记录应该再写详细点），后续记起来再补充。</p>
+<h2 id="Shader变体问题"><a href="#Shader变体问题" class="headerlink" title="Shader变体问题"></a>Shader变体问题</h2><p>之前特效Shader支持的功能很多，比如变色，流动，遮罩，溶解，扭曲等等。这些功能不管用不用都是打开状态，导致性能比较差。</p>
+<p>所以利用Shader宏对每个功能进行分别开关控制，只开启用到的功能代码，性能达到最大化。</p>
+<p>但是实际使用Shader宏用到了几个问题：</p>
+<ol>
+<li>如果multi_compile会把所有组合的Shader编译进去，一开始我们用这个方式写的，导致打包的时候需要编译的变体有100多万种。打包直接卡死。</li>
+<li>但如果使用shader_feature的话，有些用到的shader代码会生成不出来，即使用了Shader变体收集器也不行。</li>
+</ol>
+<p>按照我的理解应该是使用shader_feature来做这个功能会比较好，但是目前没有找到shader代码生成不出来的问题。所以还是继续使用multi_compile，删减了一些宏开关，但是目前的变体数还是有7000多个。后续有时间再找找shader_feature哪里使用上有问题。</p>
+<h2 id="服务器问题汇总"><a href="#服务器问题汇总" class="headerlink" title="服务器问题汇总"></a>服务器问题汇总</h2><p>这周《足球：巨星崛起》上了一个功能，将本来放在本地的存档同步到服务器。因为原来就是以单机形式设计游戏的，当接到这个需求的时候，考虑了下，再最底层的存档文件变动的时候加一个dirty标记，然后每帧tick有这个标记的存档，把它上传到服务器。这个功能在上线小程序版本的时候就已经做好了。目前只是移植到app版。</p>
+<p>但上线之后发现，这个请求的qps太高了。导致了一些问题出现。</p>
+<h3 id="充值服务器异常"><a href="#充值服务器异常" class="headerlink" title="充值服务器异常"></a>充值服务器异常</h3><p>最先发现的是导致我们充值服务器异常，报错的内容是：<code>Timeout waiting for connection from pool</code></p>
+<p>查了下原因是从http pool里面拿连接的时候超时了，原因应该是整台服务器负载上来了，导致该服务器访问后端服务器时间变长，池子里面的连接用完导致。</p>
+<p>不过我们开的个数确实也比较小只有10个，改成1000个问题解决</p>
+<h3 id="nginx-500问题"><a href="#nginx-500问题" class="headerlink" title="nginx 500问题"></a>nginx 500问题</h3><p>发现好多请求返回了500错误，但我们服务器没收到这个请求。</p>
+<p>查看nginx日志发现很多error日志，显示的内容是<code>socket() failed (24: Too many open files) while connecting to upstream,</code></p>
+<p>看到这个错误就知道应该是句柄数不够了，在nginx里面增加配置<code>worker_rlimit_nofile=20480</code>问题解决</p>
+<h3 id="请求超时问题"><a href="#请求超时问题" class="headerlink" title="请求超时问题"></a>请求超时问题</h3><p>今天流量又增加，导致服务器负载比较高，主要占用资源的是nginx和存储文件的那个后台进程。</p>
+<p>临时挪用另外一台服务器作为nginx服务器，通过dns将一部分流量路由到另外一台服务器，来减轻负载。</p>
+<p>部署完之后发情有请求超时，查看日志发现请求没有到后台进程那边，按照之前的经验问题应该出在nginx上，所以查看了下日志，发现nginx报异常：<code>1024 worker_connections are not enough</code></p>
+<p>查了下资料是因为连接数太多了，修改配置<code>worker_connections=10240</code>问题解决。</p>
+<p>另外连接超时还有的原因是带宽被打满了，升级带宽后问题解决。</p>
+<h3 id="反思"><a href="#反思" class="headerlink" title="反思"></a>反思</h3><p>这次上线问题比较多，主要问题还是没有正确评估好上线之后带来的整个服务器压力及所需的资源。另外之前线上机器资源划分的也比较乱导致这个上线的进程影响了其他比较重要的进程。下周决定把所有服务器进程和机器资源重新规划下，防止以后问题再次出现。</p>
+<h2 id="UI框架新增功能"><a href="#UI框架新增功能" class="headerlink" title="UI框架新增功能"></a>UI框架新增功能</h2><p>这周UI框架功能迭代的也比较多</p>
+<ol>
+<li>之前基础上增加了子Container概念，这种在一个面板里面套很多个面板的情况下，可以做到各个面板一个类，代码做到解耦。</li>
+<li>自动绑定功能，包括自动绑定逻辑层的控件，以及自动绑定父子面板的层级关系</li>
+<li>面板打开异常时候的捕获和处理</li>
+<li>封装了资源加载接口，默认使用Unity的Resources接口实现资源加载，逻辑层也可自定义资源使用什么方式加载，例如YooAsset或者Addressable</li>
+</ol>
+<h2 id="网络封装"><a href="#网络封装" class="headerlink" title="网络封装"></a>网络封装</h2><p>之前写的Socket封装重新整理了一遍，目的是客户端和以后的服务端都能使用这一套Socket接口，目前暂时的目标先让现有的客户端项目先用起来，服务端因为用的skynet，暂时只能等下一个项目再用起来。</p>
+<p>后续等网络、UI经过一轮验证之后，再考虑把框架代码慢慢整理发布出来。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%91%A8%E6%80%BB%E7%BB%93/" rel="tag"># 周总结</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/02/26/49-2023-02-26%E5%91%A8%E6%80%BB%E7%BB%93/" rel="prev" title="49. 2023-02-26周总结">
+                  <i class="fa fa-chevron-left"></i> 49. 2023-02-26周总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/03/21/52-2023-03-19%E5%91%A8%E6%80%BB%E7%BB%93/" rel="next" title="52. 2023-03-19周总结">
+                  52. 2023-03-19周总结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drecik Xu</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

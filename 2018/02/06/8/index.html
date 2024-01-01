@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="画建筑轮廓LintCode链接 题目描述水平面上有 N 座大楼，每座大楼都是矩阵的形状，可以用一个三元组表示 (start, end, height)，分别代表其在x轴上的起点，终点和高度。大楼之间从远处看可能会重叠，求出 N 座大楼的外轮廓线。外轮廓线的表示方法为若干三元组，每个三元组包含三个数字 (start, end, height)，代表这段轮廓的起始位置，终止位置和高度。参考下面的图，黑">
+<meta property="og:type" content="article">
+<meta property="og:title" content="131. Building Outline">
+<meta property="og:url" content="http://example.com/2018/02/06/8/index.html">
+<meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="画建筑轮廓LintCode链接 题目描述水平面上有 N 座大楼，每座大楼都是矩阵的形状，可以用一个三元组表示 (start, end, height)，分别代表其在x轴上的起点，终点和高度。大楼之间从远处看可能会重叠，求出 N 座大楼的外轮廓线。外轮廓线的表示方法为若干三元组，每个三元组包含三个数字 (start, end, height)，代表这段轮廓的起始位置，终止位置和高度。参考下面的图，黑">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/8/1.jpg">
+<meta property="article:published_time" content="2018-02-06T02:28:15.000Z">
+<meta property="article:modified_time" content="2022-06-25T13:14:58.038Z">
+<meta property="article:author" content="Drecik Xu">
+<meta property="article:tag" content="c++">
+<meta property="article:tag" content="lintcode">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/8/1.jpg">
+
+
+<link rel="canonical" href="http://example.com/2018/02/06/8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2018/02/06/8/","path":"2018/02/06/8/","title":"131. Building Outline"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>131. Building Outline | Drecik's Blog</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Drecik's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%BB%E5%BB%BA%E7%AD%91%E8%BD%AE%E5%BB%93"><span class="nav-number">1.</span> <span class="nav-text">画建筑轮廓</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B"><span class="nav-number">1.2.</span> <span class="nav-text">样例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF"><span class="nav-number">2.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">代码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%84%E4%B8%8A%E6%88%91%E7%9A%84%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81"><span class="nav-number">3.1.</span> <span class="nav-text">附上我的测试代码</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Drecik Xu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/02/06/8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="131. Building Outline | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          131. Building Outline
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-02-06 10:28:15" itemprop="dateCreated datePublished" datetime="2018-02-06T10:28:15+08:00">2018-02-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="画建筑轮廓"><a href="#画建筑轮廓" class="headerlink" title="画建筑轮廓"></a>画建筑轮廓</h3><p><a target="_blank" rel="noopener" href="http://www.lintcode.com/en/problem/building-outline/">LintCode链接</a></p>
+<h4 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h4><p>水平面上有 N 座大楼，每座大楼都是矩阵的形状，可以用一个三元组表示 (start, end, height)，分别代表其在x轴上的起点，终点和高度。大楼之间从远处看可能会重叠，求出 N 座大楼的外轮廓线。<br>外轮廓线的表示方法为若干三元组，每个三元组包含三个数字 (start, end, height)，代表这段轮廓的起始位置，终止位置和高度。<br>参考下面的图，黑色线为建筑，红色线即为建筑的轮廓线<br><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/8/1.jpg"></p>
+<span id="more"></span> 
+
+<h4 id="样例"><a href="#样例" class="headerlink" title="样例"></a>样例</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">对于下面三个链表，输出-1-&gt;2-&gt;4-&gt;null</span><br><span class="line">[</span><br><span class="line">  2-&gt;4-&gt;null,</span><br><span class="line">  null,</span><br><span class="line">  -1-&gt;null</span><br><span class="line">],</span><br></pre></td></tr></table></figure>
+
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><ol>
+<li>首先肯定能想到的是需要对输入的所有数据进行排序，排序规则应该也很好想：<ul>
+<li>如果start相等，height相等，则end大的在前面</li>
+<li>如果start相等，则height大的在前面</li>
+<li>start小的在前面</li>
+</ul>
+</li>
+<li>考虑到以下两种情况<ul>
+<li>[1,5,3],[2,3,5]，这种情况下，需要输出[1,2,3], [2,3,5], [3,5,3]</li>
+<li>[1,5,5],[2,6,3], 这种情况下，需要输出[1.5,5], [5,6,3]</li>
+</ul>
+</li>
+<li>考虑情景2中的两种情况，我们需要在比较过程中把建筑灵活的进行拆分，然后重新加入到待比较的数组中，再进行排序，每次排序肯定不现实，所以用到了最大最小堆来减少排序带来的消耗</li>
+</ol>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	* @param buildings: A list of lists of integers</span></span><br><span class="line"><span class="comment">	* @return: Find the outline of those buildings</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">buildingOutline</span>(vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; &amp;buildings) &#123;</span><br><span class="line">		<span class="comment">// write your code here</span></span><br><span class="line"></span><br><span class="line">		vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; ret;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (buildings.<span class="built_in">empty</span>())</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> ret;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">auto</span> func = [](vector&lt;<span class="type">int</span>&gt; &amp;left, vector&lt;<span class="type">int</span>&gt; &amp;right) &#123;</span><br><span class="line">			<span class="keyword">if</span> (left[<span class="number">0</span>] == right[<span class="number">0</span>] &amp;&amp; left[<span class="number">2</span>] == right[<span class="number">2</span>])</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="keyword">return</span> left[<span class="number">1</span>] &lt; right[<span class="number">1</span>];</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (left[<span class="number">0</span>] == right[<span class="number">0</span>])</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="keyword">return</span> left[<span class="number">2</span>] &lt; right[<span class="number">2</span>];</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">return</span> left[<span class="number">0</span>] &gt; right[<span class="number">0</span>];</span><br><span class="line">		&#125;;</span><br><span class="line">		<span class="comment">// 建堆;</span></span><br><span class="line">		<span class="built_in">make_heap</span>(buildings.<span class="built_in">begin</span>(), buildings.<span class="built_in">end</span>(), func);</span><br><span class="line">		</span><br><span class="line">		<span class="built_in">pop_heap</span>(buildings.<span class="built_in">begin</span>(), buildings.<span class="built_in">end</span>(), func);</span><br><span class="line">		vector&lt;<span class="type">int</span>&gt; cur_outline = *buildings.<span class="built_in">rbegin</span>();</span><br><span class="line">		buildings.<span class="built_in">pop_back</span>();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">while</span> (buildings.<span class="built_in">empty</span>() == <span class="literal">false</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">pop_heap</span>(buildings.<span class="built_in">begin</span>(), buildings.<span class="built_in">end</span>(), func);</span><br><span class="line">			vector&lt;<span class="type">int</span>&gt; building = *buildings.<span class="built_in">rbegin</span>();</span><br><span class="line">			buildings.<span class="built_in">pop_back</span>();</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (building[<span class="number">0</span>] &gt; cur_outline[<span class="number">1</span>])</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="comment">// 建筑与当前轮廓分离;</span></span><br><span class="line">				ret.<span class="built_in">push_back</span>(cur_outline);</span><br><span class="line">				cur_outline = building;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (building[<span class="number">2</span>] &gt; cur_outline[<span class="number">2</span>])</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="comment">// 建筑与当前轮廓未分离，并且高度比当前高;</span></span><br><span class="line">				<span class="keyword">if</span> (building[<span class="number">1</span>] &lt; cur_outline[<span class="number">1</span>])</span><br><span class="line">				&#123;</span><br><span class="line">					<span class="comment">// 该建筑没有当前轮廓宽，生成新的建筑;</span></span><br><span class="line">					vector&lt;<span class="type">int</span>&gt; new_building = &#123; building[<span class="number">1</span>], cur_outline[<span class="number">1</span>], cur_outline[<span class="number">2</span>] &#125;;</span><br><span class="line">					buildings.<span class="built_in">push_back</span>(new_building);</span><br><span class="line">					<span class="built_in">push_heap</span>(buildings.<span class="built_in">begin</span>(), buildings.<span class="built_in">end</span>(), func);</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				cur_outline[<span class="number">1</span>] = building[<span class="number">0</span>];</span><br><span class="line">				ret.<span class="built_in">push_back</span>(cur_outline);</span><br><span class="line">				cur_outline = building;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (building[<span class="number">2</span>] == cur_outline[<span class="number">2</span>])</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="comment">// 建筑与当前轮廓未分离，并且高度相等，则看是否合并轮廓;</span></span><br><span class="line">				cur_outline[<span class="number">1</span>] = <span class="built_in">max</span>(cur_outline[<span class="number">1</span>], building[<span class="number">1</span>]);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (building[<span class="number">2</span>] &lt; cur_outline[<span class="number">2</span>])</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="comment">// 建筑与当前轮廓未分离，并且高度比当前小;</span></span><br><span class="line">				<span class="keyword">if</span> (building[<span class="number">0</span>] == cur_outline[<span class="number">1</span>])</span><br><span class="line">				&#123;</span><br><span class="line">					<span class="comment">// 正好在边缘;</span></span><br><span class="line">					ret.<span class="built_in">push_back</span>(cur_outline);</span><br><span class="line">					cur_outline = building;</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">else</span> <span class="keyword">if</span> (building[<span class="number">1</span>] &gt; cur_outline[<span class="number">1</span>])</span><br><span class="line">				&#123;</span><br><span class="line">					<span class="comment">// 有重叠，并且该建筑比当前轮廓宽，生成新的建筑;</span></span><br><span class="line">					vector&lt;<span class="type">int</span>&gt; new_building = &#123; cur_outline[<span class="number">1</span>], building[<span class="number">1</span>], building[<span class="number">2</span>] &#125;;</span><br><span class="line">					buildings.<span class="built_in">push_back</span>(new_building);</span><br><span class="line">					<span class="built_in">push_heap</span>(buildings.<span class="built_in">begin</span>(), buildings.<span class="built_in">end</span>(), func);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		ret.<span class="built_in">push_back</span>(cur_outline);</span><br><span class="line">		<span class="keyword">return</span> ret;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="附上我的测试代码"><a href="#附上我的测试代码" class="headerlink" title="附上我的测试代码"></a>附上我的测试代码</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line">void printfOutline(vector&lt;vector&lt;int&gt;&gt; &amp;outline)</span><br><span class="line">&#123;</span><br><span class="line">	cout &lt;&lt; &quot;[&quot; &lt;&lt; endl;</span><br><span class="line">	for (auto &amp;i : outline)</span><br><span class="line">	&#123;</span><br><span class="line">		cout &lt;&lt; &quot;\t[&quot;;</span><br><span class="line">		for (auto j : i)</span><br><span class="line">		&#123;</span><br><span class="line">			cout &lt;&lt; j &lt;&lt; &quot;,&quot;;</span><br><span class="line">		&#125;</span><br><span class="line">		cout &lt;&lt; &quot;]&quot; &lt;&lt; endl;</span><br><span class="line">	&#125;</span><br><span class="line">	cout &lt;&lt; &quot;]&quot; &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">	Solution s;</span><br><span class="line">	&#123;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; input = &#123; &#123;1, 3, 3&#125;, &#123; 2, 4, 4 &#125;, &#123; 5, 6, 1&#125; &#125;;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; out = s.buildingOutline(input);</span><br><span class="line">		printfOutline(out);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	&#123;</span><br><span class="line">		// &#123;1,3,3&#125;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; input = &#123; &#123; 1, 3, 3 &#125; &#125;;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; out = s.buildingOutline(input);</span><br><span class="line">		printfOutline(out);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	&#123;</span><br><span class="line">		// &#123;1,3,5&#125;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; input = &#123; &#123; 1, 3, 3 &#125;, &#123;1,3,5&#125; &#125;;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; out = s.buildingOutline(input);</span><br><span class="line">		printfOutline(out);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	&#123;</span><br><span class="line">		// &#123;1,3,5&#125;, &#123;3,4,3&#125;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; input = &#123; &#123; 1, 4, 3 &#125;,&#123; 1,3,5 &#125; &#125;;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; out = s.buildingOutline(input);</span><br><span class="line">		printfOutline(out);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	&#123;</span><br><span class="line">		// &#123;1,2,3&#125;, &#123;2,3,5&#125;, &#123;3,4,3&#125;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; input = &#123; &#123; 1, 4, 3 &#125;,&#123; 2,3,5 &#125; &#125;;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; out = s.buildingOutline(input);</span><br><span class="line">		printfOutline(out);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	&#123;</span><br><span class="line">		// &#123;1,5,5&#125;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; input = &#123; &#123; 1, 4, 5 &#125;,&#123; 4,5,5 &#125; &#125;;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; out = s.buildingOutline(input);</span><br><span class="line">		printfOutline(out);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	&#123;</span><br><span class="line">		// &#123;1,4,5&#125;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; input = &#123; &#123; 1, 4, 5 &#125;,&#123; 2,3,3 &#125; &#125;;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; out = s.buildingOutline(input);</span><br><span class="line">		printfOutline(out);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	&#123;</span><br><span class="line">		// &#123;1,2,3&#125;,&#123;2,5,5&#125;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; input = &#123; &#123; 1, 4, 3 &#125;,&#123; 2,5,5 &#125; &#125;;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; out = s.buildingOutline(input);</span><br><span class="line">		printfOutline(out);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	&#123;</span><br><span class="line">		// &#123;1,5,3&#125;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; input = &#123; &#123; 1, 4, 3 &#125;,&#123; 2,5,3 &#125; &#125;;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; out = s.buildingOutline(input);</span><br><span class="line">		printfOutline(out);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	&#123;</span><br><span class="line">		// &#123;1,4,5&#125;,&#123;4,5,3&#125;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; input = &#123; &#123; 1, 4, 5 &#125;,&#123; 2,5,3 &#125; &#125;;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; out = s.buildingOutline(input);</span><br><span class="line">		printfOutline(out);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	&#123;</span><br><span class="line">		// &#123;1,4,3&#125;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; input = &#123; &#123; 1, 4, 3 &#125;,&#123; 1,3,3 &#125; &#125;;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; out = s.buildingOutline(input);</span><br><span class="line">		printfOutline(out);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	&#123;</span><br><span class="line">		// &#123;1,4,3&#125;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; input = &#123; &#123; 1, 4, 3 &#125;,&#123; 1,4,3 &#125; &#125;;</span><br><span class="line">		vector&lt;vector&lt;int&gt;&gt; out = s.buildingOutline(input);</span><br><span class="line">		printfOutline(out);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	while (1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/c/" rel="tag"># c++</a>
+              <a href="/tags/lintcode/" rel="tag"># lintcode</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/02/06/7/" rel="prev" title="104. Merge k Sorted Lists">
+                  <i class="fa fa-chevron-left"></i> 104. Merge k Sorted Lists
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/02/11/9/" rel="next" title="libcurl官方libevent驱动例子的研究">
+                  libcurl官方libevent驱动例子的研究 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drecik Xu</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>
