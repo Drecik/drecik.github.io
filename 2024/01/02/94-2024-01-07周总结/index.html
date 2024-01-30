@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="准心问题，父节点rect mongo数据库负载过高问题 线上问题 aab太大问题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="94. 2024-01-07周总结">
+<meta property="og:url" content="http://example.com/2024/01/02/94-2024-01-07%E5%91%A8%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Drecik&#39;s Blog">
+<meta property="og:description" content="准心问题，父节点rect mongo数据库负载过高问题 线上问题 aab太大问题">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/94/1.png">
+<meta property="og:image" content="http://example.com/images/94/2.jpg">
+<meta property="article:published_time" content="2024-01-02T09:28:04.000Z">
+<meta property="article:modified_time" content="2024-01-30T13:25:19.927Z">
+<meta property="article:author" content="Drecik Xu">
+<meta property="article:tag" content="周总结">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/94/1.png">
+
+
+<link rel="canonical" href="http://example.com/2024/01/02/94-2024-01-07%E5%91%A8%E6%80%BB%E7%BB%93/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2024/01/02/94-2024-01-07%E5%91%A8%E6%80%BB%E7%BB%93/","path":"2024/01/02/94-2024-01-07周总结/","title":"94. 2024-01-07周总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>94. 2024-01-07周总结 | Drecik's Blog</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Drecik's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%8E%B7%E5%8F%96%E5%B1%8F%E5%B9%95%E5%8F%B3%E4%B8%8A%E8%A7%92%E5%9D%90%E6%A0%87"><span class="nav-number">1.</span> <span class="nav-text">1. 获取屏幕右上角坐标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mongo%E6%95%B0%E6%8D%AE%E5%BA%93%E8%B4%9F%E8%BD%BD%E8%BF%87%E9%AB%98"><span class="nav-number">2.</span> <span class="nav-text">mongo数据库负载过高</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E4%B8%8A%E9%97%AE%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">线上问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#aab%E5%A4%AA%E5%A4%A7%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">aab太大问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">5.</span> <span class="nav-text">其他</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Drecik Xu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">97</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/02/94-2024-01-07%E5%91%A8%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="94. 2024-01-07周总结 | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          94. 2024-01-07周总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-01-02 17:28:04" itemprop="dateCreated datePublished" datetime="2024-01-02T17:28:04+08:00">2024-01-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-01-30 21:25:19" itemprop="dateModified" datetime="2024-01-30T21:25:19+08:00">2024-01-30</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <ol>
+<li>准心问题，父节点rect</li>
+<li>mongo数据库负载过高问题</li>
+<li>线上问题</li>
+<li>aab太大问题</li>
+</ol>
+<span id="more"></span>
+
+<h3 id="1-获取屏幕右上角坐标"><a href="#1-获取屏幕右上角坐标" class="headerlink" title="1. 获取屏幕右上角坐标"></a>1. 获取屏幕右上角坐标</h3><p>有个需求是需要有个准心可以在整个屏幕移动，准心的锚点设在了左下角，那就需要知道右上角的坐标，因为Unity会根据屏幕分辨率进行适配，所以右上角的坐标是动态的。一开始想的是可以拿到屏幕分辨率，根据右上角的屏幕坐标通过<code>RectTransformUtility.ScreenPointToLocalPointInRectangle</code>转成Unity坐标，但是不知道是不是使用方式不对，试了下拿到的是一个很大的值。但是在测试过程中，有个变量引起了我的注意，就是父节点的rect变量，里面有个width和height，这两个正好就是右上角的坐标。直接拿这个变量在真机上测试果然可以。但是父节点的适配要选择<code>stretch</code>模式才行，不然不会根据屏幕分辨率调整width和height。</p>
+<h3 id="mongo数据库负载过高"><a href="#mongo数据库负载过高" class="headerlink" title="mongo数据库负载过高"></a>mongo数据库负载过高</h3><p>线上机器报警，负载过高，看了下2核的CPU跑到了4，top了下看到mongo CPU使用率一直在130%。</p>
+<p>现学了下mongo如何排查性能问题，主要使用<code>db.currentOp()</code>命令，看了下主要卡在的是我们的一个战报插入操作，要耗时10多秒。这个操作之前版本都没有出现过问题，这个版本因为插入太频繁导致数据库连接池用完的原因改成了<code>bulkWrite</code>，看了下目前的数据库有40W行，所以卡顿原因就很显而易见了，没有建索引导致插入过慢。</p>
+<p>然后又现学了下mongo如何建立索引，主要是通过<code>createIndex</code>来建立，比如我们这个表<code>db.FightResult.createIndex(&#123;FightId:1&#125;, &#123;unique:true, name:&quot;FightResult_FightId&quot;&#125;)</code></p>
+<p>另外又把其他表改建索引的也都建了下。</p>
+<h3 id="线上问题"><a href="#线上问题" class="headerlink" title="线上问题"></a>线上问题</h3><p>游戏又一次上线测试的时候当天线上有玩家反馈推图打不了。上去查看日志发现有报错，通过报错定位到了问题。本来想通过热修复来做的，但是热修复做完太久了，又没有相关文档记录步骤，不太敢直接用。所以想到临时解决方案，先直接修改内存变量来临时修复，同时修改代码并进行内网测试，下次重启再把问题修复。</p>
+<p>这次暴露了几个问题：</p>
+<ul>
+<li>问题的根本原因是分支直接没有测试到，需要加强分支的测试</li>
+<li>报错机器人没有通知（内外网问题），这个导致我们比较被动，通过玩家反馈才知道有这个bug，跟上一个原因一样，需要加强因为测试环境不同的代码分支</li>
+<li>热修复解决方案没做好，没有文档记录，同时也没有演练，流程性都需要有文档记录流程，包括发客户端&#x2F;服务端版本，重启服务端，热修复服务端等等，同时重要的流程要进行演练</li>
+</ul>
+<h3 id="aab太大问题"><a href="#aab太大问题" class="headerlink" title="aab太大问题"></a>aab太大问题</h3><p>Google Play上传aab的时候报错，大小超过200MB上线</p>
+<p><img src="/../images/94/1.png"></p>
+<p>通过勾选Unity配置<code>Split Application Binary</code>解决</p>
+<p><img src="/../images/94/2.jpg"></p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>周六提车啦，5座小速腾换了个6座SUV，终于可以载着全家一起出去游玩了（就差那么一个座位😂），车子好大还不太好把握好距离，这个就慢慢习惯吧。比较难受的是车位就只有一个，停车比较麻烦，现在只能将就下，等过年开一辆车子停老家。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%91%A8%E6%80%BB%E7%BB%93/" rel="tag"># 周总结</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/12/25/93-2023-12-31%E5%91%A8%E6%80%BB%E7%BB%93/" rel="prev" title="93. 2023-12-31周总结">
+                  <i class="fa fa-chevron-left"></i> 93. 2023-12-31周总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/01/08/95-2024-01-14%E5%91%A8%E6%80%BB%E7%BB%93/" rel="next" title="95. 2024-01-14周总结">
+                  95. 2024-01-14周总结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zNzM5MS8xMzkyNQ=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drecik Xu</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>
