@@ -148,13 +148,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">97</span>
+          <span class="site-state-item-count">109</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-count">39</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -180,7 +180,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2019/02/13/27/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/17/39-Unity-Shader%E5%85%89%E7%85%A7%E7%A0%94%E7%A9%B6%EF%BC%88%E4%BA%8C%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -198,7 +198,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/02/13/27/" class="post-title-link" itemprop="url">unity ios启动即崩溃问题</a>
+          <a href="/2022/12/17/39-Unity-Shader%E5%85%89%E7%85%A7%E7%A0%94%E7%A9%B6%EF%BC%88%E4%BA%8C%EF%BC%89/" class="post-title-link" itemprop="url">39. Unity Shader光照研究（二）</a>
         </h2>
 
         <div class="post-meta-container">
@@ -209,14 +209,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2019-02-13 11:01:57" itemprop="dateCreated datePublished" datetime="2019-02-13T11:01:57+08:00">2019-02-13</time>
+      <time title="创建时间：2022-12-17 23:22:46" itemprop="dateCreated datePublished" datetime="2022-12-17T23:22:46+08:00">2022-12-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+      <time title="修改时间：2022-12-18 20:22:57" itemprop="dateModified" datetime="2022-12-18T20:22:57+08:00">2022-12-18</time>
     </span>
 
   
@@ -229,92 +229,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h2><p>unity ios版本客户端遇到了一个很奇葩的启动就崩溃问题，崩溃的堆栈全是汇编且处于unity的c库中。通过最近修改记录，不断定位发现问题出在一个新加的c++类文件中。这个类只要有除了构造函数以外的函数定义在cpp文件中就会导致崩溃。这就有点奇葩了。最后猜想这个类名(NetworkManager)可能与unity中的重名，所以尝试修改这个类的名字。结果发现问题就解决了。这就要吐槽下了，类名重复问题编译器不是应该在链接的时候给出报错吗。就这么编译过了，浪费很多时间啊。</p>
-<h2 id="反思"><a href="#反思" class="headerlink" title="反思"></a>反思</h2><p>不要定义全局类！！！</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/12/23/26/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Drecik Xu">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drecik's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Drecik's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/12/23/26/" class="post-title-link" itemprop="url">redis quicklist剖析</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-12-23 17:23:03" itemprop="dateCreated datePublished" datetime="2018-12-23T17:23:03+08:00">2018-12-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本篇文章详细剖析了redis的quicklist结构。前面我们已经介绍了两种redis数据结构：<code>adlist</code>和<code>ziplist</code>，这两中数据结构各有各的优缺点。</p>
-<ul>
-<li><code>adlist</code>: 双向链表，任意位置插入和删除非常方便，缺点也很显而易见，任意一个node都是独立的内存块，所以内存碎片化很严重</li>
-<li><code>ziplist</code>：压缩双向链表，一个链表就是一整块内存，同时如果元素值为整数的话可以进一步压缩，所以很省内存；缺点就是任意一次插入删除操作都会导致重新分配内存的操作，效率不高。</li>
-</ul>
-<p>quicklist结构就是<code>adlist</code>和<code>ziplist</code>两种结构的中间体，整个结构分为两层：外层使用类似<code>adlist</code>的结构串联，内层使用<code>ziplist</code>来节约内存</p>
+          <p>这篇是对<a target="_blank" rel="noopener" href="https://drecik.top/2022/12/03/36-Unity-Shader%E5%85%89%E7%85%A7%E7%A0%94%E7%A9%B6/">Unity Shader光照研究（一）</a>第二篇，主要是《Unity Shader入门精要》的第9章内容总结。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/12/23/26/#more" rel="contents">
+              <a class="btn" href="/2022/12/17/39-Unity-Shader%E5%85%89%E7%85%A7%E7%A0%94%E7%A9%B6%EF%BC%88%E4%BA%8C%EF%BC%89/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -345,7 +263,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/12/01/25/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/11/38-2022-12-11%E5%91%A8%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -363,7 +281,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/12/01/25/" class="post-title-link" itemprop="url">linux性能优化实战学习笔记——CPU篇</a>
+          <a href="/2022/12/11/38-2022-12-11%E5%91%A8%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">2022-12-11周总结</a>
         </h2>
 
         <div class="post-meta-container">
@@ -374,14 +292,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-12-01 16:38:32" itemprop="dateCreated datePublished" datetime="2018-12-01T16:38:32+08:00">2018-12-01</time>
+      <time title="创建时间：2022-12-11 23:12:03" itemprop="dateCreated datePublished" datetime="2022-12-11T23:12:03+08:00">2022-12-11</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+      <time title="修改时间：2022-12-13 22:04:11" itemprop="dateModified" datetime="2022-12-13T22:04:11+08:00">2022-12-13</time>
     </span>
 
   
@@ -394,10 +312,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>这篇博客用于记录学习<a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/140">linux性能优化实战</a>专栏CPU篇的一些总结，巩固自己知识点的同时也能够方便以后查询</p>
+          <p>这周主要跟了3个事情。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/12/01/25/#more" rel="contents">
+              <a class="btn" href="/2022/12/11/38-2022-12-11%E5%91%A8%E6%80%BB%E7%BB%93/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -428,7 +346,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/12/01/24/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/04/37-2022-12-04%E5%91%A8%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -446,7 +364,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/12/01/24/" class="post-title-link" itemprop="url">redis ziplist剖析</a>
+          <a href="/2022/12/04/37-2022-12-04%E5%91%A8%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">2022-12-04周总结</a>
         </h2>
 
         <div class="post-meta-container">
@@ -457,14 +375,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-12-01 10:55:51" itemprop="dateCreated datePublished" datetime="2018-12-01T10:55:51+08:00">2018-12-01</time>
+      <time title="创建时间：2022-12-04 23:14:10" itemprop="dateCreated datePublished" datetime="2022-12-04T23:14:10+08:00">2022-12-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+      <time title="修改时间：2022-12-11 23:34:48" itemprop="dateModified" datetime="2022-12-11T23:34:48+08:00">2022-12-11</time>
     </span>
 
   
@@ -477,15 +395,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本篇文章介绍redis的ziplist结构。ziplist跟zipmap一样，是在以节约内存为前提下的一个双向链表存储结构，他有着比zipmap更高的压缩率：</p>
-<ul>
-<li>字符串如果能转成整形的话会转成整形存储</li>
-<li>不会向zipmap一样预留free空间，所以所有插入和删除操作都会导致内存重新分配</li>
-</ul>
-<p>redis在元素较少的情况下使用ziplist来替代dict</p>
+          <p>这周事情比较杂</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/12/01/24/#more" rel="contents">
+              <a class="btn" href="/2022/12/04/37-2022-12-04%E5%91%A8%E6%80%BB%E7%BB%93/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -516,7 +429,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/11/25/23/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/03/36-Unity-Shader%E5%85%89%E7%85%A7%E7%A0%94%E7%A9%B6%EF%BC%88%E4%B8%80%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -534,7 +447,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/11/25/23/" class="post-title-link" itemprop="url">redis zipmap剖析</a>
+          <a href="/2022/12/03/36-Unity-Shader%E5%85%89%E7%85%A7%E7%A0%94%E7%A9%B6%EF%BC%88%E4%B8%80%EF%BC%89/" class="post-title-link" itemprop="url">Unity Shader光照研究（一）</a>
         </h2>
 
         <div class="post-meta-container">
@@ -545,14 +458,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-11-25 11:49:53" itemprop="dateCreated datePublished" datetime="2018-11-25T11:49:53+08:00">2018-11-25</time>
+      <time title="创建时间：2022-12-03 10:57:35" itemprop="dateCreated datePublished" datetime="2022-12-03T10:57:35+08:00">2022-12-03</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+      <time title="修改时间：2022-12-17 23:28:26" itemprop="dateModified" datetime="2022-12-17T23:28:26+08:00">2022-12-17</time>
     </span>
 
   
@@ -565,10 +478,11 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本篇文章介绍redis的zipmap结构。zipmap是一个以节约内存为前提的键值对存储结构，这个结构只在内存上有优势，在查找&#x2F;插入&#x2F;删除&#x2F;更新上跟hash表或者红黑树实现的map没有任何优势。所以只适用于元素数量比较少的情况。但实际上redis自己内部并没有使用该结构，而是使用ziplist在元素比较少的场合来替代dict。</p>
+          <p>最近3D项目需要调模型在游戏里面的效果，之前提供的一个只能调漫反射的强度的简单Shader不太够，需要支持更多的功能，比如<code>高光</code>,<code>环境光</code>,<code>阴影</code>等。</p>
+<p>这一块的Shader之前也都是到处乱翻的资料，没有系统学习过，趁此机会翻了下《Unity Shader入门精要》关于光照的知识并做个总结。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/11/25/23/#more" rel="contents">
+              <a class="btn" href="/2022/12/03/36-Unity-Shader%E5%85%89%E7%85%A7%E7%A0%94%E7%A9%B6%EF%BC%88%E4%B8%80%EF%BC%89/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -599,7 +513,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/11/23/22/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/26/35-2022-11-27%E5%91%A8%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -617,7 +531,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/11/23/22/" class="post-title-link" itemprop="url">redis dict(hash表)剖析</a>
+          <a href="/2022/11/26/35-2022-11-27%E5%91%A8%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">2022-11-27周总结</a>
         </h2>
 
         <div class="post-meta-container">
@@ -628,14 +542,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-11-23 19:15:07" itemprop="dateCreated datePublished" datetime="2018-11-23T19:15:07+08:00">2018-11-23</time>
+      <time title="创建时间：2022-11-26 22:07:50" itemprop="dateCreated datePublished" datetime="2022-11-26T22:07:50+08:00">2022-11-26</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+      <time title="修改时间：2022-11-27 11:03:42" itemprop="dateModified" datetime="2022-11-27T11:03:42+08:00">2022-11-27</time>
     </span>
 
   
@@ -648,10 +562,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本篇文章介绍redis的hash表。redis是一个以key-value形式提供服务的内存数据库，为了快速的进行key的查找和插入，只能采用O(1)为时间复杂度的hash表结构来存放数据。所以hash表应该是redis中最重要的一个结构。</p>
+          <p>这周主要做了两件事情，一个是卡牌项目的Shader整理，另外一个是足球项目的微信小游戏</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/11/23/22/#more" rel="contents">
+              <a class="btn" href="/2022/11/26/35-2022-11-27%E5%91%A8%E6%80%BB%E7%BB%93/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -682,7 +596,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/11/10/21/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/26/34-%E7%AB%8B%E4%B8%AAFlag/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -700,7 +614,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/11/10/21/" class="post-title-link" itemprop="url">redis双向链表剖析</a>
+          <a href="/2022/11/26/34-%E7%AB%8B%E4%B8%AAFlag/" class="post-title-link" itemprop="url">立个Flag</a>
         </h2>
 
         <div class="post-meta-container">
@@ -710,15 +624,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2018-11-10 11:09:33" itemprop="dateCreated datePublished" datetime="2018-11-10T11:09:33+08:00">2018-11-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+      <time title="创建时间：2022-11-26 21:15:58 / 修改时间：22:08:09" itemprop="dateCreated datePublished" datetime="2022-11-26T21:15:58+08:00">2022-11-26</time>
     </span>
 
   
@@ -731,10 +639,80 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本篇文章介绍redis的双向链表。redis用很简洁的代码实现了每本数据结构书籍必有的双向链表结构。可以推荐给正在学习数据结构的同学看看这代码</p>
+          <p>博客一阵子没更新了，为了防止以后自己偷懒，给自己立个Flag：做一个周总结专栏，每周总结一些工作上，生活上，或者其他感悟的内容</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/26/33-Invalid-pass-number-1-for-Graphics-Blit-Unity/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/11/26/33-Invalid-pass-number-1-for-Graphics-Blit-Unity/" class="post-title-link" itemprop="url">Invalid pass number (1) for Graphics.Blit (Unity)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-11-26 10:57:51 / 修改时间：22:13:43" itemprop="dateCreated datePublished" datetime="2022-11-26T10:57:51+08:00">2022-11-26</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="现象描述"><a href="#现象描述" class="headerlink" title="现象描述"></a>现象描述</h3><p>有一个后处理脚本在自动打包机(Linux环境)打出的包会包<code>Invalid pass number (1) for Graphics.Blit</code>错误，但是手动打包(Windows环境)打出的包不会出现这个问题。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/11/10/21/#more" rel="contents">
+              <a class="btn" href="/2022/11/26/33-Invalid-pass-number-1-for-Graphics-Blit-Unity/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -765,7 +743,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/11/06/20/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/03/15/32/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -783,7 +761,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/11/06/20/" class="post-title-link" itemprop="url">redis有序集合(intset)剖析</a>
+          <a href="/2020/03/15/32/" class="post-title-link" itemprop="url">linux性能优化实战学习笔记——I/O篇</a>
         </h2>
 
         <div class="post-meta-container">
@@ -794,7 +772,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-11-06 20:30:11" itemprop="dateCreated datePublished" datetime="2018-11-06T20:30:11+08:00">2018-11-06</time>
+      <time title="创建时间：2020-03-15 20:00:00" itemprop="dateCreated datePublished" datetime="2020-03-15T20:00:00+08:00">2020-03-15</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -814,10 +792,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本篇文章介绍redis中的有序集合(intset)数据结构。该结构使用连续的内存存储，所以每次插入和删除都会触发内存的分配。适合数量较小，插入和删除不平凡的时候使用，不太影响效率的同时节省内存，同时可以利用它的有序性进行高效的查找</p>
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>这篇博客用于记录学习<a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/140">linux性能优化实战</a>专栏I&#x2F;O篇的一些总结，巩固自己知识点的同时也能够方便以后查询。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/11/06/20/#more" rel="contents">
+              <a class="btn" href="/2020/03/15/32/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -848,7 +826,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/11/04/19/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/03/03/31/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -866,7 +844,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/11/04/19/" class="post-title-link" itemprop="url">redis字符串剖析</a>
+          <a href="/2020/03/03/31/" class="post-title-link" itemprop="url">MySql实战学习笔记——索引补充篇</a>
         </h2>
 
         <div class="post-meta-container">
@@ -877,7 +855,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-11-04 14:37:01" itemprop="dateCreated datePublished" datetime="2018-11-04T14:37:01+08:00">2018-11-04</time>
+      <time title="创建时间：2020-03-03 11:12:04" itemprop="dateCreated datePublished" datetime="2020-03-03T11:12:04+08:00">2020-03-03</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -897,10 +875,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本篇文章介绍redis使用的字符串结构。redis很巧妙的在操作的指针前面增加header，并且会在尾部增加’\0’，兼容二进制的同时，也可以直接将指针传递给C库操作字符串的函数直接操作</p>
+          <p>上一篇<a target="_blank" rel="noopener" href="https://drecik.top/2020/02/29/29/">博客</a>记录了<a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/139">MySql实战</a>基础篇的一些总结，这一篇在对其中索引进行补充。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/11/04/19/#more" rel="contents">
+              <a class="btn" href="/2020/03/03/31/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -931,7 +909,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/11/04/18/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/03/01/30/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -949,7 +927,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/11/04/18/" class="post-title-link" itemprop="url">lua 5.4分代研究及luajit分代移植</a>
+          <a href="/2020/03/01/30/" class="post-title-link" itemprop="url">linux性能优化实战学习笔记——内存篇</a>
         </h2>
 
         <div class="post-meta-container">
@@ -960,14 +938,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-11-04 10:26:13" itemprop="dateCreated datePublished" datetime="2018-11-04T10:26:13+08:00">2018-11-04</time>
+      <time title="创建时间：2020-03-01 16:49:29" itemprop="dateCreated datePublished" datetime="2020-03-01T16:49:29+08:00">2020-03-01</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-11-27 12:51:59" itemprop="dateModified" datetime="2022-11-27T12:51:59+08:00">2022-11-27</time>
+      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
     </span>
 
   
@@ -980,25 +958,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="lua垃圾回收发展历程"><a href="#lua垃圾回收发展历程" class="headerlink" title="lua垃圾回收发展历程"></a>lua垃圾回收发展历程</h2><ul>
-<li><p>为什么不用引用计数？</p>
-<ol>
-<li>引用计数有循环引用问题，会导致内存泄漏</li>
-<li>应用计数嗯外开销大，赋值的时候会带来额外引用计数计算的开销。尤其是在内存比较稳定，没有新内存申请和释放的时候，你也需要承担这部分开销。</li>
-</ol>
-</li>
-<li><p>5.0及以前使用的是stop the world的标记清除法，会卡住所有操作，直到gc完成</p>
-</li>
-<li><p>5.1引入了分步gc，整个gc过程可以分为好几步，穿插在运行过程中</p>
-</li>
-<li><p>5.2引入了分代gc，属于实验性质，实际效果不好，在5.3的时候又移除了</p>
-</li>
-<li><p>5.4重新分代了分代gc，具体实现方式会在后面介绍</p>
-</li>
-</ul>
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>这篇博客用于记录学习<a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/140">linux性能优化实战</a>专栏内存篇的一些总结，巩固自己知识点的同时也能够方便以后查询</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/11/04/18/#more" rel="contents">
+              <a class="btn" href="/2020/03/01/30/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1022,7 +985,7 @@
 
 
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/7/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/9/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/7/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/9/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

@@ -148,13 +148,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">97</span>
+          <span class="site-state-item-count">109</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-count">39</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -180,7 +180,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/02/06/7/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/11/04/19/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -198,7 +198,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/02/06/7/" class="post-title-link" itemprop="url">104. Merge k Sorted Lists</a>
+          <a href="/2018/11/04/19/" class="post-title-link" itemprop="url">redis字符串剖析</a>
         </h2>
 
         <div class="post-meta-container">
@@ -209,7 +209,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-02-06 10:21:58" itemprop="dateCreated datePublished" datetime="2018-02-06T10:21:58+08:00">2018-02-06</time>
+      <time title="创建时间：2018-11-04 14:37:01" itemprop="dateCreated datePublished" datetime="2018-11-04T14:37:01+08:00">2018-11-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -229,11 +229,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="合并k个已排序的链表"><a href="#合并k个已排序的链表" class="headerlink" title="合并k个已排序的链表"></a>合并k个已排序的链表</h3><p><a target="_blank" rel="noopener" href="http://www.lintcode.com/en/problem/merge-k-sorted-lists/">LintCode链接</a></p>
-<h4 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h4><p>合并k个已排序的链表</p>
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本篇文章介绍redis使用的字符串结构。redis很巧妙的在操作的指针前面增加header，并且会在尾部增加’\0’，兼容二进制的同时，也可以直接将指针传递给C库操作字符串的函数直接操作</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/02/06/7/#more" rel="contents">
+              <a class="btn" href="/2018/11/04/19/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -264,7 +263,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/02/03/6/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/11/04/18/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -282,7 +281,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/02/03/6/" class="post-title-link" itemprop="url">86. Binary Search Tree Iterator</a>
+          <a href="/2018/11/04/18/" class="post-title-link" itemprop="url">lua 5.4分代研究及luajit分代移植</a>
         </h2>
 
         <div class="post-meta-container">
@@ -293,14 +292,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-02-03 13:10:47" itemprop="dateCreated datePublished" datetime="2018-02-03T13:10:47+08:00">2018-02-03</time>
+      <time title="创建时间：2018-11-04 10:26:13" itemprop="dateCreated datePublished" datetime="2018-11-04T10:26:13+08:00">2018-11-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+      <time title="修改时间：2022-11-27 12:51:59" itemprop="dateModified" datetime="2022-11-27T12:51:59+08:00">2022-11-27</time>
     </span>
 
   
@@ -313,15 +312,25 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="遍历二查找叉树"><a href="#遍历二查找叉树" class="headerlink" title="遍历二查找叉树"></a>遍历二查找叉树</h3><p><a target="_blank" rel="noopener" href="http://www.lintcode.com/en/problem/binary-search-tree-iterator/">LintCode链接</a></p>
-<h4 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h4><p>设计一个迭代器，该迭代器可以按照以下要求一棵二叉查找树</p>
-<ul>
-<li>遍历的顺序按照从小到大的排序规则</li>
-<li>next与hasNext的时间复杂度平均为O(1)</li>
+          <h2 id="lua垃圾回收发展历程"><a href="#lua垃圾回收发展历程" class="headerlink" title="lua垃圾回收发展历程"></a>lua垃圾回收发展历程</h2><ul>
+<li><p>为什么不用引用计数？</p>
+<ol>
+<li>引用计数有循环引用问题，会导致内存泄漏</li>
+<li>应用计数嗯外开销大，赋值的时候会带来额外引用计数计算的开销。尤其是在内存比较稳定，没有新内存申请和释放的时候，你也需要承担这部分开销。</li>
+</ol>
+</li>
+<li><p>5.0及以前使用的是stop the world的标记清除法，会卡住所有操作，直到gc完成</p>
+</li>
+<li><p>5.1引入了分步gc，整个gc过程可以分为好几步，穿插在运行过程中</p>
+</li>
+<li><p>5.2引入了分代gc，属于实验性质，实际效果不好，在5.3的时候又移除了</p>
+</li>
+<li><p>5.4重新分代了分代gc，具体实现方式会在后面介绍</p>
+</li>
 </ul>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/02/03/6/#more" rel="contents">
+              <a class="btn" href="/2018/11/04/18/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -352,7 +361,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/02/02/5/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/07/10/17/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -370,7 +379,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/02/02/5/" class="post-title-link" itemprop="url">81. Data Stream Median</a>
+          <a href="/2018/07/10/17/" class="post-title-link" itemprop="url">linux systemtap, stap++使用</a>
         </h2>
 
         <div class="post-meta-container">
@@ -381,7 +390,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-02-02 22:26:11" itemprop="dateCreated datePublished" datetime="2018-02-02T22:26:11+08:00">2018-02-02</time>
+      <time title="创建时间：2018-07-10 15:35:55" itemprop="dateCreated datePublished" datetime="2018-07-10T15:35:55+08:00">2018-07-10</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -401,11 +410,11 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="数组最中间值"><a href="#数组最中间值" class="headerlink" title="数组最中间值"></a>数组最中间值</h3><p><a target="_blank" rel="noopener" href="http://www.lintcode.com/en/problem/data-stream-median/">LintCode链接</a></p>
-<h4 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h4><p>输入的一组数字，返回每次输入新数字之后，该序列的最中间值   </p>
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>介绍systemtap, stap++的一些使用方式，以及总结了一些遇到的坑点</p>
+<h2 id="systemtap介绍"><a href="#systemtap介绍" class="headerlink" title="systemtap介绍"></a>systemtap介绍</h2><p>systemtap跟perf一样也是一个linux下的性能分析工具，但它提供自定义脚本编写，所以功能会比perf更强大。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/02/02/5/#more" rel="contents">
+              <a class="btn" href="/2018/07/10/17/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -436,7 +445,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/02/02/4/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/07/09/16/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -454,7 +463,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/02/02/4/" class="post-title-link" itemprop="url">MySql进程使用的文件描述符数量的问题</a>
+          <a href="/2018/07/09/16/" class="post-title-link" itemprop="url">linux perf使用</a>
         </h2>
 
         <div class="post-meta-container">
@@ -465,7 +474,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-02-02 16:46:52" itemprop="dateCreated datePublished" datetime="2018-02-02T16:46:52+08:00">2018-02-02</time>
+      <time title="创建时间：2018-07-09 19:14:34" itemprop="dateCreated datePublished" datetime="2018-07-09T19:14:34+08:00">2018-07-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -485,12 +494,11 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>在CentOS 6.5, mysql版本为5.1的机器上，查看mysql进程的文件描述符使用量<br>使用命令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// grep 后面跟的是mysql进程号</span><br><span class="line">lsof -n |awk &#x27;&#123;print $2, $NF&#125;&#x27; | sort | uniq -c | sort -nr | grep 1697 | more</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-1251569602.cos.ap-shanghai.myqcloud.com/blog/4/1.png"></p>
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>总结perf在linux下进行性能分析的常用方式。</p>
+<h2 id="perf介绍"><a href="#perf介绍" class="headerlink" title="perf介绍"></a>perf介绍</h2><p>Perf是一款linux性能分析工具。<br>通过它，应用程序可以利用 PMU(performance monitoring unit)，tracepoint和内核中的特殊计数器来进行性能统计。它不但可以分析指定应用程序的性能问题，也可以用来分析内核的性能问题，当然也可以同时分析应用代码和内核，从而全面理解应用程序中的性能瓶颈。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/02/02/4/#more" rel="contents">
+              <a class="btn" href="/2018/07/09/16/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -521,7 +529,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/02/01/3/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/07/06/15/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -539,7 +547,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/02/01/3/" class="post-title-link" itemprop="url">75. Find Peak Element</a>
+          <a href="/2018/07/06/15/" class="post-title-link" itemprop="url">unity c++扩展开发坑点总结</a>
         </h2>
 
         <div class="post-meta-container">
@@ -550,7 +558,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-02-01 21:55:57" itemprop="dateCreated datePublished" datetime="2018-02-01T21:55:57+08:00">2018-02-01</time>
+      <time title="创建时间：2018-07-06 19:37:12" itemprop="dateCreated datePublished" datetime="2018-07-06T19:37:12+08:00">2018-07-06</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -570,16 +578,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="查找无续数组的峰值"><a href="#查找无续数组的峰值" class="headerlink" title="查找无续数组的峰值"></a>查找无续数组的峰值</h3><p><a target="_blank" rel="noopener" href="http://www.lintcode.com/en/problem/find-peak-element/">LintCode链接</a></p>
-<h4 id="题目说明"><a href="#题目说明" class="headerlink" title="题目说明"></a>题目说明</h4><p>给出一个整数数组(size为n)，其具有以下特点：</p>
-<ul>
-<li>相邻位置的数字是不同的</li>
-<li>A[0] &lt; A[1] 并且 A[n - 2] &gt; A[n - 1]</li>
-</ul>
-<p>假定P是峰值的位置则满足A[P] &gt; A[P-1]且A[P] &gt; A[P+1]，返回数组中任意一个峰值的位置。</p>
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>总结下最近在开发4个平台（win64, mac, ios, android）的unity复杂C++扩展遇到的坑点，不对unity如何开发c++插件进行介绍。整个插件开发用了3-4天，各个平台的编译兼容花了1周多时间。可见有多坑。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/02/01/3/#more" rel="contents">
+              <a class="btn" href="/2018/07/06/15/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -610,7 +612,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/02/01/2/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/06/17/14/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -628,7 +630,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/02/01/2/" class="post-title-link" itemprop="url">C++ stl算法——partition</a>
+          <a href="/2018/06/17/14/" class="post-title-link" itemprop="url">hexo+next配置</a>
         </h2>
 
         <div class="post-meta-container">
@@ -639,14 +641,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-02-01 18:06:25" itemprop="dateCreated datePublished" datetime="2018-02-01T18:06:25+08:00">2018-02-01</time>
+      <time title="创建时间：2018-06-17 11:38:50" itemprop="dateCreated datePublished" datetime="2018-06-17T11:38:50+08:00">2018-06-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+      <time title="修改时间：2022-11-27 12:51:13" itemprop="dateModified" datetime="2022-11-27T12:51:13+08:00">2022-11-27</time>
     </span>
 
   
@@ -659,12 +661,13 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">template&lt; class ForwardIt, class UnaryPredicate &gt;</span><br><span class="line">ForwardIt partition( ForwardIt first, ForwardIt last, UnaryPredicate p );</span><br></pre></td></tr></table></figure>
-
-<h3 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h3><p>对[first, last)元素进行处理，使得满足p的元素移到[first, last)前部，不满足的移到后部，返回第一个不满足p元素所在的迭代器，如果都满足的话返回last</p>
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>记录下制作该博客时候的一些配置修改，默认已经有hexo+next环境，如果没有该环境，请自行搜索教程</p>
+<hr>
+<p>博客好久没更新了，发现原来的版本hexo(3.x)部署之后页面都为空，最后升级了下hexo和next到最新版本。升级过程也挺坎坷的，最后走了最傻的版本，重新新建了一个hexo和next博客项目，然后迁移博客数据过来。</p>
+<p>升级过程中发现之前写的一些东西已经没法用了，包括<code>添加顶部加载条</code>, <code>代码样式</code>, <code>增加阅读统计</code>, <code>腾讯移动分析</code>。所以配置教程基本上没什么用了</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/02/01/2/#more" rel="contents">
+              <a class="btn" href="/2018/06/17/14/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -695,7 +698,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/02/01/1/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/06/17/13/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -713,7 +716,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/02/01/1/" class="post-title-link" itemprop="url">C++对象在作为函数参数的拷贝研究</a>
+          <a href="/2018/06/17/13/" class="post-title-link" itemprop="url">lua与luajit string hash算法对比</a>
         </h2>
 
         <div class="post-meta-container">
@@ -724,7 +727,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-02-01 16:54:23" itemprop="dateCreated datePublished" datetime="2018-02-01T16:54:23+08:00">2018-02-01</time>
+      <time title="创建时间：2018-06-17 10:20:48" itemprop="dateCreated datePublished" datetime="2018-06-17T10:20:48+08:00">2018-06-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -744,10 +747,265 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>C++对象在作为函数参数以及返回值的copy策略一直是我困扰的一个问题，特别是在今天看到了C++11的新增加的特性std::move以及右值概念之后，激发了我的求知欲，决定把这一块详细的搞清楚。</p>
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>研究lua与luajit两种string hash算法的原理，以及性能对比</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/02/01/1/#more" rel="contents">
+              <a class="btn" href="/2018/06/17/13/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/06/17/12/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/06/17/12/" class="post-title-link" itemprop="url">lua gc分析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-06-17 10:15:36" itemprop="dateCreated datePublished" datetime="2018-06-17T10:15:36+08:00">2018-06-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>分析lua使用的gc算法，如何做到分步gc，以及测试结论</p>
+<h2 id="gc算法分析"><a href="#gc算法分析" class="headerlink" title="gc算法分析"></a>gc算法分析</h2><p>lua gc采用的是标记-清除算法，即一次gc分两步：</p>
+<ol>
+<li>从根节点开始遍历gc对象，如果可达，则标记</li>
+<li>遍历所有的gc对象，清除没有被标记的对象</li>
+</ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/06/17/12/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/06/16/11/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/06/16/11/" class="post-title-link" itemprop="url">lua三种字符串拼接性能分析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-06-16 11:14:22" itemprop="dateCreated datePublished" datetime="2018-06-16T11:14:22+08:00">2018-06-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>lua中提供了3中字符串拼接函数，测试在日常使用情况下，各种拼接字符串的性能对比。</p>
+<h2 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h2><p>操作系统：Debian GNU&#x2F;Linux 8<br>CPU：Intel(R) Xeon(R) CPU E5-2640 v2 @ 2.00GHz<br>内存：64G<br>lua环境：LuaJIT-2.1.0-beta3 (测试的时候关闭jit)</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/06/16/11/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/02/11/10/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Drecik Xu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Drecik's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/02/11/10/" class="post-title-link" itemprop="url">C++对象在作为函数返回值的拷贝研究</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-02-11 16:14:49" itemprop="dateCreated datePublished" datetime="2018-02-11T16:14:49+08:00">2018-02-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-06-25 21:14:58" itemprop="dateModified" datetime="2022-06-25T21:14:58+08:00">2022-06-25</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>接上篇<a target="_blank" rel="noopener" href="https://drecik.github.io/1/#more">C++对象在作为函数参数的拷贝研究</a>，研究对象在作为返回值时候的拷贝研究</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/02/11/10/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -771,7 +1029,7 @@
 
 
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/9/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/9/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/11/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

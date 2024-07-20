@@ -4195,4 +4195,204 @@
         <tag>红点</tag>
       </tags>
   </entry>
+  <entry>
+    <title>100. 2024-03-03周总结</title>
+    <url>/2024/02/27/100-2024-03-03%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>打包报错</li>
+<li>docker磁盘清理</li>
+<li>unity获取本地化价格</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="1-打包报错"><a href="#1-打包报错" class="headerlink" title="1. 打包报错"></a>1. 打包报错</h2><p>第一个报错：<br>NullReferenceException: Object reference not set to an instance of an object<br>UnityEngine.InternalStaticBatchingUtility.CombineGameObjects (UnityEngine.GameObject[] gos, UnityEngine.GameObject staticBatchRoot, System.Boolean isEditorPostprocessScene, UnityEngine.InternalStaticBatchingUtility+StaticBatcherGOSorter sorter)</p>
+<p>参考这个<a href="https://blog.csdn.net/u014481027/article/details/131071177">文档</a>解决</p>
+<p>第二个报错：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">b&quot;Execution failed for task &#x27;:launcher:processReleaseResources&#x27;.\n&quot;</span><br><span class="line">b&#x27;&gt; A failure occurred while executing com.android.build.gradle.internal.tasks.Workers$ActionFacade\n&#x27;</span><br><span class="line">b&#x27;   &gt; Android resource linking failed\n&#x27;</span><br><span class="line">b&#x27;     /home/ab/.gradle/caches/transforms-2/files-2.1/769cd96ea1b8496f7f990f8752658b03/jetified-ads-sdk-5.7.0.3/AndroidManifest.xml:53:13-59: AAPT: error: unexpected element &lt;property&gt; found in &lt;manifest&gt;&lt;application&gt;.\n&#x27;</span><br><span class="line">b&#x27;         \n&#x27;</span><br><span class="line">b&#x27;\n&#x27;</span><br></pre></td></tr></table></figure>
+<p>可以通过升级gradle到4.2.1解决</p>
+<h2 id="2-docekr磁盘清理"><a href="#2-docekr磁盘清理" class="headerlink" title="2. docekr磁盘清理"></a>2. docekr磁盘清理</h2><p>磁盘满了，发现通过<code>du -sh *</code>一步步发现是<code>/var/lib/containers/storage/overlay-containers/</code>下某个容器的ctr.log占用很大，通过命令<code>cat /dev/null &gt; ctr.log</code>清楚日志后恢复</p>
+<h2 id="3-unity获取本地化价格"><a href="#3-unity获取本地化价格" class="headerlink" title="3. unity获取本地化价格"></a>3. unity获取本地化价格</h2><p>unity官方插件iap自带相关<a href="https://docs.unity3d.com/cn/2019.3/Manual/UnityIAPBrowsingMetadata.html">接口</a>获取</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>102. 2024-03-17周总结</title>
+    <url>/2024/03/18/102-2024-03-17%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<p>赶上线项目，有点累。。</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>101. 2024-03-10周总结</title>
+    <url>/2024/03/04/101-2024-03-10%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>App Store Connect Upload Error</li>
+<li>raycast真机不生效</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="1-App-Store-Connect-Upload-Error"><a href="#1-App-Store-Connect-Upload-Error" class="headerlink" title="1. App Store Connect Upload Error"></a>1. App Store Connect Upload Error</h2><p>之前一直上传的的账号，突然间报上传错误，<code>App Store Connect Upload Error &quot;You haven&#39;t been given access to cloud-managed distribution certificates&quot;</code>，可能是升级xcode或者其他什么原因导致的，按照这个<a href="https://stackoverflow.com/questions/69609859/app-store-connect-upload-error-you-havent-been-given-access-to-cloud-managed-d">解决方案</a>给对应的相关账号增加权限即可</p>
+<h2 id="2-raycast真机不生效"><a href="#2-raycast真机不生效" class="headerlink" title="2. raycast真机不生效"></a>2. raycast真机不生效</h2><p>遇到个问题，raycastall某个物体在真机上不生效，但是编辑器下可以，最后换了个box包围盒，不用mesh包围盒就可以生效，最后猜测是因为mesh包围盒太薄了，真机上的射线检测的step又比较大导致（只是猜测没有证据）</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>两个娃晚上同时支原体发烧，折腾了一整周，加上项目太忙了，有点累。</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>103. 2024-03-24周总结</title>
+    <url>/2024/03/18/103-2024-03-24%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>权重随机bug</li>
+<li>cocos richtext bug</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="1-权重随机bug"><a href="#1-权重随机bug" class="headerlink" title="1. 权重随机bug"></a>1. 权重随机bug</h2><p>底层框架提供的权重随机有bug，如果权重为0也能随机到。本来想在原来写的算法上面打个补丁，突然想到可以让chatgpt帮忙重新写还不会有bug。看了下他写的思路和我之前思路不太一样，并且也不用打补丁的方式去实现，代码漂亮了很多。</p>
+<p>后续有什么小助手函数可以找chatgpt写，另外该补充单测还是得补充，这种问题写几个小单测很容易发现。</p>
+<h2 id="2-cocos-richtext-bug"><a href="#2-cocos-richtext-bug" class="headerlink" title="2. cocos richtext bug"></a>2. cocos richtext bug</h2><p>发现cocos rich text有bug，有些情况下部分字会消失，搜了下从2.x开始就有问题，但是cocos到3.7了还没解决，有点坑，网上找了个<a href="https://forum.cocos.org/t/topic/139008/2">解决方案</a>测试是有效的</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>104. 2024-03-31周总结</title>
+    <url>/2024/03/26/104-2024-03-31%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<p>性能优化，缓冲池问题，图集问题</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>105. 2024-04-07周总结</title>
+    <url>/2024/04/15/105-2024-04-07%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>107. 2024-04-21周总结</title>
+    <url>/2024/04/15/107-2024-04-21%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<p>alert table问题</p>
+<ol>
+<li>避免大表alert，会卡住主流程</li>
+<li>索引会导致速度降低</li>
+</ol>
+<p>关于UI资源存放问题，开发期都放在一个文件夹里面，打包做处理</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>106. 2024-04-14周总结</title>
+    <url>/2024/04/15/106-2024-04-14%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>109-2024-06-16周总结</title>
+    <url>/2024/06/13/109-2024-06-16%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>关于统一后台的思考</li>
+<li>快手小游戏问题</li>
+<li>dotnet使用publish输出有些dll不更新</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="1-关于统一后台的思考"><a href="#1-关于统一后台的思考" class="headerlink" title="1. 关于统一后台的思考"></a>1. 关于统一后台的思考</h2><p>之前的想法是所有游戏用一个游戏中台，中台里面集成账号，事件，充值，游戏向接口（比如游戏列表），也按照这个部署了几个游戏。这样的好处就是其他游戏接入这些功能会比较简单，缺点就是更新迭代需要比较谨慎，影响所有游戏，同时因为是中台化，各个不同类型游戏可能会有不同需求需要特殊处理（特别是事件，每个游戏侧重点不太一样），需要有人力去汇总需求，并维护这一块代码。</p>
+<p>另外一种方案就是每个游戏单独部署这些功能，但不是从0开始，而是通过插件引入，插件自己有条线不断维护升级（主要是合并其他游戏新增的一些通用功能），游戏从某个插件版本引入之后就独立于插件了，可以自己根据游戏类型二次开发，但如果想升级的话，就需要自己手动合代码进来。这种方案的优点就是所有功能跟随游戏进程直接部署，要部署多个环境会很方便，同时跟我上周提到的远端配置中心会更契合一点，可以随意控制配置中心将地址指向不同环境的游戏，另外人力可以下降到每个游戏自身。缺点就是如果已经二次开发过升级会比较麻烦，需要自己手动拷贝代码过来升级。但也能接受，随着插件里面的通用功能越来越多，后续要升级的情况也会更少。</p>
+<p>所以准备给接下去的游戏使用各自独立部署的方案去做。</p>
+<h2 id="2-快手小游戏问题"><a href="#2-快手小游戏问题" class="headerlink" title="2. 快手小游戏问题"></a>2. 快手小游戏问题</h2><p>吐槽下快手小游戏开发体验比较差，开发工具连个模拟器都没有，同时命令行调用也没有，做不了自动化上传。另外有些报错或者函数不兼容的时候直接不返回导致卡住（比如我使用了一个btoa方法，调用了直接卡住）</p>
+<p>另外cocos不能直接输出快手工程，但可以直接兼容微信输出的工程。cc.platform也没有快手定义，工程里面判定是否快手平台比较麻烦。</p>
+<h3 id="包体过大"><a href="#包体过大" class="headerlink" title="包体过大"></a>包体过大</h3><p>快手小游戏上传的时候不会自动过滤.map文件，需要手动删除下，比较挫。</p>
+<h3 id="json里面有二进制问题"><a href="#json里面有二进制问题" class="headerlink" title="json里面有二进制问题"></a>json里面有二进制问题</h3><p>http post请求的json里面有个字段是二进制，导致二进制被截断了（在微信和抖音里面都没出现），改用base64下解决了这个问题</p>
+<h2 id="3-dotnet使用publish输出有些dll不更新"><a href="#3-dotnet使用publish输出有些dll不更新" class="headerlink" title="3. dotnet使用publish输出有些dll不更新"></a>3. dotnet使用publish输出有些dll不更新</h2><p>我们使用jenkins自动编译和部署测试服务器，使用的命令是dotnet publish xxx, 但是有些时候dll会不更新，不知道什么原因，通过手动把Debug&#x2F;下的所有dll重新拷贝一次解决</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>108. 2024-06-06周总结</title>
+    <url>/2024/06/06/108-2024-06-09%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>新项目上线</li>
+<li>新项目总结</li>
+</ol>
+<span id="more"></span>
+<p>好久没总结了[唉]</p>
+<h2 id="1-新项目上线"><a href="#1-新项目上线" class="headerlink" title="1. 新项目上线"></a>1. 新项目上线</h2><p>经过几个月的加班加点，我们的小游戏项目终于上线了。[撒花]</p>
+<h2 id="2-新项目总结"><a href="#2-新项目总结" class="headerlink" title="2. 新项目总结"></a>2. 新项目总结</h2><p>因为加班加点赶出来的产品，整个项目到现在存在一些问题，一些由于历史原因比较难改，一些随着进度压力下降正在抽时间慢慢改，总结下这个项目一些问题。</p>
+<h3 id="引擎问题"><a href="#引擎问题" class="headerlink" title="引擎问题"></a>引擎问题</h3><p>第一次用Cocos Creator开发了整个项目，整个使用体验跟Unity比还是有比较大的差距，包括编辑内运行游戏的体验，ts语言的体验，调试体验，性能优化体验等等。</p>
+<p>另外因为输出的是js代码，会导致容易被纂改，我们还花了比较大的工作量在防外挂上。</p>
+<p>当然Cocos Creator跟Unity比还是有一定的好处，比如小游戏启动速度会快点（没有编译wasm过程），内存占用会低点，ts热更处理也会比C#热更方便点（但是小程序也热更不了，Unity倒是有方案可以热更），另外自带的auto-atlas这个功能还是挺好用的。</p>
+<p>总体来说还是弊大于利吧，后面新项目即使第一平台是微信也会选择Unity的团结引擎了（当然，基于这个项目的换皮项目大概率是不会换引擎了）</p>
+<h3 id="怪物动画问题"><a href="#怪物动画问题" class="headerlink" title="怪物动画问题"></a>怪物动画问题</h3><p>之前怪物为了省资源和合图集（减少dc），采用了一种小图+Animation的方案，带来的问题就是怪物子节点比较多，几百个怪物同屏幕的时候就会卡顿明显。</p>
+<p>后续优化的时候分别测试了Spine&#x2F;序列帧的方案，发现序列帧性能最高，比之前的方案(600只怪物下)性能可以提升2倍多，spine也能1倍多，但是spine合不来批。</p>
+<p>所以以后做这种割草类游戏，怪物优先使用序列帧来做动画，如果怪物种类很多，则可以不考虑合批，直接用spine来减少资源，性能也是会比较好的。</p>
+<h3 id="战斗问题"><a href="#战斗问题" class="headerlink" title="战斗问题"></a>战斗问题</h3><ul>
+<li><p>逻辑和表现没有分离</p>
+<p>  战斗框架设计的时候没有考虑这点，后面引申出了一些问题：</p>
+<ol>
+<li>可能导致手机卡和手机不卡带来的结果可能不一致。</li>
+<li>想做防外挂不太好做，如果表现和逻辑完全分离，可以通过记录用户操作日志，重现下这场战斗能否打过即可</li>
+<li>如果被子弹引用着的怪物（用来获取怪物位置）死亡，可能导致问题，都要特殊处理。</li>
+<li>一些靠Animation驱动的地方会被打断去播其他动作，导致回调永远不执行</li>
+</ol>
+<p>  衍生思考不光这种类型游戏战斗，<strong>其他类型的战斗</strong>也都应该都这么做，不能通过表现的来驱动战斗，比如说碰撞盒碰撞，Animation回调等。</p>
+<p>  另外碰撞盒这边有一个优化，我们子弹，怪物都有一个内存池，之前的内存池做法是设置active来做，导致的问题就是collider的onEnable和onDisaable的addShape和removeShape成为性能大头。优化方案就是进内存池的对象不禁用active，而移到一个很远的地方去做。</p>
+</li>
+<li><p>没有使用状态机控制怪物</p>
+<p>  虽然是割草类游戏，但是怪物状态还是有点多，比如移动，攻击，治疗，各个控制器一起去控制怪物动作导致冲突带来了一些问题。所有不论是角色和怪物都应该有一套状态机来控制，通过配表来控制各个状态之间的冲突关系和优先级关系。</p>
+</li>
+<li><p>错误使用了全属性来做技能</p>
+<p>  一开始为了方便所有特性都是靠属性来做的，带来的问题就是属性很多，同时比如一个功能，命中概率增加buff，可能就是要三个属性buff_id, buff_time, buff_pct，如果命中可以增加多个buff那属性就会成倍增加。</p>
+<p>  一种改进方案就是用被动触发机制做，命中的行为会触发一系列被动，这个被动其中一种就是加Buff，这样就可以通过一个行为链来做实现命中之后的行为。可以是加多个buff，也可以是再释放一次其他技能等等。</p>
+<p>  同时被动行为可以复用，加buff的行为可以复用到杀死某个怪物或者命中某个状态的怪物等其他地方。</p>
+</li>
+<li><p>技能搜索目标问题</p>
+<p>  每个技能的搜索目标方式有不同也有相同的地方，之前为了快速开发同时为了不影响已经开发好的技能，使用的方案是每个技能一种搜索方式。</p>
+<p>  所有技能做完之后发现其实可以用一种简单的过滤器模式来做，把每种过滤方式实现成各自的过滤类，每个技能通过组合这些过滤器实现搜索功能。</p>
+</li>
+<li><p>技能宿主对象没有抽象</p>
+<p>  一开始我们技能只能玩家释放，所以整个释放技能过程获取的都是从玩家身上获取属性，后续随着需求增加了宠物也能释放技能，这种技能释放过程中应该从宠物身上获取属性，这就导致改起来很麻烦。</p>
+<p>  <strong>技能身上应该是一个宿主的抽象，方便后续其他人释放技能。</strong></p>
+</li>
+</ul>
+<h3 id="战斗防外挂思考"><a href="#战斗防外挂思考" class="headerlink" title="战斗防外挂思考"></a>战斗防外挂思考</h3><p>对于这种纯客户端战斗，并且还是js的游戏还是比较容易出现外挂的，我们游戏上线之后很快就出现了外挂。</p>
+<p>目前我们防外挂的手段只能依据简单的数据判定，而且还只能依赖客户端上报这些数据（比较容易篡改），服务端唯一能做的就是检测整个战斗时长是否有异常。所以整个封的过程不是特别准确，而且还是有玩家可以绕过这些检测。</p>
+<p>设想的一种比较好的封外挂就是上面提到的重现战斗看是否能打过，这得记录玩家的操作，我们的操作比较少，一个是三选一技能强化项，另外一个就是释放主动技能，为了防止客户端篡改，三选一的选项也可以服务端生成。但因为我们一开始逻辑和表现没有分离，导致这种方案做起来成本太大了。</p>
+<h3 id="各种环境及渠道管理"><a href="#各种环境及渠道管理" class="headerlink" title="各种环境及渠道管理"></a>各种环境及渠道管理</h3><p>因为数据还行，所以上线除了业务开发以外，还要对接各种渠道，包括抖音小程序，android（转移包、投放包、主播包），ios，快手小程序以及还有对应的马甲包，联运包等等。同时还有各种环境，包括开发环境，外网测试环境，审核环境，正式环境，各种环境的各个渠道可能都需要打包和控制。</p>
+<p>为了应对这些需求，我总结下经验，主要有两点吧：</p>
+<ul>
+<li><p>自动打包</p>
+<p>  指的是有自动打包脚本以及类似jenkins管理这些打包的后台。这个一定要有，不然那么多环境加渠道出版本要搞死人。</p>
+</li>
+<li><p>统一从远端拉取配置</p>
+<p>  进入游戏第一步就是从远端拉取配置，可以传递一些参数上去，比如平台，系统，app版本，游戏版本，渠道id等等，远端根据这些参数下发对应的配置，比如服务器地址，强更功能，热更地址，还有一些开关等等。</p>
+<p>  有了这个功能之后我们就可以很方便的去控制各种渠道的各种环境的表现了，例如可以直接指定某个渠道的正式环境该热更了。另外我们还可以加白名单的功能，发布之前控制某些渠道的正式环境，在某个ip下直接可以热更，或者直接连到外网测试服来测兼容性等等。</p>
+</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+        <tag>项目总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>98. 2024-02-04周总结</title>
+    <url>/2024/01/31/98-2024-02-04%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<p>解锁条件统一成解锁条件表，主动解锁的配置在各自表里面检查，被动的配置在触发器表</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>99. 2024-02-23周总结</title>
+    <url>/2024/02/27/99-2024-02-23%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<p>年后开始接手新项目</p>
+<span id="more"></span>
+
+<p>因为历史原因，包括需求更改，人员水平，变动问题，导致新项目代码结构比较乱，这周花大量时间去汇总需求，整理代码，估计还得持续一段时间才能整理完。</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
 </search>
