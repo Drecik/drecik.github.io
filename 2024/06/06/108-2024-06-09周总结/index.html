@@ -27,7 +27,7 @@
 <meta property="og:description" content="新项目上线 新项目总结">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-06-06T01:56:04.000Z">
-<meta property="article:modified_time" content="2024-07-20T12:00:44.985Z">
+<meta property="article:modified_time" content="2024-08-18T03:00:54.729Z">
 <meta property="article:author" content="Drecik Xu">
 <meta property="article:tag" content="周总结">
 <meta property="article:tag" content="项目总结">
@@ -155,13 +155,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">109</span>
+          <span class="site-state-item-count">118</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">39</span>
+        <span class="site-state-item-count">41</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -224,7 +224,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-07-20 20:00:44" itemprop="dateModified" datetime="2024-07-20T20:00:44+08:00">2024-07-20</time>
+      <time title="修改时间：2024-08-18 11:00:54" itemprop="dateModified" datetime="2024-08-18T11:00:54+08:00">2024-08-18</time>
     </span>
 
   
@@ -273,6 +273,7 @@
 </li>
 <li><p>没有使用状态机控制怪物</p>
 <p>  虽然是割草类游戏，但是怪物状态还是有点多，比如移动，攻击，治疗，各个控制器一起去控制怪物动作导致冲突带来了一些问题。所有不论是角色和怪物都应该有一套状态机来控制，通过配表来控制各个状态之间的冲突关系和优先级关系。</p>
+<p>  <strong>场中所有对象都应该是个实体，实体各自内部有相应的状态机</strong></p>
 </li>
 <li><p>错误使用了全属性来做技能</p>
 <p>  一开始为了方便所有特性都是靠属性来做的，带来的问题就是属性很多，同时比如一个功能，命中概率增加buff，可能就是要三个属性buff_id, buff_time, buff_pct，如果命中可以增加多个buff那属性就会成倍增加。</p>
@@ -285,7 +286,7 @@
 </li>
 <li><p>技能宿主对象没有抽象</p>
 <p>  一开始我们技能只能玩家释放，所以整个释放技能过程获取的都是从玩家身上获取属性，后续随着需求增加了宠物也能释放技能，这种技能释放过程中应该从宠物身上获取属性，这就导致改起来很麻烦。</p>
-<p>  <strong>技能身上应该是一个宿主的抽象，方便后续其他人释放技能。</strong></p>
+<p>  <strong>技能身上应该是一个宿主的抽象（可以统一走实体），方便后续其他人释放技能。</strong></p>
 </li>
 </ul>
 <h3 id="战斗防外挂思考"><a href="#战斗防外挂思考" class="headerlink" title="战斗防外挂思考"></a>战斗防外挂思考</h3><p>对于这种纯客户端战斗，并且还是js的游戏还是比较容易出现外挂的，我们游戏上线之后很快就出现了外挂。</p>

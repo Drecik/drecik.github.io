@@ -4342,6 +4342,7 @@
 </li>
 <li><p>没有使用状态机控制怪物</p>
 <p>  虽然是割草类游戏，但是怪物状态还是有点多，比如移动，攻击，治疗，各个控制器一起去控制怪物动作导致冲突带来了一些问题。所有不论是角色和怪物都应该有一套状态机来控制，通过配表来控制各个状态之间的冲突关系和优先级关系。</p>
+<p>  <strong>场中所有对象都应该是个实体，实体各自内部有相应的状态机</strong></p>
 </li>
 <li><p>错误使用了全属性来做技能</p>
 <p>  一开始为了方便所有特性都是靠属性来做的，带来的问题就是属性很多，同时比如一个功能，命中概率增加buff，可能就是要三个属性buff_id, buff_time, buff_pct，如果命中可以增加多个buff那属性就会成倍增加。</p>
@@ -4354,7 +4355,7 @@
 </li>
 <li><p>技能宿主对象没有抽象</p>
 <p>  一开始我们技能只能玩家释放，所以整个释放技能过程获取的都是从玩家身上获取属性，后续随着需求增加了宠物也能释放技能，这种技能释放过程中应该从宠物身上获取属性，这就导致改起来很麻烦。</p>
-<p>  <strong>技能身上应该是一个宿主的抽象，方便后续其他人释放技能。</strong></p>
+<p>  <strong>技能身上应该是一个宿主的抽象（可以统一走实体），方便后续其他人释放技能。</strong></p>
 </li>
 </ul>
 <h3 id="战斗防外挂思考"><a href="#战斗防外挂思考" class="headerlink" title="战斗防外挂思考"></a>战斗防外挂思考</h3><p>对于这种纯客户端战斗，并且还是js的游戏还是比较容易出现外挂的，我们游戏上线之后很快就出现了外挂。</p>
@@ -4393,6 +4394,248 @@
 ]]></content>
       <tags>
         <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>109-2024-06-22周总结</title>
+    <url>/2024/06/17/109-2024-06-22%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>iOS泰文问题</li>
+<li>jenkins windows节点git没有权限</li>
+<li>mongo entity framework core问题</li>
+<li>cocos spine computeWorldVertices问题</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="1-iOS泰文问题"><a href="#1-iOS泰文问题" class="headerlink" title="1. iOS泰文问题"></a>1. iOS泰文问题</h2><p>老项目在做泰文多语言的时候发现iOS泰文没有任何显示，即使iOS切到泰文语言也一样，怀疑是没有泰文字体，找了个泰文字体放进去之后泰文显示出来了，但是还是有部分地方不显示。最终定位到原因是泰文字体比想象中的高，修改Text组件的VerticalOverflow为Overflow解决</p>
+<h2 id="2-jenkins-windows节点git没有权限"><a href="#2-jenkins-windows节点git没有权限" class="headerlink" title="2. jenkins windows节点git没有权限"></a>2. jenkins windows节点git没有权限</h2><p>比较奇怪相同的凭证linux节点可以，但是windows节点用不了，最后定位到是本地小乌龟记录的凭证冲突了，小乌龟设置里面把记录的git凭证清楚了就可以了</p>
+<h2 id="3-mongo-entity-framework-core问题"><a href="#3-mongo-entity-framework-core问题" class="headerlink" title="3. mongo entity framework core问题"></a>3. mongo entity framework core问题</h2><p>上周说过要把统一后台干的事情下沉到各个游戏，这周把一个游戏替换成这样，主要就是账号，充值，事件，服务器列表这几块。</p>
+<p>因为线上只有一台mongo，而我又比较希望后续能快速将代码改成支持mysql，所以首先想到的是mongo能否支持entity framework core。</p>
+<p>搜了下还真有（<a href="https://www.mongodb.com/docs/entity-framework/current/">链接</a>），但是只能使用.net8，为了使用它我还特意把项目升级到.net8。</p>
+<p>在使用过程中比较恶心的就是设置Primary Key问题，mongo默认将_id作为主key，所以就需要在Model结构里面默认填个结构</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[BsonId]</span><br><span class="line">[Key]</span><br><span class="line">public ObjectId _id &#123; get; set; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个结构必须加，最好直接拷贝过去，少了某个属性标签或者 get set都可能导致问题。</p>
+<p>目前遇到的问题：</p>
+<ol>
+<li>报错没有设置Key</li>
+<li>报错_id不能转成对象key数据类型</li>
+<li>多个类型执行mongodb的_id</li>
+</ol>
+<h2 id="4-cocos-spine不同平台不一致问题"><a href="#4-cocos-spine不同平台不一致问题" class="headerlink" title="4. cocos spine不同平台不一致问题"></a>4. cocos spine不同平台不一致问题</h2><p>我们用了spine，同时需要用到spine播放过程中的顶点来实时设置包围盒位置，所以用到了相关函数</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">let attachment = sk.getAttachment(&#x27;dragon_collider01&#x27;, &#x27;dragon_collider02&#x27;) as sp.spine.VertexAttachment;</span><br><span class="line">//获取hero的骨骼</span><br><span class="line">let slot = sk.findSlot(&quot;dragon_collider01&quot;);</span><br><span class="line">//获取hero的骨骼</span><br><span class="line">//获取hurt的顶点数组</span><br><span class="line">let arr = [];</span><br><span class="line">attachment.computeWorldVertices(slot, 0, attachment.worldVerticesLength, arr, 0, 2)</span><br></pre></td></tr></table></figure>
+
+<p>但是<code>computeWorldVertices</code>在H5和小游戏平台下都好的，但是android下面会报错，找不到这个函数。</p>
+<p>无奈只能自己网上找了一个这个实现方式</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">private computeWorldVertices(slot, start, count, worldVertices, offset, stride) &#123;</span><br><span class="line">    count = offset + (count &gt;&gt; 1) * stride;</span><br><span class="line">    let deformArray = slot.deform;</span><br><span class="line">    let vertices;</span><br><span class="line">    if (deformArray.length &gt; 0)</span><br><span class="line">        vertices = deformArray;</span><br><span class="line"></span><br><span class="line">    if (!vertices)</span><br><span class="line">        return;</span><br><span class="line"></span><br><span class="line">    let bone = slot.bone;</span><br><span class="line">    let x = bone.worldX;</span><br><span class="line">    let y = bone.worldY;</span><br><span class="line">    let a = bone.a, b = bone.b, c = bone.c, d = bone.d;</span><br><span class="line">    for (let v_1 = start, w = offset; w &lt; count; v_1 += 2, w += stride) &#123;</span><br><span class="line">        let vx = vertices[v_1], vy = vertices[v_1 + 1];</span><br><span class="line">        worldVertices[w] = vx * a + vy * b + x;</span><br><span class="line">        worldVertices[w + 1] = vx * c + vy * d + y;</span><br><span class="line">    &#125;</span><br><span class="line">    return;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>110-2024-06-29周总结</title>
+    <url>/2024/06/27/110-2024-06-29%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>新项目上线</li>
+<li>新项目问题</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="1-新项目上线"><a href="#1-新项目上线" class="headerlink" title="1. 新项目上线"></a>1. 新项目上线</h2><p>又一个新项目在海外上线开测了[撒花]</p>
+<h2 id="2-新项目问题"><a href="#2-新项目问题" class="headerlink" title="2. 新项目问题"></a>2. 新项目问题</h2><p>问题有很多，设计上的需求频繁改动，代码没有把控以及前期设计问题，导致后期有很多代码坑在，需要慢慢去填。很多经验我也会总结到游戏经验总结里面，后续新游戏有类似需求的时候可以参考下这篇总结，防止走弯路。</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>111-2024-07-07周总结</title>
+    <url>/2024/07/01/111-2024-07-07%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>konga平台跨域问题</li>
+<li>mongo拉数据问题</li>
+</ol>
+<span id="more"></span>
+<h2 id="1-konga平台跨域问题"><a href="#1-konga平台跨域问题" class="headerlink" title="1. konga平台跨域问题"></a>1. konga平台跨域问题</h2><p>之前一直用腾讯云的Api网关用来做业务分发，最近上去看到Api网关要废弃了，推荐用云原生Api网关替换，在上面部署了个新业务，从实用性上来说没多大差别，唯一的问题就是一个service和一个后端绑定了，虽然可以配置多个路由，但最终都会指向到一个后端。这就导致一个后端需要建一个service，而我的业务中，基本上都是一个路由对应一个后端，对我来说就比较繁琐。之前Api网关是在配置路由的时候可以选择后端通道的，这样就能随意配置。</p>
+<p>另外还有个问题就是云原生Api网关配置跨域比较麻烦，在腾讯云后台还不能直接配置，需要去他提供的konga后台去配置cors插件，而且配置也比较繁琐，也不支持导入导出插件功能，需要一个个手动填，比较麻烦。另外在支持跨域的时候需要在路由那边支持OPTIONS请求，因为我的请求是非简单。具体可以参考这篇<a href="https://blog.csdn.net/u010241027/article/details/106251649/">文章</a></p>
+<h2 id="2-mongo拉数据问题"><a href="#2-mongo拉数据问题" class="headerlink" title="2. mongo拉数据问题"></a>2. mongo拉数据问题</h2><p>新项目上线之后，策划有需求要拉下线上数据。因为用的mongo数据，不太熟悉，而且拉数据方式跟sql不太一样，所以拉起数据来比麻烦，需要写JavaScript脚本，比如拉取次留的写法：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 定义起始日期 (UTC+8 时间)</span><br><span class="line">var startDate = new Date(2024, 5, 29); // 请根据实际情况调整年份和月份（月份是从0开始的）</span><br><span class="line">var endDate = new Date();</span><br><span class="line"></span><br><span class="line">// 转换为时间戳</span><br><span class="line">var startTimestamp = startDate.getTime() / 1000;</span><br><span class="line">var endTimestamp = Math.floor(endDate.getTime() / 1000);</span><br><span class="line">print(startTimestamp);</span><br><span class="line">print(endTimestamp);</span><br><span class="line"></span><br><span class="line">// 初始化结果数组</span><br><span class="line">var retentionRates = [];</span><br><span class="line"></span><br><span class="line">// 循环每一天</span><br><span class="line">var currentTimestamp = startTimestamp;</span><br><span class="line">while (currentTimestamp &lt; endTimestamp) &#123;</span><br><span class="line">    // 查询当天注册的用户</span><br><span class="line">    var registrations = db.LogRegister.find(&#123;</span><br><span class="line">        Day: currentTimestamp</span><br><span class="line">    &#125;).map(function(r) &#123; return r.PlayerId; &#125;);</span><br><span class="line">    </span><br><span class="line">    var registeredUsers = new Set(registrations);</span><br><span class="line">    var registeredUsersCount = registeredUsers.size;</span><br><span class="line">    </span><br><span class="line">    // 查询第二天登录的用户</span><br><span class="line">    var logins = db.LogLogin.find(&#123;</span><br><span class="line">        Day: currentTimestamp + 86400 * 1</span><br><span class="line">    &#125;).map(function(l) &#123; return l.PlayerId; &#125;);</span><br><span class="line">    </span><br><span class="line">    var loggedInUsers2 = new Set(logins);</span><br><span class="line">		</span><br><span class="line">		// 查询第三天登录的用户</span><br><span class="line">    logins = db.LogLogin.find(&#123;</span><br><span class="line">        Day: currentTimestamp + 86400 * 2</span><br><span class="line">    &#125;).map(function(l) &#123; return l.PlayerId; &#125;);</span><br><span class="line">    </span><br><span class="line">    var loggedInUsers3 = new Set(logins);</span><br><span class="line">		</span><br><span class="line">		// 查询第四天登录的用户</span><br><span class="line">    logins = db.LogLogin.find(&#123;</span><br><span class="line">        Day: currentTimestamp + 86400 * 3</span><br><span class="line">    &#125;).map(function(l) &#123; return l.PlayerId; &#125;);</span><br><span class="line">    </span><br><span class="line">    var loggedInUsers4 = new Set(logins);</span><br><span class="line">		</span><br><span class="line">		// 查询第五天登录的用户</span><br><span class="line">		logins = db.LogLogin.find(&#123;</span><br><span class="line">        Day: currentTimestamp + 86400 * 4</span><br><span class="line">    &#125;).map(function(l) &#123; return l.PlayerId; &#125;);</span><br><span class="line">    </span><br><span class="line">    var loggedInUsers5 = new Set(logins);</span><br><span class="line">		</span><br><span class="line">		// 查询第六天登录的用户</span><br><span class="line">		logins = db.LogLogin.find(&#123;</span><br><span class="line">        Day: currentTimestamp + 86400 * 5</span><br><span class="line">    &#125;).map(function(l) &#123; return l.PlayerId; &#125;);</span><br><span class="line">    </span><br><span class="line">    var loggedInUsers6 = new Set(logins);</span><br><span class="line">		</span><br><span class="line">		// 查询第七天登录的用户</span><br><span class="line">		logins = db.LogLogin.find(&#123;</span><br><span class="line">        Day: currentTimestamp + 86400 * 6</span><br><span class="line">    &#125;).map(function(l) &#123; return l.PlayerId; &#125;);</span><br><span class="line">    </span><br><span class="line">    var loggedInUsers7 = new Set(logins);</span><br><span class="line">    </span><br><span class="line">    // 计算留存用户</span><br><span class="line">    var retainedUsersCount2 = Array.from(registeredUsers).filter(function(id) &#123;</span><br><span class="line">        return loggedInUsers2.has(id);</span><br><span class="line">    &#125;).length;</span><br><span class="line">		</span><br><span class="line">		var retainedUsersCount3 = Array.from(registeredUsers).filter(function(id) &#123;</span><br><span class="line">        return loggedInUsers3.has(id);</span><br><span class="line">    &#125;).length;</span><br><span class="line">		</span><br><span class="line">		var retainedUsersCount4 = Array.from(registeredUsers).filter(function(id) &#123;</span><br><span class="line">        return loggedInUsers4.has(id);</span><br><span class="line">    &#125;).length;</span><br><span class="line">    </span><br><span class="line">		var retainedUsersCount5 = Array.from(registeredUsers).filter(function(id) &#123;</span><br><span class="line">        return loggedInUsers5.has(id);</span><br><span class="line">    &#125;).length;</span><br><span class="line">		</span><br><span class="line">		var retainedUsersCount6 = Array.from(registeredUsers).filter(function(id) &#123;</span><br><span class="line">        return loggedInUsers6.has(id);</span><br><span class="line">    &#125;).length;</span><br><span class="line">		</span><br><span class="line">		var retainedUsersCount7 = Array.from(registeredUsers).filter(function(id) &#123;</span><br><span class="line">        return loggedInUsers7.has(id);</span><br><span class="line">    &#125;).length;</span><br><span class="line">		</span><br><span class="line">    // 计算留存率</span><br><span class="line">    var retentionRate = registeredUsersCount &gt; 0 ? (retainedUsersCount2 / registeredUsersCount) : 0;</span><br><span class="line">    </span><br><span class="line">    // 打印结果</span><br><span class="line">		var d = new Date(currentTimestamp * 1000);</span><br><span class="line">	  print((d.getMonth() + 1).toString() + &quot;-&quot; + d.getDate() + &quot;, 新增人数: &quot; + registeredUsersCount +</span><br><span class="line">			&quot;, 次留: &quot; + ((retainedUsersCount2 / registeredUsersCount) * 100).toFixed(2) + &quot;%&quot; +</span><br><span class="line">			&quot;, 3留: &quot; + ((retainedUsersCount3 / registeredUsersCount) * 100).toFixed(2) + &quot;%&quot; +</span><br><span class="line">			&quot;, 4留: &quot; + ((retainedUsersCount4 / registeredUsersCount) * 100).toFixed(2) + &quot;%&quot; +</span><br><span class="line">			&quot;, 5留: &quot; + ((retainedUsersCount5 / registeredUsersCount) * 100).toFixed(2) + &quot;%&quot; +</span><br><span class="line">			&quot;, 6留: &quot; + ((retainedUsersCount6 / registeredUsersCount) * 100).toFixed(2) + &quot;%&quot; +</span><br><span class="line">			&quot;, 7留: &quot; + ((retainedUsersCount7 / registeredUsersCount) * 100).toFixed(2) + &quot;%&quot;);</span><br><span class="line">    </span><br><span class="line">    // 移动到下一天</span><br><span class="line">    currentTimestamp += 86400;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个可以做优化，可以先把每天注册的用户和登录的用户一次性都拉到，循环里面只做计算即可。</p>
+<p>这个看着还好，但是我要拉取某些用户数据的时候就很麻烦，而且不容易看懂。比如我要拉取所有玩家的等级数据：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">db.Player.aggregate([</span><br><span class="line">    &#123;</span><br><span class="line">        $addFields: &#123;</span><br><span class="line">            CreateDate: &#123;</span><br><span class="line">                $dateToString: &#123; format: &quot;%Y-%m-%d&quot;, date: &#123; $toDate: &#123; $multiply: [&quot;$CreateTime&quot;, 1000] &#125; &#125; &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            LoginDate: &#123;</span><br><span class="line">                $dateToString: &#123; format: &quot;%Y-%m-%d&quot;, date: &#123; $toDate: &#123; $multiply: [&quot;$LoginTime&quot;, 1000] &#125; &#125; &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        $match: &#123;</span><br><span class="line">            $expr: &#123; $gt: [ &quot;$LoginDate&quot;, &quot;$CreateDate&quot; ] &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        $addFields: &#123;</span><br><span class="line">            Modules: &#123; $arrayElemAt: [ &#123; $arrayElemAt: [ &#123; $arrayElemAt: [&quot;$Player&quot;, 0] &#125;, 3 ] &#125;, 1 ] &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    </span><br><span class="line">    // 等级</span><br><span class="line">    &#123;</span><br><span class="line">        $addFields: &#123;</span><br><span class="line">                BasicModule: &#123; $arrayElemAt: [ &#123; $arrayElemAt: [ &#123; $arrayElemAt: [ &quot;$Modules&quot;, 1 ] &#125;, 1 ] &#125;, 0] &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        $addFields: &#123;</span><br><span class="line">                Level: &#123; $arrayElemAt: [ &quot;$BasicModule&quot;, 0 ] &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        $project: &#123;</span><br><span class="line">            _id: 0,</span><br><span class="line">            Gbid: 1,</span><br><span class="line">            CreateDate: 1,</span><br><span class="line">            LoginDate: 1,</span><br><span class="line">			Level: 1</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">]);</span><br></pre></td></tr></table></figure>
+<p>里面都是arrayElemAt，不太直观，很容易搞不清楚当前到哪一层了。这里框架这边也有些设计问题在，所有的Dictionary和Object都会转成array来处理，主要原因是因为Mongo不支持int作为key来存数据，然后为了避免单个文档不超过16mb限制（mongo有这个限制），所以每个字段是不存key的，通过代码里面的属性标签来确定到底是array的哪个字段。这样导致的问题就是要找Player某个字段会很麻烦且不直观。这一块后续再想想怎么去优化下框架设计。</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>112-2024-07-14周总结</title>
+    <url>/2024/07/11/112-2024-07-14%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>google play打不出包</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="1-google-play打不出包"><a href="#1-google-play打不出包" class="headerlink" title="1. google play打不出包"></a>1. google play打不出包</h2><p>这周google play分支的包就是打不出来，报了下面的错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">b&#x27;* What went wrong:\n&#x27;</span><br><span class="line">b&quot;Execution failed for task &#x27;:launcher:processReleaseResources&#x27;.\n&quot;</span><br><span class="line">b&#x27;&gt; A failure occurred while executing com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$TaskAction\n&#x27;</span><br><span class="line">b&#x27;   &gt; AAPT2 aapt2-4.2.1-7147631-linux Daemon #0: Unexpected error during link, attempting to stop daemon.\n&#x27;</span><br><span class="line">b&#x27;     This should not happen under normal circumstances, please file an issue if it does.\n&#x27;</span><br><span class="line">b&#x27;\n&#x27;</span><br><span class="line">b&#x27;* Try:\n&#x27;</span><br><span class="line">b&#x27;Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.\n&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>这个信息很少，因为我们打包都是unity直接在打包机上一键打出包的，所以一开始想修改代码让打包机先打出as工程，下载到本地自己编译看看。结果下载下来之后路走歪了，给出的报错是firebase sdk有问题，然后就一阵折腾，升级firebase，对比自己的sdk接入过程啥的，发现并没有卵用。</p>
+<p>最后走了比较蠢的办法，一步步删除sdk，测试到底是哪个sdk有问题，最后定位到是facebook问题，只要项目里面接入了facebook就打不出包。确认了之后，还是一样先尝试升级Facebook SDK，发现问题还再，然后就卡住了，因为是要在facebook上面投放的，所以facebook sdk肯定是需要的。</p>
+<p>然后又回到了最初报错上面，想根据报错看看为啥facebook不行，问了下ChatGPT，发现可以在Unity的mainTemplate.gradle最后面加这些设置可以打包的时候给出相信gradle信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 设置日志级别和堆栈跟踪</span><br><span class="line">gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS</span><br><span class="line">gradle.startParameter.logLevel = LogLevel.INFO  // 可以设置为 LogLevel.DEBUG</span><br></pre></td></tr></table></figure>
+
+<p>翻看详细信息找到了关键错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#x27;Caused by: java.io.IOException: AAPT2 process unexpectedly exit. Error output:\n&#x27;</span><br><span class="line">&quot;aapt2 W 07-15 10:08:44 1119730 1119730 LoadedArsc.cpp:682] Unknown chunk type &#x27;200&#x27;.\n&quot;</span><br></pre></td></tr></table></figure>
+
+<p>通过这个信息找到了<a href="https://stackoverflow.com/questions/76172177/aapt2-process-unexpectedly-exit">原因和解决方案</a></p>
+<p>原来罪魁祸首是最近该的target sdk从33升级到34，要彻底解决需要升级gradle版本，先暂时回退到33解决了该问题，折腾了一周了。</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>煎熬的一周，工作上被打不出包卡着，家里两只神兽先后得了疱症性咽峡炎，大的周二中午开始发烧，晚上高烧到了41，退烧药也只能到39，还连续吐了几次，半夜送去医院，医院也只是配了点药，让回家观察，好在第二天就稳定了下来。小的周五早上开始发烧，中午烧起来的时候高热惊厥了，送往医院做了检查，挂了盐水，由于传染病，需要单人房间，没有床位，只能回家等排队入院。晚上的时候又一次高热惊厥，再一次去了医院，在急诊病床上呆了一晚上，期间又烧到40度，医生给挂了激素，好在激素效果比较好，稳定了下来。周六下午轮到了床位，安排了入院，因为喉咙有疱症，再加上这两天又是抽血，又是打针的，又难受有怕，周六整整哭了一整天，都没怎么吃东西。周日情况慢慢好起来了，疱症应该好点了，食欲也变好了，终于快要熬过去了。</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>112-2024-07-21周总结</title>
+    <url>/2024/07/15/112-2024-07-21%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>白图问题</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="1-白图问题"><a href="#1-白图问题" class="headerlink" title="1. 白图问题"></a>1. 白图问题</h2><p>这是一个历史悠久的问题，问题现象就是预制体引入了一张图片，这张图片在打包的时候会被打进图集，那如果在预制体加载的时候图集没有加载就会导致显示的是白图。</p>
+<p>之前有几种解决方案，一种就是如果这图片不多且少，那就复制一张到静态图片中，这类图片会跟随预制体一起打进包。另外一种就是知道图片所在的图集后，手动在预制体之前进行加载（一般在加载场景的时候就加载了）</p>
+<p>这一次出现白图的时候发现一个Warning，追究这个Warning的时候发现Unity是提供了这种情况的解决方案的。这个Warning内容是：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SpriteAtlasManager.atlasRequested wasn&#x27;t listened to while AdventureCamp requested.</span><br></pre></td></tr></table></figure>
+
+<p>这里出现的情况就是预制体引入了一张图片，这张图片被打进了AdventureCamp图集中了，但是我没有注册SpriteAtlasManager.atlasRequested方法，所以图集加载失败。所以只要我们注册了SpriteAtlasManager.atlasRequested方法，在方法里面对需要的atlas进行加载，那么这种情况的白图问题就能彻底解决。</p>
+<p>我们在注册SpriteAtlasManager.atlasRequested之后遇到了另外一个问题，Unity会缓存atlasRequested返回的图集，导致游戏层把图集释放之后，下次加载图集还是会白图，因为Unity缓存的那份已经被我们释放了，但是因为缓存的原因没有再一次调用atlasRequested回调。找了半天没找到释放缓存的接口，最后发现可以通过调用Resources.UnloadUnusedAssets()方法进行释放（但是我们测试发现其他图集都释放了，还有一张Item图集是个例外就是释放不了，不知道被哪里引用着了，这张图集我们回到了老办法进行了预加载并且设置为永不释放（- -||））</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>113-2024-07-28周总结</title>
+    <url>/2024/07/26/113-2024-07-28%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>ubuntu点不亮显示器问题</li>
+<li>Unity2021升级到2022问题<span id="more"></span></li>
+</ol>
+<h2 id="1-ubuntu点不亮显示器问题"><a href="#1-ubuntu点不亮显示器问题" class="headerlink" title="1. ubuntu点不亮显示器问题"></a>1. ubuntu点不亮显示器问题</h2><p>因为项目比较多，准备启用另外一个性能更好的但是长时间没用的打包机。这台打包机性能会更好，但是有个问题就是点亮不了显示器，安装Unity还好，可以通过命令行安装，但是激活遇到了问题，网上找的命令就是执行不成功。</p>
+<p>无奈只能看看能不能解决点不亮显示器的问题，chatgpt一通问，绕了点弯路，但是最终还是通过换显示管理器解决了问题</p>
+<p><a href="../images/113/1.png"></a></p>
+<h2 id="2-Unity2021升级2022问题"><a href="#2-Unity2021升级2022问题" class="headerlink" title="2. Unity2021升级2022问题"></a>2. Unity2021升级2022问题</h2><p>大部分都兼容，几个Api需要修改下，Unity也会友好的告诉需要用哪个api替换。</p>
+<p>另外gradleTemplate.properties里面<code>android.enableR8=**MINIFY_WITH_R_EIGHT**</code>组不支持宏定义了，打包的时候会报错：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">b&quot;A problem occurred evaluating project &#x27;:launcher&#x27;.\n&quot;</span><br><span class="line">b&quot;&gt; Failed to apply plugin &#x27;com.android.internal.application&#x27;.\n&quot;</span><br><span class="line">b&quot;   &gt; Cannot parse project property android.enableR8=&#x27;&#x27; of type &#x27;class java.lang.String&#x27; as boolean. Expected &#x27;true&#x27; or &#x27;false&#x27;.\n&quot;</span><br></pre></td></tr></table></figure>
+<p>直接改成<code>android.enableR8=true</code>即可</p>
+<p>另外升级完成解决了我之前遗留的两个问题：</p>
+<ul>
+<li>一个是Facebook SDK导致Android Target SDK从33升级到34打不出包问题，这个在<a href="">这里提到过</a></li>
+<li>另外一个就是打不出Development的包，之前是因为NDK版本过低，当代码比较多的情况下，link会失败</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>114-2024-08-04周总结</title>
+    <url>/2024/07/30/114-2024-08-04%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>xcode签名找不到证书</li>
+<li>强大的chatgpt</li>
+</ol>
+<span id="more"></span>
+<h2 id="1-xcode签名找不到证书"><a href="#1-xcode签名找不到证书" class="headerlink" title="1. xcode签名找不到证书"></a>1. xcode签名找不到证书</h2><p>看看钥匙串里面是不是有多个相同组织的证书，如果多个的话，xcode可能找到另外一个证书了，保留希望留下的那个即可</p>
+<h2 id="2-强大的chatgpt"><a href="#2-强大的chatgpt" class="headerlink" title="2. 强大的chatgpt"></a>2. 强大的chatgpt</h2><p>安利下chatgpt，大部分问题在上面都能解决，另外在处理mongo查询的时候也帮了大忙，直接给出表格式和需求他能给我返回查询例子，我自己写可能需要折腾好久。</p>
+<p>当然一些问题chatgpt可能给不到正确的回答，这时候需要结合下谷歌去找找问题，比如之前的Facebook SDK问题就是chatgpt找不到合适的，然后google之后才找到解决方案。</p>
+<h2 id="3-域名解析支持地区配置"><a href="#3-域名解析支持地区配置" class="headerlink" title="3. 域名解析支持地区配置"></a>3. 域名解析支持地区配置</h2><p>海外cdn一直被国内墙，咨询云服务厂商发现域名可以按照地区配置，国内甚至可以精确到城市。虽然最后解决方案是通过开启全球cdn加速，但是这个功能感觉后续全球推广的时候可以用起来。</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>115-2024-08-11周总结</title>
+    <url>/2024/08/06/115-2024-08-11%E5%91%A8%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>jenkins坏了</li>
+<li>Firebase在android 14下闪退</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="1-jenkins坏了"><a href="#1-jenkins坏了" class="headerlink" title="1. jenkins坏了"></a>1. jenkins坏了</h2><p>早上jenkins突然坏了，好像是一个比较底层的插件自动升级了，升级之后依赖高版本的jenkins，导致插件都坏了，折腾了好久没有成功。</p>
+<p>一开始尝试在原数据上升级，但是各种插件报错，搞不定。</p>
+<p>尝试直接安装新的jenkins，安装好需要的插件，然后把之前的配置慢慢挪过来，包括jobs，users，凭证，其中凭证密码是加密的，挪过来之后需要重新输入一次密码，users倒是不用比较方便</p>
+<p>安装新的jenkins之后，agent的启动需要java11才行，但是.zshrc .bashrc里面都加入export了，jenkins ssh的时候找不到。chatgpt给出了答案，原因是jenkins ssh的时候是不会启动一个交互式shell，因此它不会自动读取~&#x2F;.zshrc文件，解决方案（来自ChatGPT）。但是Path环境变量再测试的时候发现不会展开，我直接把正常登录时候的path都拷贝了进去了</p>
+<p><a href="../115/1.png"></a></p>
+<p>另外java11支持之后，cocos打包android包报错，重新写了打包脚本把Java环境重新改回到java8。改完之后还会有问题，sdk目录是一个iCloud目录，发现会有概率访问失败，没权限，手动把sdk拷贝到本地目录之后解决。</p>
+<h2 id="2-Firebase在android-14下闪退"><a href="#2-Firebase在android-14下闪退" class="headerlink" title="2. Firebase在android 14下闪退"></a>2. Firebase在android 14下闪退</h2><p>Target SDK升级到34的时候，android 14下启动会闪退，闪退堆栈：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">08-07 13:41:17.946 10986 11218 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 11218 (Thread-13), pid 10986 (ackstone.and.ww)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   : Build fingerprint: &#x27;HONOR/MAA-AN10/HNMAP:14/HONORMAA-AN10/8.0.0.128C00E128R3P1:user/release-keys&#x27;</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   : Revision: &#x27;0&#x27;</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   : ABI: &#x27;arm64&#x27;</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   : Timestamp: 2024-08-07 13:41:18.104587789+0800</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   : Process uptime: 7s</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   : Cmdline: com.babuyo.blackstone.and.ww</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   : pid: 10986, tid: 11218, name: Thread-13  &gt;&gt;&gt; com.babuyo.blackstone.and.ww &lt;&lt;&lt;</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   : uid: 10385</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   : Abort message: &#x27;JNI DETECTED ERROR IN APPLICATION: obj == null</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :     in call to CallObjectMethodV&#x27;</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :     x0  0000000000000000  x1  0000000000002bd2  x2  0000000000000006  x3  00000078b0dabf30</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :     x4  0000000000000000  x5  0000000000000000  x6  0000000000000000  x7  000000000000002e</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :     x8  00000000000000f0  x9  0000007d242eda98  x10 0000000000000001  x11 0000007d24335540</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :     x12 0000000000008829  x13 0000000000000004  x14 ffffffffffffffff  x15 00003cfc32460fe3</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :     x16 0000007d24399f38  x17 0000007d24377370  x18 000000788d6f6000  x19 0000000000002aea</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :     x20 0000000000002bd2  x21 00000000ffffffff  x22 0000000000000058  x23 00000078b0dac168</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :     x24 00000078b0dac1d0  x25 0000000000000000  x26 00000078b0dac160  x27 0000007a7b617000</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :     x28 0000007a7b40ba18  x29 00000078b0dabfb0</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :     lr  0000007d24326d94  sp  00000078b0dabf10  pc  0000007d24326dc0  pst 0000000000001000</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   : 35 total frames</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   : backtrace:</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #00 pc 000000000005bdc0  /apex/com.android.runtime/lib64/bionic/libc.so (abort+164) (BuildId: d638ba9bdf4cea2cddd9bd06ae04407f)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #01 pc 00000000006438d0  /apex/com.android.art/lib64/libart.so (art::Runtime::Abort(char const*)+1520) (BuildId: 45bd7463869db509a538bd3ee176a52b)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #02 pc 0000000000019140  /apex/com.android.art/lib64/libbase.so (android::base::SetAborter(std::__1::function&lt;void (char const*)&gt;&amp;&amp;)::$_0::__invoke(char const*)+80) (BuildId: d7ee9e9c6847906e74d9d8cb638a4376)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #03 pc 00000000000186c8  /apex/com.android.art/lib64/libbase.so (android::base::LogMessage::~LogMessage()+352) (BuildId: d7ee9e9c6847906e74d9d8cb638a4376)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #04 pc 0000000000461af0  /apex/com.android.art/lib64/libart.so (art::JavaVMExt::JniAbort(char const*, char const*)+2464) (BuildId: 45bd7463869db509a538bd3ee176a52b)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #05 pc 000000000047abac  /apex/com.android.art/lib64/libart.so (art::JNI&lt;false&gt;::CallObjectMethodV(_JNIEnv*, _jobject*, _jmethodID*, std::__va_list)+1484) (BuildId: 45bd7463869db509a538bd3ee176a52b)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #06 pc 000000000019198c  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libFirebaseCppApp-11_4_0.so (_JNIEnv::CallObjectMethod(_jobject*, _jmethodID*, ...)+116)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #07 pc 0000000000196c6c  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libFirebaseCppApp-11_4_0.so (firebase::util::FindClassInFiles(_JNIEnv*, _jobject*, std::__ndk1::vector&lt;firebase::internal::EmbeddedFile, std::__ndk1::allocator&lt;firebase::internal::EmbeddedFile&gt; &gt; const&amp;, char const*)+1260)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #08 pc 0000000000184568  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libFirebaseCppApp-11_4_0.so (firebase::util::FindClassGlobal(_JNIEnv*, _jobject*, std::__ndk1::vector&lt;firebase::internal::EmbeddedFile, std::__ndk1::allocator&lt;firebase::internal::EmbeddedFile&gt; &gt; const*, char const*, firebase::util::ClassRequirement)+96)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #09 pc 000000000018f4e0  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libFirebaseCppApp-11_4_0.so (firebase::util::Initialize(_JNIEnv*, _jobject*)+3540)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #10 pc 00000000001a1a28  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libFirebaseCppApp-11_4_0.so (firebase::(anonymous namespace)::CacheMethods(_JNIEnv*, _jobject*)+52)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #11 pc 00000000001a38e8  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libFirebaseCppApp-11_4_0.so (firebase::CallAfterEnsureMethodsCached(_JNIEnv*, _jobject*, std::__ndk1::function&lt;void ()&gt;)+20)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #12 pc 00000000001ee074  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libFirebaseCppApp-11_4_0.so (Firebase_App_CSharp_FirebaseApp_RegisterLibrariesInternal+224)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #13 pc 00000000021ee058  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #14 pc 00000000021ec43c  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #15 pc 00000000021e9ad4  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #16 pc 00000000021ecd78  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #17 pc 00000000021ee78c  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #18 pc 00000000021e90ac  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #19 pc 00000000021eccf0  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #20 pc 00000000021ee3d8  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #21 pc 0000000003253624  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #22 pc 0000000004099ce4  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #23 pc 0000000004087d58  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #24 pc 000000000409a0c4  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #25 pc 0000000004099f88  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #26 pc 000000000408dfa8  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #27 pc 0000000001dd3310  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #28 pc 0000000001e9a268  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #29 pc 0000000001e93bf8  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #30 pc 000000000200a4d8  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #31 pc 0000000001e7f75c  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #32 pc 00000000020270b4  /data/app/~~-CibUt3AniSv2ALHc4wqQQ==/com.babuyo.blackstone.and.ww-nQH4y7u8WvIH0wJ9Vyp82A==/lib/arm64/libil2cpp.so (BuildId: f206293fd6bb1536d4839c2a8485b46f9c269aa6)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #33 pc 00000000000c0b88  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+208) (BuildId: d638ba9bdf4cea2cddd9bd06ae04407f)</span><br><span class="line">08-07 13:41:18.252 11387 11387 F DEBUG   :       #34 pc 000000000005d5f8  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: d638ba9bdf4cea2cddd9bd06ae04407f)</span><br><span class="line">08-07 13:41:27.939 11764 12031 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 12031 (Thread-14), pid 11764 (ackstone.and.ww)</span><br><span class="line">08-07 13:41:28.196 12106 12106 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***</span><br></pre></td></tr></table></figure>
+
+<p>找不到问题，升级到最新的Firebase 12.2.0之后解决了</p>
+]]></content>
+      <tags>
+        <tag>周总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>游戏经验总结</title>
+    <url>/2024/06/27/%E6%B8%B8%E6%88%8F%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<ol>
+<li>战斗相关经验总结</li>
+<li>任务</li>
+<li>演出剧情</li>
+<li>红点</li>
+<li>多渠道管理</li>
+<li>触发器</li>
+<li>AI</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="1-战斗相关经验总结"><a href="#1-战斗相关经验总结" class="headerlink" title="1. 战斗相关经验总结"></a>1. 战斗相关经验总结</h2><h3 id="割草类游戏"><a href="#割草类游戏" class="headerlink" title="割草类游戏"></a>割草类游戏</h3><p>参考之前的<a href="">每周总结</a>，其中一些点其他类型游戏应该适用</p>
+<p>主要就是</p>
+<ul>
+<li><p>逻辑和表现分离</p>
+<p>  逻辑完全独立于表现</p>
+</li>
+<li><p>属性和被动双设计</p>
+<p>  属性只用作必要的地方（比如攻击，血量，伤害等），其他地方靠被动触发来做</p>
+</li>
+<li><p>怪物动画走序列帧或者Spine动画</p>
+<p>  序列帧性能最好，Spine可以节约资源</p>
+</li>
+<li><p>技能搜索走过滤器设计模式</p>
+</li>
+<li><p>技能设计要考虑属于不同宿主的情况（人物技能，宠物技能），可以直接引用所属实体对象</p>
+</li>
+<li><p>场中的实体对象都应该由状态机控制（主要是怪物和人物，技能倒还好）</p>
+</li>
+</ul>
+<h2 id="2-任务"><a href="#2-任务" class="headerlink" title="2. 任务"></a>2. 任务</h2><p>最近一个项目在设计主线任务的时候，任务状态控制完全由客户端来判断和转变的，判断是否可以完成以及当前进度也是客户端来做的，这会导致各个任务的完成条件变动时候要触发任务表现刷新下，这会增加客户端代码的复杂度。同时这种模式不支持计数型任务。</p>
+<p>正确来说任务状态转变控制可以由客户端来驱动，比如客户端需要有个交任务过程，但是任务的计数变动都由服务端用触发器来做，并实时下发变动到客户端，客户端只需要监听任务变动事件来驱动表现刷新即可。</p>
+<h2 id="3-演出剧情"><a href="#3-演出剧情" class="headerlink" title="3. 演出剧情"></a>3. 演出剧情</h2><p>TODO</p>
+<h2 id="4-红点"><a href="#4-红点" class="headerlink" title="4. 红点"></a>4. 红点</h2><p>之前写过一篇<a href="">红点总结</a></p>
+<h2 id="5-多渠道管理"><a href="#5-多渠道管理" class="headerlink" title="5. 多渠道管理"></a>5. 多渠道管理</h2><p>参考之前的<a href="">每周总结</a></p>
+<ul>
+<li>自动打包</li>
+<li>统一的配置后台</li>
+<li>除了配置后台统一以外，其他的功能包括（账号，充值，事件等）都下沉各个游戏项的服务器功能到各个游戏，方便管理</li>
+</ul>
+<h2 id="6-触发器"><a href="#6-触发器" class="headerlink" title="6. 触发器"></a>6. 触发器</h2><p>TODO</p>
+<p>除了触发器，每个模块在需要时候还是应该要有回调接口。触发器适合用在那种需要配表支持的并带有计数的情况，比如玩家生命周期内的触发功能，任务，成就等，而一些有限范围内的功能还是走回调方便，比如一些模块受到月卡开启和关闭时候的一些处理，一些模块在等级升级时候需要进行一些处理。但是这种感觉大部分也能用触发器替代，能不用就不用吧。</p>
+<h2 id="7-人物AI"><a href="#7-人物AI" class="headerlink" title="7. 人物AI"></a>7. 人物AI</h2><p>放服务端控制，除非纯单机</p>
+<h2 id="8-属性模块设计"><a href="#8-属性模块设计" class="headerlink" title="8. 属性模块设计"></a>8. 属性模块设计</h2><ul>
+<li>考虑多种类型属性，需要自动恢复的（血量，蓝量），可以设置值也可以设置百分比的属性（对外是算出来的一个值），单一属性</li>
+<li>设置属性的时候增加来源，来源最好两级，包括大模块（整数），具体key（字符串），比如装备模块的具体的某件装备Id</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>游戏</tag>
+        <tag>总结</tag>
       </tags>
   </entry>
 </search>
